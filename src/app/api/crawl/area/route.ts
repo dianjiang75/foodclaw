@@ -1,0 +1,44 @@
+export async function POST(request: Request) {
+  try {
+    const { latitude, longitude, radius_miles } = await request.json();
+
+    if (latitude == null || longitude == null) {
+      return Response.json({ error: "latitude and longitude are required" }, { status: 400 });
+    }
+
+    const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+    if (!apiKey || apiKey === "placeholder") {
+      return Response.json({ error: "Google Places API not configured" }, { status: 503 });
+    }
+
+    const radiusMeters = Math.round((radius_miles || 0.5) * 1609.34);
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radiusMeters}&type=restaurant&key=${apiKey}`;
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      return Response.json({ error: "Google Places API failed" }, { status: 502 });
+    }
+
+    const data = await res.json();
+    const places = data.results || [];
+
+    const { menuCrawlQueue } = await import("@/../workers/queues");
+
+    let queued = 0;
+    for (const place of places) {
+      await menuCrawlQueue.add(
+        "area-crawl",
+        { googlePlaceId: place.place_id },
+        { attempts: 3, backoff: { type: "exponential", delay: 5000 } }
+      );
+      queued++;
+    }
+
+    return Response.json({
+      restaurants_found: places.length,
+      jobs_queued: queued,
+    }, { status: 202 });
+  } catch {
+    return Response.json({ error: "Failed to trigger area crawl" }, { status: 500 });
+  }
+}
