@@ -5,6 +5,7 @@
  * Usage: npx tsx scripts/seed-demo.ts
  */
 
+import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 

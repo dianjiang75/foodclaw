@@ -98,11 +98,16 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
           const sRes = await fetch(`/api/dishes/${id}/similar?lat=40.7264&lng=-73.9878&limit=4`);
           if (sRes.ok) {
             const sData = await sRes.json();
-            setSimilar((sData.dishes || []).map((d: Record<string, unknown>) => ({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            setSimilar((sData.dishes || []).map((d: any) => ({
               id: d.id, name: d.name,
-              restaurant_name: (d as { restaurant_name?: string }).restaurant_name || "",
-              macros: d.macros || { calories: null, protein_g: null, carbs_g: null, fat_g: null },
-              macro_confidence: d.macro_confidence as number | null,
+              restaurant_name: d.restaurant_name || "",
+              macros: {
+                calories: d.calories_min != null ? { min: d.calories_min, max: d.calories_max } : null,
+                protein_g: d.protein_max_g != null ? { min: 0, max: d.protein_max_g } : null,
+                carbs_g: null, fat_g: null,
+              },
+              macro_confidence: null,
               macro_source: null, rating: null,
             })));
           }

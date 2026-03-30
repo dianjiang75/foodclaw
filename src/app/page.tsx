@@ -72,20 +72,29 @@ export default function HomePage() {
       const res = await fetch(`/api/search?${params}`);
       if (res.ok) {
         const data = await res.json();
-        const items: DishCardData[] = (data.dishes || []).map((d: Record<string, unknown>) => ({
-          id: d.id,
-          name: d.name,
-          restaurant_name: (d as { restaurant_name?: string }).restaurant_name || "Unknown",
-          photo_url: (d as { photo_url?: string }).photo_url,
-          macros: d.macros || { calories: null, protein_g: null, carbs_g: null, fat_g: null },
-          macro_confidence: d.macro_confidence as number | null,
-          macro_source: d.macro_source as string | null,
-          rating: d.rating as number | null,
-          distance_miles: d.distance_miles as number | null,
-          wait_minutes: d.wait_minutes as number | null,
-          delivery_platforms: (d as { delivery_platforms?: string[] }).delivery_platforms || [],
-          highlight: goalToHighlight(s.goal),
-        }));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const items: DishCardData[] = (data.dishes || []).map((d: any) => {
+          const rest = d.restaurant || {};
+          return {
+            id: d.id,
+            name: d.name,
+            restaurant_name: rest.name || "Unknown",
+            photo_url: d.photo_url,
+            macros: {
+              calories: d.calories_min != null ? { min: d.calories_min, max: d.calories_max } : null,
+              protein_g: d.protein_min_g != null ? { min: d.protein_min_g, max: d.protein_max_g } : null,
+              carbs_g: d.carbs_min_g != null ? { min: d.carbs_min_g, max: d.carbs_max_g } : null,
+              fat_g: d.fat_min_g != null ? { min: d.fat_min_g, max: d.fat_max_g } : null,
+            },
+            macro_confidence: d.macro_confidence ?? null,
+            macro_source: d.macro_source ?? null,
+            rating: d.review_summary?.average_rating ?? null,
+            distance_miles: rest.distance_miles ?? null,
+            wait_minutes: d.logistics?.estimated_wait_minutes ?? null,
+            delivery_platforms: (d.delivery || []).map((del: any) => del.platform).filter(Boolean),
+            highlight: goalToHighlight(s.goal),
+          };
+        });
         setDishes(append ? (prev) => [...prev, ...items] : items);
         setHasMore(items.length >= s.limit);
       }
