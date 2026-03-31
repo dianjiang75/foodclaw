@@ -1,6 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import {
+  Pizza,
+  Soup,
+  Sandwich,
+  Beef,
+  Salad,
+  CookingPot,
+  Coffee,
+  UtensilsCrossed,
+  Fish,
+  Flame,
+  Wheat,
+  Leaf,
+  Cherry,
+  Sun,
+  Moon,
+  Clock,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 const CATEGORIES = [
   // Cuisine types
@@ -29,27 +48,155 @@ const CATEGORIES = [
   { id: "tacos", label: "Tacos", type: "meal" },
 ] as const;
 
-const EMOJI_MAP: Record<string, string> = {
-  thai: "🇹🇭", japanese: "🇯🇵", italian: "🇮🇹", mexican: "🇲🇽", indian: "🇮🇳",
-  chinese: "🇨🇳", korean: "🇰🇷", mediterranean: "🫒", american: "🇺🇸", vietnamese: "🇻🇳",
-  lunch: "🍱", dinner: "🍽️", breakfast: "🥞", pizza: "🍕", sushi: "🍣",
-  bowls: "🥗", salads: "🥬", sandwiches: "🥪", burgers: "🍔", noodles: "🍜",
-  soup: "🍲", tacos: "🌮",
+// Inline SVG icons for cuisines (simple, geometric, DoorDash-style)
+function ThaiIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 14c0-4 3-8 6-10 3 2 6 6 6 10" />
+      <path d="M7 14c0-2 1.5-4 3-5.5 1.5 1.5 3 3.5 3 5.5" />
+      <line x1="10" y1="14" x2="10" y2="18" />
+    </svg>
+  );
+}
+
+function JapaneseIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="6" />
+      <path d="M7 10c0-1.5 1.3-3 3-3s3 1.5 3 3" />
+      <circle cx="10" cy="10" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function MexicanIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12h14" />
+      <path d="M5 12c0-4 2.2-7 5-7s5 3 5 7" />
+      <path d="M6 12v3c0 1 1.8 2 4 2s4-1 4-2v-3" />
+    </svg>
+  );
+}
+
+function IndianIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="10" cy="12" rx="6" ry="4" />
+      <path d="M6 12V9c0-2.2 1.8-4 4-4s4 1.8 4 4v3" />
+      <path d="M10 5V3" />
+      <path d="M8 6l-1-2" />
+      <path d="M12 6l1-2" />
+    </svg>
+  );
+}
+
+function ChineseIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 8h12" />
+      <path d="M6 8l-1 8h10l-1-8" />
+      <path d="M8 5c0-1 .9-2 2-2s2 1 2 2" />
+      <line x1="10" y1="8" x2="10" y2="13" />
+    </svg>
+  );
+}
+
+function KoreanIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="7" />
+      <path d="M5 10c2.8 0 4.2-3 5-3s2.2 3 5 3" />
+      <path d="M5 10c2.8 0 4.2 3 5 3s2.2-3 5-3" />
+    </svg>
+  );
+}
+
+function MediterraneanIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="10" cy="12" rx="4" ry="5" />
+      <path d="M10 7V3" />
+      <path d="M7 5c1-1 2-1.5 3-1.5s2 .5 3 1.5" />
+      <path d="M8 4c.6-.8 1.2-1 2-1s1.4.2 2 1" />
+    </svg>
+  );
+}
+
+function AmericanIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 8h12l-.5 2H4.5z" />
+      <ellipse cx="10" cy="11" rx="6" ry="1.5" />
+      <path d="M5 11c0 2 2.2 4 5 4s5-2 5-4" />
+      <path d="M5 8c0-1 2.2-3 5-3s5 2 5 3" />
+    </svg>
+  );
+}
+
+function VietnameseIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 13c0-3 2.7-8 6-8s6 5 6 8" />
+      <line x1="3" y1="13" x2="17" y2="13" />
+      <path d="M8 9c.5-1 1.2-1.5 2-1.5s1.5.5 2 1.5" />
+      <path d="M7 11h6" />
+    </svg>
+  );
+}
+
+function TacoIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 13c0-5 3.1-9 7-9s7 4 7 9" />
+      <path d="M5 13c.5-1.5 2.3-3 5-3s4.5 1.5 5 3" />
+      <line x1="3" y1="13" x2="17" y2="13" />
+    </svg>
+  );
+}
+
+// Map categories to icons
+const ICON_MAP: Record<string, LucideIcon | (({ className }: { className?: string }) => React.ReactNode)> = {
+  thai: ThaiIcon,
+  japanese: JapaneseIcon,
+  italian: Pizza,
+  mexican: MexicanIcon,
+  indian: IndianIcon,
+  chinese: ChineseIcon,
+  korean: KoreanIcon,
+  mediterranean: MediterraneanIcon,
+  american: AmericanIcon,
+  vietnamese: VietnameseIcon,
+  lunch: Sun,
+  dinner: Moon,
+  breakfast: Coffee,
+  pizza: Pizza,
+  sushi: Fish,
+  bowls: CookingPot,
+  salads: Salad,
+  sandwiches: Sandwich,
+  burgers: Beef,
+  noodles: Wheat,
+  soup: Soup,
+  tacos: TacoIcon,
 };
 
 export function CategoryPills() {
   return (
     <div className="flex gap-1.5 overflow-x-auto pb-0.5 no-scrollbar -mx-4 px-4">
-      {CATEGORIES.map((cat) => (
-        <Link
-          key={cat.id}
-          href={`/category/${cat.id}`}
-          className="text-[11px] font-semibold px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 bg-muted/50 hover:bg-primary/10 hover:text-primary text-muted-foreground flex items-center gap-1"
-        >
-          <span className="text-xs">{EMOJI_MAP[cat.id] || ""}</span>
-          {cat.label}
-        </Link>
-      ))}
+      {CATEGORIES.map((cat) => {
+        const Icon = ICON_MAP[cat.id] || UtensilsCrossed;
+        return (
+          <Link
+            key={cat.id}
+            href={`/category/${cat.id}`}
+            className="text-[11px] font-semibold px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 bg-muted/50 hover:bg-primary/10 hover:text-primary text-muted-foreground flex items-center gap-1.5"
+          >
+            <Icon className="w-3.5 h-3.5" />
+            {cat.label}
+          </Link>
+        );
+      })}
     </div>
   );
 }

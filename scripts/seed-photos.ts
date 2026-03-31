@@ -184,8 +184,27 @@ const FALLBACK_PHOTOS = [
   "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&h=500&fit=crop",
 ];
 
+/**
+ * Find the best matching photo for a dish name by checking keywords.
+ */
+function matchPhotoForDish(dishName: string, index: number): string {
+  const nameLower = dishName.toLowerCase();
+
+  // Check each keyword against the dish name
+  for (const [keyword, photos] of Object.entries(PHOTOS_BY_TYPE)) {
+    const searchTerm = keyword.replace(/_/g, " ");
+    if (nameLower.includes(searchTerm) || nameLower.includes(keyword)) {
+      // Pick from available photos for this type (rotate if multiple)
+      return photos[index % photos.length];
+    }
+  }
+
+  // Fallback: cycle through generic food photos
+  return FALLBACK_PHOTOS[index % FALLBACK_PHOTOS.length];
+}
+
 async function main() {
-  console.log("Adding photos to dishes...");
+  console.log("Adding keyword-matched photos to dishes...");
 
   const dishes = await prisma.dish.findMany({
     select: { id: true, name: true },
@@ -193,10 +212,11 @@ async function main() {
   });
 
   let added = 0;
+  let updated = 0;
 
   for (let i = 0; i < dishes.length; i++) {
     const dish = dishes[i];
-    const photoUrl = FOOD_PHOTOS[i % FOOD_PHOTOS.length];
+    const photoUrl = matchPhotoForDish(dish.name, i);
 
     // Check if photo already exists
     const existing = await prisma.dishPhoto.findFirst({
@@ -213,10 +233,17 @@ async function main() {
         },
       });
       added++;
+    } else if (existing.sourceUrl !== photoUrl) {
+      // Update existing photo if a better keyword match is found
+      await prisma.dishPhoto.update({
+        where: { id: existing.id },
+        data: { sourceUrl: photoUrl },
+      });
+      updated++;
     }
   }
 
-  console.log(`Done! Added photos to ${added} dishes (${dishes.length} total).`);
+  console.log(`Done! Added ${added}, updated ${updated} photos (${dishes.length} dishes total).`);
   await prisma.$disconnect();
 }
 
