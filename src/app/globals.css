@@ -49,29 +49,29 @@
 }
 
 :root {
-  /* Surfaces — warm white, not pure white (food photos look better) */
-  --background: oklch(0.985 0.002 110);
-  --foreground: oklch(0.145 0.005 260);
-  --card: oklch(1.0 0 0);
-  --card-foreground: oklch(0.145 0.005 260);
-  --popover: oklch(1.0 0 0);
-  --popover-foreground: oklch(0.145 0.005 260);
+  /* Surfaces — warm cream (food photos pop, not clinical white) */
+  --background: oklch(0.975 0.006 80);
+  --foreground: oklch(0.18 0.01 50);
+  --card: oklch(0.995 0.002 80);
+  --card-foreground: oklch(0.18 0.01 50);
+  --popover: oklch(0.995 0.002 80);
+  --popover-foreground: oklch(0.18 0.01 50);
 
-  /* Brand — warm emerald green (health + freshness, not clinical) */
-  --primary: oklch(0.59 0.17 160);
+  /* Brand — warm emerald green (health + freshness) */
+  --primary: oklch(0.55 0.17 158);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.97 0.008 80);
+  --secondary: oklch(0.965 0.01 80);
   --secondary-foreground: oklch(0.25 0.02 30);
-  /* Accent — warm coral (appetizing, food-associated) */
-  --accent: oklch(0.68 0.17 25);
+  /* Accent — warm coral (appetite-stimulating) */
+  --accent: oklch(0.67 0.19 25);
   --accent-foreground: oklch(0.99 0 0);
 
   /* Utility */
-  --muted: oklch(0.965 0.002 110);
-  --muted-foreground: oklch(0.50 0.005 260);
+  --muted: oklch(0.955 0.006 80);
+  --muted-foreground: oklch(0.48 0.01 50);
   --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.90 0.005 110);
-  --input: oklch(0.90 0.005 110);
+  --border: oklch(0.92 0.005 80);
+  --input: oklch(0.93 0.005 80);
   --ring: oklch(0.55 0.18 155);
 
   /* Charts — macro-coded */
@@ -197,9 +197,9 @@
 .skeleton-shimmer {
   background: linear-gradient(
     90deg,
-    oklch(0.95 0 0) 25%,
-    oklch(0.90 0 0) 50%,
-    oklch(0.95 0 0) 75%
+    oklch(0.95 0.006 80) 25%,
+    oklch(0.91 0.01 70) 50%,
+    oklch(0.95 0.006 80) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;

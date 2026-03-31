@@ -293,22 +293,36 @@ function DishesView({
 }) {
   if (loading && dishes.length === 0) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-lg border overflow-hidden">
-            <div className="aspect-[16/10] w-full skeleton-shimmer" />
-            <div className="p-3 space-y-2.5">
-              <div className="h-4 w-3/4 rounded skeleton-shimmer" />
-              <div className="h-3 w-1/2 rounded skeleton-shimmer" />
-              <div className="h-2 w-full rounded-full skeleton-shimmer" />
-              <div className="flex gap-2">
-                <div className="h-3 w-14 rounded skeleton-shimmer" />
-                <div className="h-3 w-10 rounded skeleton-shimmer" />
-                <div className="h-3 w-10 rounded skeleton-shimmer" />
+      <div className="space-y-6">
+        {/* Carousel skeleton */}
+        <div>
+          <div className="h-4 w-36 rounded skeleton-shimmer mb-3" />
+          <div className="flex gap-3 overflow-hidden -mx-4 px-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={`cs-${i}`} className="w-[280px] shrink-0 rounded-2xl overflow-hidden border border-border/30">
+                <div className="aspect-[3/2] w-full skeleton-shimmer" />
+                <div className="p-3 space-y-2">
+                  <div className="h-4 w-3/4 rounded skeleton-shimmer" />
+                  <div className="h-3 w-1/2 rounded skeleton-shimmer" />
+                  <div className="h-1.5 w-full rounded-full skeleton-shimmer" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Grid skeleton */}
+        <div className="grid gap-3.5 sm:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={`gs-${i}`} className="rounded-2xl overflow-hidden border border-border/30">
+              <div className="aspect-[3/2] w-full skeleton-shimmer" />
+              <div className="p-3 space-y-2">
+                <div className="h-4 w-3/4 rounded skeleton-shimmer" />
+                <div className="h-3 w-1/2 rounded skeleton-shimmer" />
+                <div className="h-1.5 w-full rounded-full skeleton-shimmer" />
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     );
   }
@@ -316,33 +330,88 @@ function DishesView({
   if (dishes.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-          <Search className="w-7 h-7 text-muted-foreground" />
+        <div className="w-20 h-20 rounded-full bg-muted/80 flex items-center justify-center mb-4">
+          <span className="text-3xl">🍽️</span>
         </div>
-        <p className="text-base font-semibold">No dishes found</p>
-        <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+        <p className="text-base font-bold">No dishes found</p>
+        <p className="text-sm text-muted-foreground mt-1.5 max-w-xs leading-relaxed">
           Try broadening your search, removing some dietary filters, or expanding the radius.
         </p>
       </div>
     );
   }
 
+  // Split dishes into sections for curated feel
+  const topRated = [...dishes].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)).slice(0, 8);
+  const highProtein = [...dishes].sort((a, b) => {
+    const pa = avg(a.macros.protein_g);
+    const pb = avg(b.macros.protein_g);
+    return pb - pa;
+  }).slice(0, 8);
+  const isSearching = dishes.length < 20; // User applied filters or searched
+
   return (
-    <>
-      <div className="grid gap-4 sm:grid-cols-2">
+    <div className="space-y-6">
+      {/* Horizontal carousels only on default browse (no search query) */}
+      {!isSearching && (
+        <>
+          {/* Top Rated carousel */}
+          <section>
+            <h2 className="text-sm font-bold mb-2.5 flex items-center gap-1.5">
+              <span className="text-amber-500">★</span> Top Rated Near You
+            </h2>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 snap-x snap-mandatory">
+              {topRated.map((dish) => (
+                <div key={`top-${dish.id}`} className="w-[280px] shrink-0 snap-start">
+                  <DishCard dish={dish} />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* High Protein carousel */}
+          <section>
+            <h2 className="text-sm font-bold mb-2.5 flex items-center gap-1.5">
+              <span className="text-indigo-500">💪</span> High Protein
+            </h2>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 snap-x snap-mandatory">
+              {highProtein.map((dish) => (
+                <div key={`hp-${dish.id}`} className="w-[280px] shrink-0 snap-start">
+                  <DishCard dish={dish} />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Section divider */}
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-border/50" />
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">All Dishes</span>
+            <div className="h-px flex-1 bg-border/50" />
+          </div>
+        </>
+      )}
+
+      {/* Main grid */}
+      <div className="grid gap-3.5 sm:grid-cols-2">
         {dishes.map((dish) => (
           <DishCard key={dish.id} dish={dish} />
         ))}
       </div>
       {hasMore && (
-        <div className="text-center mt-6">
-          <Button variant="outline" onClick={onLoadMore} disabled={loading}>
-            {loading ? "Loading..." : "Load more"}
+        <div className="text-center mt-4 pb-2">
+          <Button variant="outline" onClick={onLoadMore} disabled={loading} className="rounded-full px-8">
+            {loading ? "Loading..." : "Load more dishes"}
           </Button>
         </div>
       )}
-    </>
+    </div>
   );
+}
+
+function avg(range: { min: number | null; max: number | null } | null): number {
+  if (!range || range.min == null || range.max == null) return 0;
+  return (range.min + range.max) / 2;
 }
 
 function RestaurantsView({

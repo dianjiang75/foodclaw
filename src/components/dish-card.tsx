@@ -41,7 +41,7 @@ export function DishCard({ dish }: { dish: DishCardData }) {
     <Link href={`/dish/${dish.id}`} className="group block">
       <div className="rounded-2xl overflow-hidden bg-card shadow-sm border border-border/50 transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 group-active:translate-y-0 group-active:shadow-md">
         {/* Photo */}
-        <div className="aspect-[16/10] w-full relative overflow-hidden">
+        <div className="aspect-[3/2] w-full relative overflow-hidden">
           {dish.photo_url ? (
             <>
               <Image
@@ -54,9 +54,9 @@ export function DishCard({ dish }: { dish: DishCardData }) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </>
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-muted via-muted to-muted/60 flex flex-col items-center justify-center gap-1.5">
-              <UtensilsCrossed className="w-8 h-8 text-muted-foreground/30" />
-              <span className="text-[10px] text-muted-foreground/40 font-medium">No photo yet</span>
+            <div className="w-full h-full bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 dark:from-amber-950/30 dark:via-orange-950/20 dark:to-rose-950/20 flex flex-col items-center justify-center gap-1.5">
+              <UtensilsCrossed className="w-8 h-8 text-orange-300/60 dark:text-orange-700/40" />
+              <span className="text-[10px] text-orange-400/50 dark:text-orange-600/40 font-medium">No photo yet</span>
             </div>
           )}
 
