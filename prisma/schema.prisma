@@ -121,6 +121,7 @@ model Dish {
   photos             DishPhoto[]
   reviewSummary      ReviewSummary?
   communityFeedback  CommunityFeedback[]
+  favorites          UserFavorite[]
 
   @@index([restaurantId], map: "idx_dishes_restaurant")
   @@index([caloriesMin, caloriesMax], map: "idx_dishes_calories")
@@ -209,8 +210,22 @@ model UserProfile {
   updatedAt            DateTime @updatedAt @map("updated_at")
 
   communityFeedback    CommunityFeedback[]
+  favorites            UserFavorite[]
 
   @@map("user_profiles")
+}
+
+model UserFavorite {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  dishId    String   @map("dish_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dish      Dish        @relation(fields: [dishId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dishId])
+  @@map("user_favorites")
 }
 
 model CommunityFeedback {

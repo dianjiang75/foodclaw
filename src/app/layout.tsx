@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/lib/auth/context";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -40,9 +41,11 @@ export default function RootLayout({
           >
             Skip to main content
           </a>
-          <TooltipProvider delay={300}>
-            <main id="main-content">{children}</main>
-          </TooltipProvider>
+          <AuthProvider>
+            <TooltipProvider delay={300}>
+              <main id="main-content">{children}</main>
+            </TooltipProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
