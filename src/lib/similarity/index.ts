@@ -162,8 +162,25 @@ export async function autoReroute(
 }
 
 /**
- * Normalize macro values into a unit vector [cal, protein, carbs, fat].
+ * Normalize macro values using z-score standardization then L2 normalize.
+ *
+ * Previous approach used arbitrary divisors (cal/1000, protein/50, etc.)
+ * which caused calories to dominate similarity. Z-score standardization
+ * (subtract mean, divide by std) puts all macros on the same scale.
+ *
+ * Statistics computed from typical restaurant dish ranges:
+ *   Calories: mean ~500, std ~250 (range 100-1500)
+ *   Protein:  mean ~25g, std ~15g (range 2-80)
+ *   Carbs:    mean ~45g, std ~30g (range 0-150)
+ *   Fat:      mean ~20g, std ~15g (range 2-70)
  */
+const MACRO_STATS = {
+  calories: { mean: 500, std: 250 },
+  protein: { mean: 25, std: 15 },
+  carbs: { mean: 45, std: 30 },
+  fat: { mean: 20, std: 15 },
+};
+
 function normalizeMacros(
   calories: number | null,
   protein: number | null,
@@ -172,13 +189,15 @@ function normalizeMacros(
 ): number[] | null {
   if (calories === null) return null;
 
+  // Z-score standardization: (value - mean) / std
   const vec = [
-    calories / 1000, // Normalize calories to ~0-2 range
-    (protein ?? 0) / 50, // Normalize protein to ~0-2 range
-    (carbs ?? 0) / 100, // Normalize carbs to ~0-2 range
-    (fat ?? 0) / 50, // Normalize fat to ~0-2 range
+    (calories - MACRO_STATS.calories.mean) / MACRO_STATS.calories.std,
+    ((protein ?? 0) - MACRO_STATS.protein.mean) / MACRO_STATS.protein.std,
+    ((carbs ?? 0) - MACRO_STATS.carbs.mean) / MACRO_STATS.carbs.std,
+    ((fat ?? 0) - MACRO_STATS.fat.mean) / MACRO_STATS.fat.std,
   ];
 
+  // L2 normalize to unit vector for cosine similarity
   const magnitude = Math.sqrt(vec.reduce((sum, v) => sum + v * v, 0));
   if (magnitude === 0) return null;
 

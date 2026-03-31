@@ -5,6 +5,7 @@ import {
   type QueryCacheParams,
 } from "@/lib/cache";
 import { verify } from "@/lib/evaluator";
+import { fullTextSearchDishes } from "@/lib/db/geo";
 import type {
   DishResult,
   SearchResults,
@@ -39,10 +40,8 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   }
 
   // 2. Build and execute database query
-  // Build dietary filter conditions
   const dietaryWhere = buildDietaryWhere(query.dietary_restrictions);
 
-  // Build macro conditions
   const macroWhere: Record<string, unknown> = {};
   if (query.calorie_limit) {
     macroWhere.caloriesMin = { lte: query.calorie_limit };
@@ -51,10 +50,22 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     macroWhere.proteinMaxG = { gte: query.protein_min_g };
   }
 
-  // Build text search condition
-  const textWhere: Record<string, unknown> = {};
+  // Full-text search: use tsvector when available, fallback to ILIKE
+  let textWhere: Record<string, unknown> = {};
+  let textSearchDishIds: string[] | null = null;
   if (query.query) {
-    textWhere.name = { contains: query.query, mode: "insensitive" };
+    try {
+      const ftsResults = await fullTextSearchDishes(query.query, 200);
+      if (ftsResults.length > 0) {
+        textSearchDishIds = ftsResults.map((r) => r.id);
+      } else {
+        // tsvector returned nothing — fallback to ILIKE
+        textWhere = { name: { contains: query.query, mode: "insensitive" } };
+      }
+    } catch {
+      // Full-text search not available (tsvector column missing) — fallback
+      textWhere = { name: { contains: query.query, mode: "insensitive" } };
+    }
   }
 
   // Build cuisine filter from categories (cuisine-type categories map to restaurant cuisineType)
@@ -71,6 +82,9 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     (c) => !CUISINE_IDS.has(c)
   );
 
+  // Fetch a larger window for caching (top 100), then paginate from cache on subsequent requests
+  const fetchLimit = Math.max(limit, 100);
+
   // Query dishes with restaurant join
   const dishes = await prisma.dish.findMany({
     where: {
@@ -78,6 +92,8 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
       ...dietaryWhere,
       ...macroWhere,
       ...textWhere,
+      // If full-text search returned IDs, filter to those
+      ...(textSearchDishIds ? { id: { in: textSearchDishIds } } : {}),
       ...(mealCategories.length
         ? { category: { in: mealCategories, mode: "insensitive" } }
         : {}),
@@ -93,8 +109,8 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
       reviewSummary: true,
       photos: { take: 1, orderBy: { createdAt: "desc" } },
     },
-    take: limit,
-    skip: offset,
+    take: fetchLimit,
+    skip: 0, // Always fetch from 0 for cache; paginate from cache
     orderBy: buildOrderBy(query),
   });
 
@@ -189,27 +205,35 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   // 5. Run Apollo evaluator for dietary safety
   const verified = verify(radiusFiltered, query.dietary_restrictions);
 
-  const result: SearchResults = {
-    dishes: verified,
-    total_count: verified.length,
-    cached: false,
-  };
-
-  // 5b. Sort by distance if requested (DB can't sort by computed distance)
+  // 5b. In-memory sorts for fields that can't be sorted at DB level
   if (query.sort_by === "distance") {
     verified.sort((a, b) => {
       const da = a.restaurant.distance_miles ?? Infinity;
       const db = b.restaurant.distance_miles ?? Infinity;
       return da - db;
     });
+  } else if (query.sort_by === "wait_time") {
+    verified.sort((a, b) => {
+      const wa = a.logistics?.estimated_wait_minutes ?? Infinity;
+      const wb = b.logistics?.estimated_wait_minutes ?? Infinity;
+      return wa - wb;
+    });
   }
 
-  // 6. Cache results
-  if (offset === 0) {
-    await setCachedQuery(cacheParams, result);
-  }
+  // 6. Cache full result set, then return paginated slice
+  const fullResult: SearchResults = {
+    dishes: verified,
+    total_count: verified.length,
+    cached: false,
+  };
 
-  return result;
+  await setCachedQuery(cacheParams, fullResult);
+
+  return {
+    dishes: verified.slice(offset, offset + limit),
+    total_count: verified.length,
+    cached: false,
+  };
 }
 
 const CUISINE_IDS = new Set([
