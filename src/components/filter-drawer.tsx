@@ -139,10 +139,10 @@ export function FilterDrawer({ filters, onChange }: FilterDrawerProps) {
                   <button
                     key={diet.id}
                     onClick={() => toggleDiet(diet.id)}
-                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                    className={`text-xs font-medium px-3.5 py-2 rounded-full border transition-all duration-200 ${
                       isActive
-                        ? "bg-ns-green text-white border-ns-green"
-                        : "border-border hover:bg-muted"
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm scale-[1.02]"
+                        : "border-border/70 text-muted-foreground hover:bg-primary/10 hover:border-primary/30 hover:text-primary"
                     }`}
                   >
                     {diet.label}
@@ -171,10 +171,10 @@ export function FilterDrawer({ filters, onChange }: FilterDrawerProps) {
                       <button
                         key={allergen.id}
                         onClick={() => toggleAllergen(allergen.id)}
-                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                        className={`text-xs font-medium px-3.5 py-2 rounded-full border transition-all duration-200 ${
                           isActive
-                            ? "bg-red-500/90 text-white border-red-500/90"
-                            : "border-border hover:bg-muted"
+                            ? "bg-ns-red text-white border-ns-red shadow-sm scale-[1.02]"
+                            : "border-border/70 text-muted-foreground hover:bg-ns-red-light hover:border-ns-red/30 hover:text-ns-red"
                         }`}
                       >
                         {allergen.label}
@@ -193,10 +193,10 @@ export function FilterDrawer({ filters, onChange }: FilterDrawerProps) {
                       <button
                         key={allergen.id}
                         onClick={() => toggleAllergen(allergen.id)}
-                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                        className={`text-xs font-medium px-3.5 py-2 rounded-full border transition-all duration-200 ${
                           isActive
-                            ? "bg-red-500/90 text-white border-red-500/90"
-                            : "border-border hover:bg-muted"
+                            ? "bg-ns-red text-white border-ns-red shadow-sm scale-[1.02]"
+                            : "border-border/70 text-muted-foreground hover:bg-ns-red-light hover:border-ns-red/30 hover:text-ns-red"
                         }`}
                       >
                         {allergen.label}
@@ -245,7 +245,7 @@ export function FilterDrawer({ filters, onChange }: FilterDrawerProps) {
 
         <div className="sticky bottom-0 bg-background pt-2 pb-4 border-t">
           <SheetClose
-            className="w-full inline-flex items-center justify-center rounded-md bg-ns-green hover:bg-ns-green/90 text-white h-10 px-4 text-sm font-medium transition-colors"
+            className="w-full inline-flex items-center justify-center rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground h-11 px-4 text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
           >
             Apply Filters {activeCount > 0 && `(${activeCount})`}
           </SheetClose>

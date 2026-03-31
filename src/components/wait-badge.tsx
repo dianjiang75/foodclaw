@@ -1,18 +1,24 @@
-import { Badge } from "@/components/ui/badge";
+import { Clock } from "lucide-react";
 
 interface WaitBadgeProps {
   minutes: number | null;
 }
 
 export function WaitBadge({ minutes }: WaitBadgeProps) {
-  if (minutes == null) {
-    return <Badge variant="outline" className="text-xs">Wait N/A</Badge>;
-  }
-  if (minutes <= 5) {
-    return <Badge className="bg-ns-green-light text-ns-green border-ns-green/20 text-xs">No wait</Badge>;
-  }
-  if (minutes <= 20) {
-    return <Badge className="bg-ns-amber-light text-ns-amber border-ns-amber/20 text-xs">~{minutes} min</Badge>;
-  }
-  return <Badge className="bg-ns-red-light text-ns-red border-ns-red/20 text-xs">~{minutes} min</Badge>;
+  if (minutes == null) return null;
+
+  const style = minutes <= 5
+    ? "bg-ns-green-light text-ns-green"
+    : minutes <= 20
+    ? "bg-ns-amber-light text-ns-amber"
+    : "bg-ns-red-light text-ns-red";
+
+  const label = minutes <= 5 ? "No wait" : `~${minutes} min`;
+
+  return (
+    <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${style}`}>
+      <Clock className="w-3 h-3" />
+      {label}
+    </span>
+  );
 }

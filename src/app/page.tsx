@@ -172,28 +172,28 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen pb-16">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="max-w-2xl mx-auto px-4 py-3 space-y-2.5">
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/30">
+        <div className="max-w-2xl mx-auto px-4 pt-3 pb-2.5 space-y-2">
           {/* Search row */}
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-extrabold tracking-tight shrink-0">
-              <span className="text-primary">Food</span><span className="text-accent">Claw</span>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-black tracking-tight shrink-0">
+              <span className="text-primary">Food</span><span className="bg-gradient-to-r from-rose-500 to-amber-500 bg-clip-text text-transparent">Claw</span>
             </h1>
             <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60" />
               <Input
                 ref={searchInputRef}
                 placeholder={activeTab === "dishes" ? "Search dishes... e.g. udon, pad thai" : "Search restaurants..."}
-                className="h-9 text-sm pl-8"
+                className="h-10 text-sm pl-9 rounded-xl bg-muted/50 border-border/30 focus:bg-background"
                 value={search.q}
                 onChange={(e) => handleSearchInput(e.target.value)}
               />
             </div>
             <FilterDrawer filters={filters} onChange={setFilters} />
             <Link href="/profile">
-              <Button variant="ghost" size="sm" className="shrink-0 text-xs px-2">
-                Profile
-              </Button>
+              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm hover:bg-primary/20 transition-colors">
+                P
+              </div>
             </Link>
           </div>
 
@@ -202,14 +202,14 @@ export default function HomePage() {
 
           {/* Sort options (dishes only) */}
           {activeTab === "dishes" && (
-            <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+            <div className="flex gap-1.5 overflow-x-auto no-scrollbar -mx-4 px-4">
               {SORT_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
-                  className={`text-xs px-3 py-1.5 rounded-full border transition-all duration-200 whitespace-nowrap font-medium ${
+                  className={`text-[11px] px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap font-semibold ${
                     search.sort === opt.value
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                      : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                   onClick={() => setSearch((s) => ({ ...s, sort: opt.value, offset: 0 }))}
                 >

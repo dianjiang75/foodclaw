@@ -29,15 +29,24 @@ const CATEGORIES = [
   { id: "tacos", label: "Tacos", type: "meal" },
 ] as const;
 
+const EMOJI_MAP: Record<string, string> = {
+  thai: "🇹🇭", japanese: "🇯🇵", italian: "🇮🇹", mexican: "🇲🇽", indian: "🇮🇳",
+  chinese: "🇨🇳", korean: "🇰🇷", mediterranean: "🫒", american: "🇺🇸", vietnamese: "🇻🇳",
+  lunch: "🍱", dinner: "🍽️", breakfast: "🥞", pizza: "🍕", sushi: "🍣",
+  bowls: "🥗", salads: "🥬", sandwiches: "🥪", burgers: "🍔", noodles: "🍜",
+  soup: "🍲", tacos: "🌮",
+};
+
 export function CategoryPills() {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+    <div className="flex gap-1.5 overflow-x-auto pb-0.5 no-scrollbar -mx-4 px-4">
       {CATEGORIES.map((cat) => (
         <Link
           key={cat.id}
           href={`/category/${cat.id}`}
-          className="text-xs font-medium px-3.5 py-1.5 rounded-full border whitespace-nowrap shrink-0 transition-all duration-200 border-border/70 hover:bg-primary/10 hover:border-primary/30 hover:text-primary text-muted-foreground"
+          className="text-[11px] font-semibold px-3 py-1.5 rounded-full whitespace-nowrap shrink-0 transition-all duration-200 bg-muted/50 hover:bg-primary/10 hover:text-primary text-muted-foreground flex items-center gap-1"
         >
+          <span className="text-xs">{EMOJI_MAP[cat.id] || ""}</span>
           {cat.label}
         </Link>
       ))}

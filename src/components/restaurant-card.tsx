@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Star, MapPin, Clock } from "lucide-react";
+import { Star, MapPin, Clock, ChevronRight } from "lucide-react";
 
 export interface RestaurantCardData {
   id: string;
@@ -25,16 +23,16 @@ export interface RestaurantCardData {
 
 export function RestaurantCard({ restaurant }: { restaurant: RestaurantCardData }) {
   return (
-    <Link href={`/restaurant/${restaurant.id}`} className="block">
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
-      <CardContent className="p-3 space-y-2.5">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <h3 className="font-semibold text-sm truncate">{restaurant.name}</h3>
-            <div className="flex items-center gap-1.5 mt-0.5">
+    <Link href={`/restaurant/${restaurant.id}`} className="group block">
+      <div className="rounded-2xl overflow-hidden bg-card border border-border/50 p-4 transition-all duration-300 group-hover:shadow-lg group-hover:-translate-y-0.5 group-active:translate-y-0">
+        {/* Header row */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-bold text-sm group-hover:text-primary transition-colors">{restaurant.name}</h3>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
               {restaurant.googleRating != null && (
-                <span className="flex items-center gap-0.5 text-xs font-medium">
-                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                <span className="flex items-center gap-0.5 text-xs font-semibold">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   {restaurant.googleRating.toFixed(1)}
                 </span>
               )}
@@ -52,36 +50,40 @@ export function RestaurantCard({ restaurant }: { restaurant: RestaurantCardData 
               )}
             </div>
           </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground/50 mt-1 group-hover:text-primary transition-colors" />
         </div>
 
-        <div className="flex gap-1 flex-wrap">
+        {/* Cuisine tags */}
+        <div className="flex gap-1.5 mt-2.5 flex-wrap">
           {restaurant.cuisineType.slice(0, 3).map((c) => (
-            <Badge key={c} variant="outline" className="text-[10px] px-1.5 py-0">
+            <span key={c} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/8 text-primary border border-primary/15">
               {c}
-            </Badge>
+            </span>
           ))}
         </div>
 
+        {/* Top dishes */}
         {restaurant.topDishes.length > 0 && (
-          <div className="space-y-1">
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-              Matching Dishes
+          <div className="mt-3 pt-3 border-t border-border/50">
+            <p className="text-[9px] font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">
+              Top Dishes
             </p>
-            {restaurant.topDishes.slice(0, 3).map((dish) => (
-              <div key={dish.id} className="flex items-center justify-between text-xs">
-                <span className="truncate mr-2">{dish.name}</span>
-                <span className="text-muted-foreground shrink-0">
-                  {dish.calories_min != null
-                    ? `${dish.calories_min}${dish.calories_max && dish.calories_max !== dish.calories_min ? `-${dish.calories_max}` : ""} cal`
-                    : ""}
-                  {dish.protein_min_g != null ? ` · ${dish.protein_min_g}g P` : ""}
-                </span>
-              </div>
-            ))}
+            <div className="space-y-1">
+              {restaurant.topDishes.slice(0, 3).map((dish) => (
+                <div key={dish.id} className="flex items-center justify-between text-xs">
+                  <span className="truncate mr-2 text-foreground/80">{dish.name}</span>
+                  <span className="text-[10px] text-muted-foreground shrink-0 tabular-nums">
+                    {dish.calories_min != null
+                      ? `${dish.calories_min}${dish.calories_max && dish.calories_max !== dish.calories_min ? `–${dish.calories_max}` : ""} cal`
+                      : ""}
+                    {dish.protein_min_g != null ? ` · ${dish.protein_min_g}g P` : ""}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
     </Link>
   );
 }
