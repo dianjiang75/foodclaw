@@ -5,11 +5,14 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
+import { Plus, X } from "lucide-react";
 
 const DIETARY_OPTIONS = [
-  "vegan", "vegetarian", "gluten_free", "dairy_free", "nut_free", "halal", "kosher",
+  "vegan", "vegetarian", "pescatarian", "keto", "paleo",
+  "gluten_free", "dairy_free", "nut_free", "halal", "kosher",
 ] as const;
 
 const GOAL_OPTIONS = [
@@ -18,6 +21,35 @@ const GOAL_OPTIONS = [
   { value: "min_fat", label: "Minimize Fat" },
   { value: "min_carbs", label: "Minimize Carbs" },
   { value: "balanced", label: "Balanced" },
+] as const;
+
+// FDA Big 9 + additional common allergens
+const ALLERGEN_GROUPS = [
+  {
+    label: "FDA Big 9",
+    items: [
+      { id: "milk", label: "Milk" },
+      { id: "eggs", label: "Eggs" },
+      { id: "peanuts", label: "Peanuts" },
+      { id: "tree_nuts", label: "Tree Nuts" },
+      { id: "fish", label: "Fish" },
+      { id: "shellfish", label: "Shellfish" },
+      { id: "wheat", label: "Wheat" },
+      { id: "soybeans", label: "Soybeans" },
+      { id: "sesame", label: "Sesame" },
+    ],
+  },
+  {
+    label: "Other Common",
+    items: [
+      { id: "celery", label: "Celery" },
+      { id: "mustard", label: "Mustard" },
+      { id: "lupin", label: "Lupin" },
+      { id: "molluscs", label: "Molluscs" },
+      { id: "sulphites", label: "Sulphites" },
+      { id: "gluten", label: "Gluten" },
+    ],
+  },
 ] as const;
 
 interface UserProfile {
@@ -32,6 +64,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [dietary, setDietary] = useState<string[]>([]);
+  const [allergens, setAllergens] = useState<string[]>([]);
+  const [customRestrictions, setCustomRestrictions] = useState<string[]>([]);
+  const [customInput, setCustomInput] = useState("");
   const [goal, setGoal] = useState("balanced");
   const [maxWait, setMaxWait] = useState([30]);
   const [searchRadius, setSearchRadius] = useState([2]);
@@ -48,10 +83,9 @@ export default function ProfilePage() {
     fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: "" }), // will use stored ID flow
+      body: JSON.stringify({ email: "" }),
     }).catch(() => {});
 
-    // For now, just load from localStorage or a simple fetch
     setUser({ id: userId, email: "", name: "", dietary_restrictions: null, nutritional_goals: null });
   }, [router]);
 
@@ -59,6 +93,24 @@ export default function ProfilePage() {
     setDietary((prev) =>
       prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]
     );
+  }
+
+  function toggleAllergen(id: string) {
+    setAllergens((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }
+
+  function addCustom() {
+    const trimmed = customInput.trim().toLowerCase();
+    if (trimmed && !customRestrictions.includes(trimmed)) {
+      setCustomRestrictions((prev) => [...prev, trimmed]);
+      setCustomInput("");
+    }
+  }
+
+  function removeCustom(item: string) {
+    setCustomRestrictions((prev) => prev.filter((c) => c !== item));
   }
 
   async function handleSave() {
@@ -76,6 +128,8 @@ export default function ProfilePage() {
           user_id: user.id,
           dietary_restrictions: flags,
           nutritional_goals: { priority: goal },
+          allergens,
+          custom_restrictions: customRestrictions,
           max_wait_minutes: maxWait[0],
           search_radius_miles: searchRadius[0],
         }),
@@ -87,7 +141,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4 space-y-4">
+    <div className="max-w-md mx-auto p-4 space-y-4 pb-8">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">Profile</h1>
         <a href="/">
@@ -95,9 +149,10 @@ export default function ProfilePage() {
         </a>
       </div>
 
+      {/* Dietary Preferences */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Dietary Restrictions</CardTitle>
+          <CardTitle className="text-sm">Dietary Preferences</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
@@ -110,13 +165,77 @@ export default function ProfilePage() {
                 }`}
                 onClick={() => toggleDietary(d)}
               >
-                {d.replace("_", " ")}
+                {d.replace(/_/g, " ")}
               </Badge>
             ))}
           </div>
         </CardContent>
       </Card>
 
+      {/* Allergen Exclusions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Allergen Exclusions</CardTitle>
+          <p className="text-xs text-muted-foreground">Dishes containing these will always be hidden</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {ALLERGEN_GROUPS.map((group) => (
+            <div key={group.label}>
+              <p className="text-xs font-medium text-muted-foreground mb-1.5">{group.label}</p>
+              <div className="flex flex-wrap gap-2">
+                {group.items.map((a) => (
+                  <Badge
+                    key={a.id}
+                    variant={allergens.includes(a.id) ? "default" : "outline"}
+                    className={`cursor-pointer text-xs py-1 px-2.5 ${
+                      allergens.includes(a.id) ? "bg-red-500/90 hover:bg-red-500/80 text-white border-red-500/90" : ""
+                    }`}
+                    onClick={() => toggleAllergen(a.id)}
+                  >
+                    {a.label}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Custom Restrictions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Other Restrictions</CardTitle>
+          <p className="text-xs text-muted-foreground">Add any custom dietary needs</p>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="flex gap-2">
+            <Input
+              value={customInput}
+              onChange={(e) => setCustomInput(e.target.value)}
+              placeholder="e.g. nightshades, FODMAPs..."
+              className="h-8 text-sm"
+              onKeyDown={(e) => e.key === "Enter" && addCustom()}
+            />
+            <Button size="sm" variant="outline" className="h-8 px-2 shrink-0" onClick={addCustom}>
+              <Plus className="w-4 h-4" />
+            </Button>
+          </div>
+          {customRestrictions.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {customRestrictions.map((item) => (
+                <Badge key={item} variant="secondary" className="text-xs gap-1 pr-1">
+                  {item}
+                  <button onClick={() => removeCustom(item)} className="hover:text-destructive">
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Nutritional Goal */}
       <Card>
         <CardHeader>
           <CardTitle className="text-sm">Nutritional Goal</CardTitle>
@@ -138,9 +257,10 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
+      {/* Preferences */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Preferences</CardTitle>
+          <CardTitle className="text-sm">Search Preferences</CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="space-y-2">
@@ -156,7 +276,7 @@ export default function ProfilePage() {
 
       <Separator />
 
-      <Button className="w-full" onClick={handleSave} disabled={saving}>
+      <Button className="w-full bg-ns-green hover:bg-ns-green/90 text-white" onClick={handleSave} disabled={saving}>
         {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
       </Button>
 

@@ -8,6 +8,9 @@ export interface DietaryFlags {
   kosher: boolean | null;
   dairy_free: boolean | null;
   nut_free: boolean | null;
+  pescatarian?: boolean | null;
+  keto?: boolean | null;
+  paleo?: boolean | null;
 }
 
 export interface NutritionalGoals {

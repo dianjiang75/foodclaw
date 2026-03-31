@@ -23,6 +23,9 @@ export async function GET(request: Request) {
       kosher: dietStr.includes("kosher") ? true : null,
       dairy_free: dietStr.includes("dairy_free") ? true : null,
       nut_free: dietStr.includes("nut_free") ? true : null,
+      pescatarian: dietStr.includes("pescatarian") ? true : null,
+      keto: dietStr.includes("keto") ? true : null,
+      paleo: dietStr.includes("paleo") ? true : null,
     };
 
     const results = await search({
@@ -39,6 +42,9 @@ export async function GET(request: Request) {
       sort_by: (searchParams.get("sort") as "macro_match" | "distance" | "rating" | "wait_time") || undefined,
       limit: parseInt(searchParams.get("limit") || "20"),
       offset: parseInt(searchParams.get("offset") || "0"),
+      query: searchParams.get("q") || undefined,
+      categories: searchParams.get("categories")?.split(",").filter(Boolean) || undefined,
+      allergens: searchParams.get("allergens")?.split(",").filter(Boolean) || undefined,
     });
 
     return Response.json(results);

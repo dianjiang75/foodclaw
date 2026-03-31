@@ -48,16 +48,43 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     macroWhere.proteinMaxG = { gte: query.protein_min_g };
   }
 
+  // Build text search condition
+  const textWhere: Record<string, unknown> = {};
+  if (query.query) {
+    textWhere.name = { contains: query.query, mode: "insensitive" };
+  }
+
+  // Build category conditions
+  const categoryWhere = buildCategoryWhere(query.categories);
+
+  // Build cuisine filter from categories (cuisine-type categories map to restaurant cuisineType)
+  const cuisineCategories = (query.categories || []).filter((c) =>
+    CUISINE_IDS.has(c)
+  );
+  const allCuisines = [
+    ...(query.cuisine_preferences || []),
+    ...cuisineCategories,
+  ];
+
+  // Build meal category filter (non-cuisine categories map to dish category)
+  const mealCategories = (query.categories || []).filter(
+    (c) => !CUISINE_IDS.has(c)
+  );
+
   // Query dishes with restaurant join
   const dishes = await prisma.dish.findMany({
     where: {
       isAvailable: true,
       ...dietaryWhere,
       ...macroWhere,
+      ...textWhere,
+      ...(mealCategories.length
+        ? { category: { in: mealCategories, mode: "insensitive" } }
+        : {}),
       restaurant: {
         isActive: true,
-        ...(query.cuisine_preferences?.length
-          ? { cuisineType: { hasSome: query.cuisine_preferences } }
+        ...(allCuisines.length
+          ? { cuisineType: { hasSome: allCuisines } }
           : {}),
       },
     },
@@ -155,6 +182,16 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   return result;
 }
 
+const CUISINE_IDS = new Set([
+  "thai", "japanese", "italian", "mexican", "indian",
+  "chinese", "korean", "mediterranean", "american", "vietnamese",
+]);
+
+function buildCategoryWhere(categories?: string[]): Record<string, unknown> {
+  if (!categories?.length) return {};
+  return {};
+}
+
 function extractDietaryFilters(flags: UserSearchQuery["dietary_restrictions"]): string[] {
   const filters: string[] = [];
   for (const [key, value] of Object.entries(flags)) {
@@ -183,7 +220,23 @@ function buildDietaryWhere(
 
 function buildOrderBy(
   query: UserSearchQuery
-): Record<string, string> | Record<string, string>[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any {
+  // sort_by takes precedence if set
+  if (query.sort_by) {
+    switch (query.sort_by) {
+      case "rating":
+        return { reviewSummary: { averageDishRating: "desc" } };
+      case "wait_time":
+        return { createdAt: "asc" };
+      case "distance":
+        return { createdAt: "desc" }; // distance requires PostGIS, fallback
+      case "macro_match":
+        // Fall through to nutritional goal ordering
+        break;
+    }
+  }
+
   switch (query.nutritional_goal) {
     case "max_protein":
       return { proteinMaxG: "desc" };

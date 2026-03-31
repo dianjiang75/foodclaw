@@ -15,6 +15,12 @@ export interface UserSearchQuery {
   sort_by?: "macro_match" | "distance" | "rating" | "wait_time";
   limit?: number;
   offset?: number;
+  /** Text search for dish name */
+  query?: string;
+  /** Category filters (cuisine types or meal categories) */
+  categories?: string[];
+  /** Allergens to exclude */
+  allergens?: string[];
 }
 
 export interface DishResult {

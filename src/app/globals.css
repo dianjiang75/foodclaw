@@ -129,6 +129,13 @@
   }
 }
 
+/* Utility: hide scrollbar */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Safe area padding for bottom nav on notched devices */
+.safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
 /* NutriScout custom colors */
 :root {
   --ns-green: oklch(0.55 0.15 150);
