@@ -201,11 +201,9 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
           <div className="flex flex-wrap gap-2">
             {Object.entries(dish.dietary_flags).map(([key, val]) => {
               if (val == null) return null;
-              const conf = dish.dietary_confidence;
-              const confLabel = conf != null ? ` (${Math.round(conf * 100)}%)` : "";
               return val ? (
                 <Badge key={key} className="bg-ns-green-light text-ns-green border-ns-green/20">
-                  {key.replace("_", " ")}{confLabel}
+                  {key.replace("_", " ")}
                 </Badge>
               ) : (
                 <Badge key={key} variant="outline" className="text-muted-foreground">
@@ -372,7 +370,7 @@ function SourceLine({
   source: MacroSourceDetail | null;
   confidence: number | null;
 }) {
-  const SourceIcon = getSourceIcon(source?.tier);
+  const sourceIcon = getSourceIcon(source?.tier);
   const confColor = confidence != null
     ? confidence >= 0.8 ? "text-ns-green"
       : confidence >= 0.5 ? "text-ns-amber"
@@ -390,7 +388,7 @@ function SourceLine({
     <div className="flex items-center gap-3 text-[11px] text-muted-foreground flex-wrap">
       {/* Source */}
       <span className="flex items-center gap-1">
-        <SourceIcon className="w-3.5 h-3.5 shrink-0" />
+        {sourceIcon}
         <span className="font-medium">Source:</span>{" "}
         {source?.source_url ? (
           <a
@@ -426,10 +424,10 @@ function SourceLine({
 
 function getSourceIcon(tier: string | undefined) {
   switch (tier) {
-    case "restaurant_published": return Store;
+    case "restaurant_published": return <Store className="w-3.5 h-3.5 shrink-0" />;
     case "third_party_db":
-    case "usda_match": return Database;
-    case "vision_ai": return FlaskConical;
-    default: return FlaskConical;
+    case "usda_match": return <Database className="w-3.5 h-3.5 shrink-0" />;
+    case "vision_ai": return <FlaskConical className="w-3.5 h-3.5 shrink-0" />;
+    default: return <FlaskConical className="w-3.5 h-3.5 shrink-0" />;
   }
 }

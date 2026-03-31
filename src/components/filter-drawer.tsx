@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus } from "lucide-react";
+import { X, Plus, SlidersHorizontal } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -111,11 +111,7 @@ export function FilterDrawer({ filters, onChange }: FilterDrawerProps) {
       <SheetTrigger
         className="relative flex items-center justify-center w-9 h-9 rounded-full border border-border hover:bg-muted transition-colors shrink-0"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-foreground">
-          <circle cx="3" cy="8" r="1.5" fill="currentColor" />
-          <circle cx="8" cy="8" r="1.5" fill="currentColor" />
-          <circle cx="13" cy="8" r="1.5" fill="currentColor" />
-        </svg>
+        <SlidersHorizontal className="w-4 h-4 text-foreground" />
         {activeCount > 0 && (
           <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-ns-green text-white text-[9px] font-bold flex items-center justify-center">
             {activeCount}

@@ -48,7 +48,7 @@ export async function checkRestaurantSource(
       const url = new URL(path, restaurantWebsite).toString();
       const res = await fetch(url, {
         signal: AbortSignal.timeout(5000),
-        headers: { "User-Agent": "NutriScout/1.0 (nutrition-data-aggregator)" },
+        headers: { "User-Agent": "FoodClaw/1.0 (nutrition-data-aggregator)" },
       });
 
       if (res.ok) {
@@ -204,7 +204,7 @@ export async function resolveNutrition(
       source: {
         tier: "vision_ai",
         confidence,
-        sourceName: "NutriScout AI Estimation",
+        sourceName: "FoodClaw AI Estimation",
         sourceUrl: null,
         nutrition: existingAiEstimate,
       },

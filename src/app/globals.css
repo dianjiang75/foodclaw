@@ -136,7 +136,7 @@
 /* Safe area padding for bottom nav on notched devices */
 .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
 
-/* NutriScout custom colors */
+/* FoodClaw custom colors */
 :root {
   --ns-green: oklch(0.55 0.15 150);
   --ns-green-light: oklch(0.92 0.05 150);

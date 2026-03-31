@@ -34,8 +34,6 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   }
 
   // 2. Build and execute database query
-  const radiusMeters = query.radius_miles * 1609.34;
-
   // Build dietary filter conditions
   const dietaryWhere = buildDietaryWhere(query.dietary_restrictions);
 
@@ -53,9 +51,6 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   if (query.query) {
     textWhere.name = { contains: query.query, mode: "insensitive" };
   }
-
-  // Build category conditions
-  const categoryWhere = buildCategoryWhere(query.categories);
 
   // Build cuisine filter from categories (cuisine-type categories map to restaurant cuisineType)
   const cuisineCategories = (query.categories || []).filter((c) =>
@@ -186,11 +181,6 @@ const CUISINE_IDS = new Set([
   "thai", "japanese", "italian", "mexican", "indian",
   "chinese", "korean", "mediterranean", "american", "vietnamese",
 ]);
-
-function buildCategoryWhere(categories?: string[]): Record<string, unknown> {
-  if (!categories?.length) return {};
-  return {};
-}
 
 function extractDietaryFilters(flags: UserSearchQuery["dietary_restrictions"]): string[] {
   const filters: string[] = [];

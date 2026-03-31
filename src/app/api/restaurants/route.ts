@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
     const q = searchParams.get("q") || "";
     const categories = searchParams.get("categories")?.split(",").filter(Boolean) || [];
-    const diets = searchParams.get("diet")?.split(",").filter(Boolean) || [];
+    const _diets = searchParams.get("diet")?.split(",").filter(Boolean) || [];
 
     // Cuisine-type categories for restaurant filter
     const cuisineIds = new Set([

@@ -78,7 +78,7 @@ export default function OnboardingPage() {
 
       if (res.ok) {
         const user = await res.json();
-        localStorage.setItem("nutriscout_user_id", user.id);
+        localStorage.setItem("foodclaw_user_id", user.id);
 
         await fetch("/api/users/profile", {
           method: "PATCH",
@@ -102,7 +102,7 @@ export default function OnboardingPage() {
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-muted/30">
       <div className="w-full max-w-md space-y-4">
         <div className="text-center space-y-1">
-          <h1 className="text-2xl font-bold text-ns-green">NutriScout</h1>
+          <h1 className="text-2xl font-bold text-ns-green">FoodClaw</h1>
           <p className="text-sm text-muted-foreground">Discover dishes that fit your goals</p>
         </div>
 

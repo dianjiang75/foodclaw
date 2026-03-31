@@ -15,7 +15,7 @@ export function verify(
   restrictions: DietaryFlags
 ): DishResult[] {
   const activeRestrictions = Object.entries(restrictions)
-    .filter(([_, v]) => v === true)
+    .filter(([, v]) => v === true)
     .map(([k]) => k as keyof DietaryFlags);
 
   if (activeRestrictions.length === 0) return dishes;

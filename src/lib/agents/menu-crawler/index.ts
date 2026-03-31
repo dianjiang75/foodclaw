@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/db/client";
-import { menuSources, parseHtmlMenu } from "./sources";
+import { menuSources } from "./sources";
 import type {
   AnalyzedDish,
   CrawlResult,
@@ -188,7 +188,6 @@ export async function crawlRestaurant(
   const analyzed = await analyzeIngredients(rawItems);
 
   // Upsert dishes into database
-  let dishesUpserted = 0;
   for (let i = 0; i < rawItems.length; i++) {
     const raw = rawItems[i];
     const analysis = analyzed.find(
@@ -212,7 +211,6 @@ export async function crawlRestaurant(
         isAvailable: true,
       },
     });
-    dishesUpserted++;
   }
 
   // Update restaurant menu source

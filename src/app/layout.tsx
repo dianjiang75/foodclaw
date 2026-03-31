@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NutriScout — Discover Dishes by Nutrition",
+  title: "FoodClaw — Discover Dishes by Nutrition",
   description: "Find restaurant dishes that match your dietary needs and nutritional goals.",
 };
 
@@ -29,8 +29,14 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-background focus:text-foreground focus:border focus:border-border focus:rounded-md focus:m-2"
+        >
+          Skip to main content
+        </a>
         <TooltipProvider delay={300}>
-          {children}
+          <main id="main-content">{children}</main>
         </TooltipProvider>
       </body>
     </html>

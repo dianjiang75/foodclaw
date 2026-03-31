@@ -36,7 +36,7 @@ export const websiteSource: MenuSourceStrategy = {
 
       // First try the main page for a menu link
       const mainRes = await fetch(baseUrl, {
-        headers: { "User-Agent": "NutriScout/1.0 (menu-indexer)" },
+        headers: { "User-Agent": "FoodClaw/1.0 (menu-indexer)" },
         signal: AbortSignal.timeout(10000),
       });
 
@@ -53,7 +53,7 @@ export const websiteSource: MenuSourceStrategy = {
               ? href
               : new URL(href, baseUrl).toString();
             const menuRes = await fetch(menuUrl, {
-              headers: { "User-Agent": "NutriScout/1.0 (menu-indexer)" },
+              headers: { "User-Agent": "FoodClaw/1.0 (menu-indexer)" },
               signal: AbortSignal.timeout(10000),
             });
             if (menuRes.ok) {
@@ -68,7 +68,7 @@ export const websiteSource: MenuSourceStrategy = {
         for (const path of menuPaths) {
           try {
             const res = await fetch(`${baseUrl}${path}`, {
-              headers: { "User-Agent": "NutriScout/1.0 (menu-indexer)" },
+              headers: { "User-Agent": "FoodClaw/1.0 (menu-indexer)" },
               signal: AbortSignal.timeout(5000),
             });
             if (res.ok) {
@@ -107,7 +107,7 @@ export function parseHtmlMenu(html: string): RawMenuItem[] {
     '[data-testid*="menu"]',
   ];
 
-  let currentCategory: string | null = null;
+  const currentCategory: string | null = null;
 
   // Try structured selectors first
   for (const selector of selectors) {
@@ -229,6 +229,7 @@ export const deliveryPlatformSource: MenuSourceStrategy = {
   name: "delivery_platform",
   priority: 3,
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async fetch(_restaurant: RestaurantInfo): Promise<RawMenuItem[] | null> {
     // Stub — will be implemented in Phase 7
     return null;

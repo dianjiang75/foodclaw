@@ -29,7 +29,10 @@ export function ConfidenceDot({ confidence, source }: ConfidenceDotProps) {
 
   return (
     <Tooltip>
-      <TooltipTrigger className={`inline-block h-2.5 w-2.5 rounded-full ${color}`} />
+      <TooltipTrigger
+        className={`inline-block h-2.5 w-2.5 rounded-full ${color}`}
+        aria-label={`${label}${confidence != null ? ` (${Math.round(confidence * 100)}%)` : ""}${source ? ` — ${source}` : ""}`}
+      />
       <TooltipContent>
         <p className="text-xs">
           {label}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -74,7 +75,7 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const userId = localStorage.getItem("nutriscout_user_id");
+    const userId = localStorage.getItem("foodclaw_user_id");
     if (!userId) {
       router.push("/onboarding");
       return;
@@ -144,9 +145,9 @@ export default function ProfilePage() {
     <div className="max-w-md mx-auto p-4 space-y-4 pb-8">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">Profile</h1>
-        <a href="/">
+        <Link href="/">
           <Button variant="ghost" size="sm" className="text-xs">Home</Button>
-        </a>
+        </Link>
       </div>
 
       {/* Dietary Preferences */}
@@ -284,7 +285,7 @@ export default function ProfilePage() {
         variant="outline"
         className="w-full text-xs"
         onClick={() => {
-          localStorage.removeItem("nutriscout_user_id");
+          localStorage.removeItem("foodclaw_user_id");
           router.push("/onboarding");
         }}
       >

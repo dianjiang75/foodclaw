@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 const CATEGORIES = [
   // Cuisine types
   { id: "thai", label: "Thai", type: "cuisine" },
@@ -27,30 +29,18 @@ const CATEGORIES = [
   { id: "tacos", label: "Tacos", type: "meal" },
 ] as const;
 
-interface CategoryPillsProps {
-  selected: string[];
-  onToggle: (id: string) => void;
-}
-
-export function CategoryPills({ selected, onToggle }: CategoryPillsProps) {
+export function CategoryPills() {
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-      {CATEGORIES.map((cat) => {
-        const isActive = selected.includes(cat.id);
-        return (
-          <button
-            key={cat.id}
-            onClick={() => onToggle(cat.id)}
-            className={`text-xs px-3 py-1.5 rounded-full border whitespace-nowrap shrink-0 transition-colors ${
-              isActive
-                ? "bg-ns-green text-white border-ns-green"
-                : "border-border hover:bg-muted text-foreground"
-            }`}
-          >
-            {cat.label}
-          </button>
-        );
-      })}
+      {CATEGORIES.map((cat) => (
+        <Link
+          key={cat.id}
+          href={`/category/${cat.id}`}
+          className="text-xs px-3 py-1.5 rounded-full border whitespace-nowrap shrink-0 transition-colors border-border hover:bg-muted text-foreground"
+        >
+          {cat.label}
+        </Link>
+      ))}
     </div>
   );
 }

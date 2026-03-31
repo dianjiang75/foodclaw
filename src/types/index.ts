@@ -1,4 +1,4 @@
-// Shared TypeScript types for NutriScout
+// Shared TypeScript types for FoodClaw
 
 export interface DietaryFlags {
   vegan: boolean | null;

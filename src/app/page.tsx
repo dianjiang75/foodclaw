@@ -109,7 +109,7 @@ export default function HomePage() {
             rating: d.review_summary?.average_rating ?? null,
             distance_miles: rest.distance_miles ?? null,
             wait_minutes: d.logistics?.estimated_wait_minutes ?? null,
-            delivery_platforms: (d.delivery || []).map((del: any) => del.platform).filter(Boolean),
+            delivery_platforms: (d.delivery || []).map((del: { platform: string }) => del.platform).filter(Boolean),
             highlight: goalToHighlight(s.goal),
           };
         });
@@ -162,16 +162,6 @@ export default function HomePage() {
     }, 300);
   }
 
-  function toggleCategory(id: string) {
-    setSearch((s) => ({
-      ...s,
-      offset: 0,
-      categories: s.categories.includes(id)
-        ? s.categories.filter((c) => c !== id)
-        : [...s.categories, id],
-    }));
-  }
-
   function loadMore() {
     const next = { ...search, offset: search.offset + search.limit };
     setSearch(next);
@@ -185,7 +175,7 @@ export default function HomePage() {
         <div className="max-w-2xl mx-auto px-4 py-3 space-y-2.5">
           {/* Search row */}
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-bold text-ns-green shrink-0">NutriScout</h1>
+            <h1 className="text-lg font-bold text-ns-green shrink-0">FoodClaw</h1>
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -204,8 +194,8 @@ export default function HomePage() {
             </a>
           </div>
 
-          {/* Category pills */}
-          <CategoryPills selected={search.categories} onToggle={toggleCategory} />
+          {/* Category pills — each links to its own page */}
+          <CategoryPills />
 
           {/* Sort options (dishes only) */}
           {activeTab === "dishes" && (
