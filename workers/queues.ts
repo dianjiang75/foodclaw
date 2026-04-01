@@ -8,5 +8,6 @@ const connection = new IORedis(process.env.REDIS_URL || "redis://localhost:6379"
 export const menuCrawlQueue = new Queue("menu-crawl", { connection });
 export const photoAnalysisQueue = new Queue("photo-analysis", { connection });
 export const logisticsQueue = new Queue("logistics-update", { connection });
+export const reviewQueue = new Queue("review-aggregation", { connection });
 
 export { connection };

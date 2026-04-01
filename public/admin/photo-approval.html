@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodClaw — Dish Photo Approval Tool</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e5e5e5; }
+
+  .header { position: sticky; top: 0; z-index: 100; background: #111; border-bottom: 1px solid #333; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .header .stats { font-size: 13px; color: #888; }
+  .header .stats span { color: #22c55e; font-weight: 600; }
+  .header .actions { display: flex; gap: 8px; }
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-primary { background: #22c55e; color: #000; }
+  .btn-primary:hover { background: #16a34a; }
+  .btn-secondary { background: #333; color: #e5e5e5; }
+  .btn-secondary:hover { background: #444; }
+  .btn-danger { background: #ef4444; color: #fff; }
+  .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+  .filters { padding: 8px 20px; background: #111; border-bottom: 1px solid #222; display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-pill { padding: 4px 12px; border-radius: 20px; font-size: 11px; border: 1px solid #333; background: transparent; color: #888; cursor: pointer; }
+  .filter-pill.active { background: #22c55e20; border-color: #22c55e; color: #22c55e; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; padding: 20px; }
+
+  .card { background: #181818; border-radius: 12px; overflow: hidden; border: 2px solid transparent; transition: border-color 0.2s; }
+  .card.approved { border-color: #22c55e; }
+  .card.rejected { border-color: #ef4444; }
+  .card.pending { border-color: #333; }
+
+  .card-photo { aspect-ratio: 3/2; width: 100%; position: relative; overflow: hidden; background: #222; }
+  .card-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .card-photo .no-photo { display: flex; align-items: center; justify-content: center; height: 100%; color: #555; font-size: 13px; }
+  .card-photo .badge { position: absolute; top: 8px; right: 8px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .badge.approved { background: #22c55e; color: #000; }
+  .badge.rejected { background: #ef4444; color: #fff; }
+  .badge.pending { background: #555; color: #fff; }
+  .card-photo .index { position: absolute; top: 8px; left: 8px; background: #000a; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+
+  .card-info { padding: 12px; }
+  .card-info h3 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+  .card-info .restaurant { font-size: 11px; color: #888; margin-bottom: 4px; }
+  .card-info .description { font-size: 11px; color: #666; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-info .cuisine { font-size: 10px; color: #22c55e; font-weight: 600; margin-bottom: 8px; }
+
+  .card-actions { display: flex; gap: 6px; margin-bottom: 8px; }
+
+  .url-input { width: 100%; padding: 6px 10px; border-radius: 6px; border: 1px solid #333; background: #111; color: #e5e5e5; font-size: 11px; outline: none; }
+  .url-input:focus { border-color: #22c55e; }
+  .url-input::placeholder { color: #555; }
+
+  .search-links { display: flex; gap: 6px; margin-top: 6px; }
+  .search-link { font-size: 10px; color: #6366f1; text-decoration: none; padding: 3px 8px; border-radius: 4px; background: #6366f115; cursor: pointer; }
+  .search-link:hover { background: #6366f130; }
+
+  .candidates { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 8px; }
+  .candidates img { width: 100%; aspect-ratio: 3/2; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; }
+  .candidates img:hover { border-color: #6366f1; transform: scale(1.02); }
+  .candidates img.selected { border-color: #22c55e; box-shadow: 0 0 0 1px #22c55e; }
+  .candidates .loading { grid-column: 1/-1; text-align: center; padding: 12px; color: #555; font-size: 11px; }
+  .candidates .error { grid-column: 1/-1; text-align: center; padding: 8px; color: #ef4444; font-size: 11px; }
+
+  .export-modal { display: none; position: fixed; inset: 0; z-index: 200; background: #000c; backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+  .export-modal.open { display: flex; }
+  .export-content { background: #181818; border-radius: 16px; padding: 24px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; }
+  .export-content h2 { margin-bottom: 12px; }
+  .export-content pre { background: #111; padding: 12px; border-radius: 8px; font-size: 11px; overflow-x: auto; white-space: pre-wrap; max-height: 50vh; overflow-y: auto; }
+  .export-content .close { float: right; cursor: pointer; font-size: 20px; color: #888; }
+
+  .progress-bar { height: 3px; background: #222; }
+  .progress-bar .fill { height: 100%; background: #22c55e; transition: width 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>FoodClaw Photo Approval</h1>
+  <div class="stats">
+    <span id="approvedCount">0</span> approved ·
+    <span id="rejectedCount" style="color:#ef4444">0</span> rejected ·
+    <span id="pendingCount">0</span> pending ·
+    <span id="totalCount">0</span> total
+  </div>
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="searchAllDishes()">🔍 Search All</button>
+    <button class="btn btn-secondary" onclick="approveAllWithPhotos()">Approve All With Photos</button>
+    <button class="btn btn-primary" onclick="showExport()">Export JSON</button>
+    <button class="btn btn-secondary" onclick="loadSaved()">Load Saved</button>
+  </div>
+</div>
+<div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+
+<div class="filters" id="filters"></div>
+<div class="grid" id="grid"></div>
+
+<div class="export-modal" id="exportModal">
+  <div class="export-content">
+    <span class="close" onclick="closeExport()">&times;</span>
+    <h2>Export Approved Photos</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:12px;">Copy this JSON and paste into scripts/approved-photos.json</p>
+    <pre id="exportJson"></pre>
+    <div style="margin-top:12px;display:flex;gap:8px;">
+      <button class="btn btn-primary" onclick="copyExport()">Copy to Clipboard</button>
+      <button class="btn btn-secondary" onclick="downloadExport()">Download JSON</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Dish data will be loaded from the API or embedded
+let DISHES = [];
+let state = {}; // { "Dish Name": { status: "approved"|"rejected"|"pending", url: "..." } }
+
+async function init() {
+  DISHES = EMBEDDED_DISHES;
+
+  // Load saved state from localStorage
+  const saved = localStorage.getItem('foodclaw_photo_approval');
+  if (saved) state = JSON.parse(saved);
+
+  // Try loading suggested photos from approved-photos.json (generated by suggest-photos script)
+  try {
+    const res = await fetch('/admin/approved-photos.json');
+    if (res.ok) {
+      const suggestions = await res.json();
+      // Apply suggestions as "pending" photos (not auto-approved — user must review)
+      Object.entries(suggestions).forEach(([name, url]) => {
+        const dish = DISHES.find(d => d.name === name);
+        if (dish) {
+          const key = dish.name + '|' + dish.restaurant;
+          if (!state[key] || !state[key].url) {
+            state[key] = { status: 'pending', url: url };
+          }
+        }
+      });
+    }
+  } catch {}
+
+  // Initialize any dishes not in state
+  DISHES.forEach((d, i) => {
+    const key = d.name + '|' + d.restaurant;
+    if (!state[key]) {
+      state[key] = { status: 'pending', url: '' };
+    }
+  });
+
+  renderFilters();
+  renderGrid();
+  updateStats();
+
+  // Auto-search for pending dishes on load
+  setTimeout(() => autoSearchPending(), 500);
+}
+
+function renderFilters() {
+  const cuisines = [...new Set(DISHES.map(d => d.cuisine))].sort();
+  const statuses = ['all', 'pending', 'approved', 'rejected'];
+  const el = document.getElementById('filters');
+
+  el.innerHTML = statuses.map(s =>
+    `<button class="filter-pill ${s === 'all' ? 'active' : ''}" data-filter="${s}" onclick="filterBy('${s}', this)">${s} (${s === 'all' ? DISHES.length : DISHES.filter(d => getState(d).status === s).length})</button>`
+  ).join('') + cuisines.map(c =>
+    `<button class="filter-pill" data-cuisine="${c}" onclick="filterByCuisine('${c}', this)">${c}</button>`
+  ).join('');
+}
+
+let currentFilter = 'all';
+let currentCuisine = null;
+
+function filterBy(status, btn) {
+  currentFilter = status;
+  currentCuisine = null;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+
+function filterByCuisine(cuisine, btn) {
+  currentCuisine = cuisine;
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+
+function getState(dish) {
+  const key = dish.name + '|' + dish.restaurant;
+  return state[key] || { status: 'pending', url: '' };
+}
+
+function setState(dish, newState) {
+  const key = dish.name + '|' + dish.restaurant;
+  state[key] = { ...state[key], ...newState };
+  save();
+  updateStats();
+}
+
+function save() {
+  localStorage.setItem('foodclaw_photo_approval', JSON.stringify(state));
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  let filtered = DISHES;
+
+  if (currentFilter !== 'all') {
+    filtered = filtered.filter(d => getState(d).status === currentFilter);
+  }
+  if (currentCuisine) {
+    filtered = filtered.filter(d => d.cuisine === currentCuisine);
+  }
+
+  grid.innerHTML = filtered.map((dish, i) => {
+    const s = getState(dish);
+    const globalIdx = DISHES.indexOf(dish);
+    const searchQ = encodeURIComponent(dish.name + ' ' + dish.description.split(',')[0] + ' food');
+    const unsplashQ = encodeURIComponent(dish.name + ' food');
+    const pexelsQ = encodeURIComponent(dish.name + ' dish');
+
+    return `
+    <div class="card ${s.status}" id="card-${globalIdx}">
+      <div class="card-photo">
+        <span class="index">#${globalIdx + 1}</span>
+        ${s.url ? `<img src="${s.url}" alt="${dish.name}" onerror="this.parentElement.innerHTML='<div class=no-photo>Image failed to load</div>'" loading="lazy">` : '<div class="no-photo">No photo</div>'}
+        <span class="badge ${s.status}">${s.status}</span>
+      </div>
+      <div class="card-info">
+        <h3>${dish.name}</h3>
+        <div class="restaurant">${dish.restaurant}</div>
+        <div class="cuisine">${dish.cuisine}</div>
+        <div class="description">${dish.description}</div>
+
+        <div class="card-actions">
+          <button class="btn btn-sm ${s.status === 'approved' ? 'btn-primary' : 'btn-secondary'}" onclick="approve(${globalIdx})">✓ Approve</button>
+          <button class="btn btn-sm ${s.status === 'rejected' ? 'btn-danger' : 'btn-secondary'}" onclick="reject(${globalIdx})">✗ Reject</button>
+          <button class="btn btn-sm btn-secondary" onclick="searchImages(${globalIdx})">🔍 Find Photos</button>
+        </div>
+
+        <div class="candidates" id="candidates-${globalIdx}"></div>
+
+        <input class="url-input"
+          placeholder="Paste new image URL here..."
+          value="${s.url || ''}"
+          onchange="updateUrl(${globalIdx}, this.value)"
+          onpaste="setTimeout(() => updateUrl(${globalIdx}, this.value), 50)"
+        >
+
+        <div class="search-links">
+          <a class="search-link" href="https://www.google.com/search?q=${searchQ}&tbm=isch&tbs=isz:l" target="_blank">Google</a>
+          <span class="search-link" onclick="searchImages(${globalIdx})">Auto-Search</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function approve(idx) {
+  setState(DISHES[idx], { status: 'approved' });
+  updateCard(idx);
+}
+
+function reject(idx) {
+  setState(DISHES[idx], { status: 'rejected' });
+  updateCard(idx);
+}
+
+function updateUrl(idx, url) {
+  url = url.trim();
+  setState(DISHES[idx], { url, status: url ? 'approved' : 'pending' });
+  updateCard(idx);
+}
+
+function updateCard(idx) {
+  const card = document.getElementById(`card-${idx}`);
+  if (card) {
+    const s = getState(DISHES[idx]);
+    card.className = `card ${s.status}`;
+    const badge = card.querySelector('.badge');
+    if (badge) { badge.className = `badge ${s.status}`; badge.textContent = s.status; }
+    const img = card.querySelector('.card-photo img');
+    if (img && s.url) img.src = s.url;
+  }
+  renderFilters();
+}
+
+function updateStats() {
+  const counts = { approved: 0, rejected: 0, pending: 0 };
+  DISHES.forEach(d => { counts[getState(d).status]++; });
+  document.getElementById('approvedCount').textContent = counts.approved;
+  document.getElementById('rejectedCount').textContent = counts.rejected;
+  document.getElementById('pendingCount').textContent = counts.pending;
+  document.getElementById('totalCount').textContent = DISHES.length;
+  document.getElementById('progressFill').style.width = `${(counts.approved / DISHES.length) * 100}%`;
+}
+
+function approveAllWithPhotos() {
+  DISHES.forEach((d, i) => {
+    const s = getState(d);
+    if (s.url && s.status === 'pending') {
+      setState(d, { status: 'approved' });
+    }
+  });
+  renderGrid();
+  renderFilters();
+}
+
+function showExport() {
+  const approved = {};
+  DISHES.forEach(d => {
+    const s = getState(d);
+    if (s.status === 'approved' && s.url) {
+      approved[d.name] = s.url;
+    }
+  });
+  document.getElementById('exportJson').textContent = JSON.stringify(approved, null, 2);
+  document.getElementById('exportModal').classList.add('open');
+}
+
+function closeExport() {
+  document.getElementById('exportModal').classList.remove('open');
+}
+
+function copyExport() {
+  const text = document.getElementById('exportJson').textContent;
+  navigator.clipboard.writeText(text);
+  alert('Copied to clipboard!');
+}
+
+function downloadExport() {
+  const text = document.getElementById('exportJson').textContent;
+  const blob = new Blob([text], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'approved-photos.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Image search via Bing proxy API
+async function searchImages(idx) {
+  const dish = DISHES[idx];
+  const container = document.getElementById(`candidates-${idx}`);
+  if (!container) return;
+
+  // Toggle: if already showing results, hide them
+  if (container.children.length > 0 && !container.querySelector('.loading')) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = '<div class="loading">Searching for photos...</div>';
+
+  try {
+    const q = encodeURIComponent(dish.name + ' ' + dish.description.split(',')[0]);
+    const res = await fetch(`/api/admin/image-search?q=${q}&limit=8`);
+    const data = await res.json();
+
+    if (!data.images || data.images.length === 0) {
+      container.innerHTML = '<div class="error">No results. Try pasting a URL manually.</div>';
+      return;
+    }
+
+    container.innerHTML = data.images.map((img, i) =>
+      `<img src="${img.url}" alt="Option ${i+1}" loading="lazy" onclick="selectCandidate(${idx}, '${img.url.replace(/'/g, "\\'")}')" onerror="this.style.display='none'" title="Click to select">`
+    ).join('');
+  } catch (err) {
+    container.innerHTML = '<div class="error">Search failed: ' + err.message + '</div>';
+  }
+}
+
+function selectCandidate(idx, url) {
+  // Highlight selected thumbnail
+  const container = document.getElementById(`candidates-${idx}`);
+  if (container) {
+    container.querySelectorAll('img').forEach(img => img.classList.remove('selected'));
+    const selected = container.querySelector(`img[src="${CSS.escape ? url : url}"]`);
+    if (selected) selected.classList.add('selected');
+  }
+
+  // Update the URL input and auto-approve
+  const card = document.getElementById(`card-${idx}`);
+  if (card) {
+    const input = card.querySelector('.url-input');
+    if (input) input.value = url;
+  }
+  setState(DISHES[idx], { url, status: 'approved' });
+  updateCard(idx);
+}
+
+// Search ALL dishes (triggered by Search All button)
+async function searchAllDishes() {
+  for (let i = 0; i < DISHES.length; i++) {
+    const container = document.getElementById(`candidates-${i}`);
+    if (container && container.children.length > 0 && !container.querySelector('.loading')) continue; // skip already searched
+    await searchImages(i);
+    await new Promise(r => setTimeout(r, 400));
+  }
+}
+
+// Auto-search for dishes that don't have photos yet
+async function autoSearchPending() {
+  const pending = DISHES.map((d, i) => ({ dish: d, idx: i }))
+    .filter(({ dish }) => {
+      const s = getState(dish);
+      return !s.url || s.status === 'pending';
+    });
+
+  // Search first 6 pending dishes automatically (to avoid overwhelming the API)
+  for (let i = 0; i < Math.min(pending.length, 6); i++) {
+    await searchImages(pending[i].idx);
+    await new Promise(r => setTimeout(r, 500)); // small delay between requests
+  }
+}
+
+function loadSaved() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    const text = await file.text();
+    const data = JSON.parse(text);
+    // data is { "Dish Name": "url" }
+    Object.entries(data).forEach(([name, url]) => {
+      const dish = DISHES.find(d => d.name === name);
+      if (dish) setState(dish, { url, status: 'approved' });
+    });
+    renderGrid();
+    renderFilters();
+  };
+  input.click();
+}
+
+// Embedded dish data (fallback)
+const EMBEDDED_DISHES = [{"name":"Somtum Thai","description":"Green papaya salad with tomato, long bean, peanut, dried shrimp, palm sugar, and lime","restaurant":"Somtum Der","cuisine":"Thai, Isan"},{"name":"Larb Moo Tod","description":"Crispy pork larb with toasted rice, shallots, mint, cilantro, and chili","restaurant":"Somtum Der","cuisine":"Thai, Isan"},{"name":"Pad Thai Goong","description":"Stir-fried rice noodles with shrimp, egg, bean sprouts, chives, and tamarind sauce","restaurant":"Somtum Der","cuisine":"Thai, Isan"},{"name":"Gaeng Keow Wan Gai","description":"Green curry with chicken, Thai eggplant, bamboo shoots, and sweet basil in coconut milk","restaurant":"Somtum Der","cuisine":"Thai, Isan"},{"name":"Khao Niew Ma Muang","description":"Sticky rice with fresh mango and sweet coconut cream","restaurant":"Somtum Der","cuisine":"Thai, Isan"},{"name":"Nam Tok Moo","description":"Grilled pork waterfall salad with toasted rice, mint, shallots, and fish sauce","restaurant":"Somtum Der","cuisine":"Thai, Isan"},{"name":"Sukhothai Noodle","description":"Dry rice noodles with pork, homemade fish cake, ground peanuts, dried shrimp, and jammy egg","restaurant":"Soothr","cuisine":"Thai"},{"name":"Khao Soi Gai","description":"Northern Thai curry noodle soup with chicken, crispy egg noodles, pickled mustard greens","restaurant":"Soothr","cuisine":"Thai"},{"name":"Ba Mii Pu","description":"Spicy dry crab egg noodles with ground peanuts, bean sprouts, and lettuce","restaurant":"Soothr","cuisine":"Thai"},{"name":"Tom Yum Noodle Soup","description":"Rice noodles in spicy and sour tom yum broth with shrimp and mushrooms","restaurant":"Soothr","cuisine":"Thai"},{"name":"Moo Ping","description":"Grilled marinated pork skewers with tamarind dipping sauce and sticky rice","restaurant":"Soothr","cuisine":"Thai"},{"name":"Kanom Jeen Nam Ya","description":"Fermented rice noodles in spicy fish curry with fresh vegetables","restaurant":"Soothr","cuisine":"Thai"},{"name":"Coconut Crab Curry","description":"Jumbo lump crab in yellow coconut curry with Thai herbs and lime leaf","restaurant":"Fish Cheeks","cuisine":"Thai, Seafood"},{"name":"Crab Fried Rice","description":"Wok-fried jasmine rice with crab meat, egg, scallions, and fish sauce","restaurant":"Fish Cheeks","cuisine":"Thai, Seafood"},{"name":"Zabb Wings","description":"Crispy chicken wings tossed in spicy fish sauce glaze with toasted rice and herbs","restaurant":"Fish Cheeks","cuisine":"Thai, Seafood"},{"name":"Whole Branzino","description":"Deep-fried branzino with three-flavor sauce, crispy basil, and chili","restaurant":"Fish Cheeks","cuisine":"Thai, Seafood"},{"name":"Pork Cheek Chili Garlic","description":"Braised pork cheeks with roasted chili garlic sauce and Thai basil","restaurant":"Fish Cheeks","cuisine":"Thai, Seafood"},{"name":"Shrimp Paste Rice","description":"Fried rice with shrimp paste, sweet pork, dried shrimp, shredded omelette, and fresh mango","restaurant":"Fish Cheeks","cuisine":"Thai, Seafood"},{"name":"Crab Fried Rice","description":"Uncle Boon's signature crab fried rice with egg and scallions","restaurant":"Thai Diner","cuisine":"Thai, American"},{"name":"Thai Disco Fries","description":"Crispy fries with green curry gravy and cheese curds","restaurant":"Thai Diner","cuisine":"Thai, American"},{"name":"Coconut Pancakes","description":"Fluffy coconut pancakes with coconut cream and tropical fruit","restaurant":"Thai Diner","cuisine":"Thai, American"},{"name":"Drunken Dumplings","description":"Pan-fried dumplings with spicy basil filling and chili vinegar","restaurant":"Thai Diner","cuisine":"Thai, American"},{"name":"Roti Kabocha","description":"Flaky roti bread with kabocha squash curry dipping sauce","restaurant":"Thai Diner","cuisine":"Thai, American"},{"name":"Khao Soi","description":"Northern Thai curry with egg noodles, crispy shallots, and pickled mustard","restaurant":"Thai Diner","cuisine":"Thai, American"},{"name":"Omakase","description":"Chef's selection of 15-20 pieces of seasonal nigiri sushi","restaurant":"Sushi Yasuda","cuisine":"Japanese, Sushi"},{"name":"Toro Nigiri","description":"Fatty bluefin tuna belly over seasoned sushi rice","restaurant":"Sushi Yasuda","cuisine":"Japanese, Sushi"},{"name":"Uni Nigiri","description":"Fresh sea urchin from Hokkaido over sushi rice","restaurant":"Sushi Yasuda","cuisine":"Japanese, Sushi"},{"name":"Salmon Sashimi","description":"Six pieces of fresh Atlantic salmon, thinly sliced","restaurant":"Sushi Yasuda","cuisine":"Japanese, Sushi"},{"name":"Yellowtail Hand Roll","description":"Hamachi with scallion in crispy nori cone with sushi rice","restaurant":"Sushi Yasuda","cuisine":"Japanese, Sushi"},{"name":"Chirashi Bowl","description":"Assorted sashimi over seasoned sushi rice with pickled ginger","restaurant":"Sushi Yasuda","cuisine":"Japanese, Sushi"},{"name":"21-Course Omakase","description":"Chef Nakazawa's signature twenty-one course sushi omakase experience","restaurant":"Sushi Nakazawa","cuisine":"Japanese, Sushi"},{"name":"Kohada Nigiri","description":"Gizzard shad marinated in vinegar, a classic Edomae preparation","restaurant":"Sushi Nakazawa","cuisine":"Japanese, Sushi"},{"name":"A5 Wagyu Nigiri","description":"Japanese A5 wagyu beef lightly seared over sushi rice","restaurant":"Sushi Nakazawa","cuisine":"Japanese, Sushi"},{"name":"Anago Nigiri","description":"Freshwater eel brushed with sweet soy reduction over rice","restaurant":"Sushi Nakazawa","cuisine":"Japanese, Sushi"},{"name":"Tamago","description":"House-made sweet Japanese omelette, a signature preparation","restaurant":"Sushi Nakazawa","cuisine":"Japanese, Sushi"},{"name":"Seasonal Sashimi Plate","description":"Selection of five seasonal fish, chef's choice","restaurant":"Sushi Nakazawa","cuisine":"Japanese, Sushi"},{"name":"Kitsune Udon","description":"Hand-pulled udon noodles in dashi broth with sweet fried tofu","restaurant":"Raku","cuisine":"Japanese, Udon"},{"name":"Nabeyaki Udon","description":"Hot pot udon with shrimp tempura, chicken, egg, mushroom, and vegetables","restaurant":"Raku","cuisine":"Japanese, Udon"},{"name":"Curry Udon","description":"Thick udon noodles in Japanese curry broth with sliced pork","restaurant":"Raku","cuisine":"Japanese, Udon"},{"name":"Cold Zaru Udon","description":"Chilled hand-pulled udon with dipping sauce, scallion, and wasabi","restaurant":"Raku","cuisine":"Japanese, Udon"},{"name":"Agedashi Tofu","description":"Deep-fried silken tofu in warm dashi broth with grated daikon","restaurant":"Raku","cuisine":"Japanese, Udon"},{"name":"Karaage","description":"Japanese fried chicken thigh with yuzu mayo and shichimi","restaurant":"Raku","cuisine":"Japanese, Udon"},{"name":"Hire Katsu Set","description":"Premium pork tenderloin cutlet, deep-fried with panko, served with cabbage, rice, and miso soup","restaurant":"Katsu-Hama","cuisine":"Japanese"},{"name":"Rosu Katsu Set","description":"Pork loin cutlet with tonkatsu sauce, cabbage, rice, and pickles","restaurant":"Katsu-Hama","cuisine":"Japanese"},{"name":"Chicken Katsu Set","description":"Crispy panko-breaded chicken breast with curry sauce, rice, and salad","restaurant":"Katsu-Hama","cuisine":"Japanese"},{"name":"Katsu Curry","description":"Tonkatsu pork cutlet with Japanese curry, steamed rice, and fukujinzuke","restaurant":"Katsu-Hama","cuisine":"Japanese"},{"name":"Ebi Fry Set","description":"Jumbo fried shrimp with tartar sauce, rice, miso soup, and cabbage","restaurant":"Katsu-Hama","cuisine":"Japanese"},{"name":"Katsu Don","description":"Tonkatsu over rice with egg, onion, and sweet soy broth","restaurant":"Katsu-Hama","cuisine":"Japanese"},{"name":"Spaghetti Cacio e Pepe","description":"Spaghetti with pecorino romano and cracked black pepper","restaurant":"L'Artusi","cuisine":"Italian"},{"name":"Beef Carpaccio","description":"Thinly sliced raw beef with arugula, capers, and shaved parmigiano","restaurant":"L'Artusi","cuisine":"Italian"},{"name":"Ricotta Gnudi","description":"Light ricotta dumplings with brown butter and sage","restaurant":"L'Artusi","cuisine":"Italian"},{"name":"Grilled Branzino","description":"Whole grilled branzino with olive oil, lemon, and herbs","restaurant":"L'Artusi","cuisine":"Italian"},{"name":"Burrata","description":"Fresh burrata with grilled peaches, arugula, and aged balsamic","restaurant":"L'Artusi","cuisine":"Italian"},{"name":"Olive Oil Cake","description":"Moist olive oil cake with mascarpone cream and citrus zest","restaurant":"L'Artusi","cuisine":"Italian"},{"name":"Carciofi Fritti","description":"Fried artichokes Roman-style with lemon and sea salt","restaurant":"Via Carota","cuisine":"Italian"},{"name":"Tonnarelli Cacio e Pepe","description":"Fresh hand-cut pasta with pecorino and black pepper","restaurant":"Via Carota","cuisine":"Italian"},{"name":"Pappardelle al Ragu","description":"Wide ribbon pasta with slow-braised wild boar ragu","restaurant":"Via Carota","cuisine":"Italian"},{"name":"Insalata Verde","description":"Mixed green salad with herbs, fennel, celery, and lemon vinaigrette","restaurant":"Via Carota","cuisine":"Italian"},{"name":"Pollo Arrosto","description":"Roasted half chicken with salsa verde and roasted potatoes","restaurant":"Via Carota","cuisine":"Italian"},{"name":"Panna Cotta","description":"Classic vanilla panna cotta with seasonal fruit compote","restaurant":"Via Carota","cuisine":"Italian"},{"name":"Pinwheel Lasagna","description":"Signature spiral-rolled lasagna with bolognese, bechamel, and mozzarella","restaurant":"Don Angie","cuisine":"Italian, Italian-American"},{"name":"Chrysanthemum Salad","description":"Shaved vegetables arranged like a flower with lemon vinaigrette","restaurant":"Don Angie","cuisine":"Italian, Italian-American"},{"name":"Fuzi Bolognese","description":"Hand-rolled pasta with rich meat sauce and parmigiano","restaurant":"Don Angie","cuisine":"Italian, Italian-American"},{"name":"Meatballs al Forno","description":"Baked meatballs in tomato sauce with whipped ricotta and basil","restaurant":"Don Angie","cuisine":"Italian, Italian-American"},{"name":"Pork Chop Milanese","description":"Breaded and fried pork chop with arugula and cherry tomato salad","restaurant":"Don Angie","cuisine":"Italian, Italian-American"},{"name":"Black Cocoa Tiramisu","description":"Dark cocoa tiramisu with espresso-soaked ladyfingers and mascarpone","restaurant":"Don Angie","cuisine":"Italian, Italian-American"},{"name":"Taco de Adobada","description":"Marinated pork al pastor in hand-pressed corn tortilla with onion, cilantro, and salsa","restaurant":"Los Tacos No. 1","cuisine":"Mexican"},{"name":"Taco de Asada","description":"Grilled steak in fresh corn tortilla with onion and cilantro","restaurant":"Los Tacos No. 1","cuisine":"Mexican"},{"name":"Taco de Pollo","description":"Grilled chicken in corn tortilla with fresh salsa verde","restaurant":"Los Tacos No. 1","cuisine":"Mexican"},{"name":"Quesadilla de Asada","description":"Flour tortilla with melted cheese and grilled steak","restaurant":"Los Tacos No. 1","cuisine":"Mexican"},{"name":"Taco de Nopal","description":"Grilled cactus with onion, cilantro, and salsa roja in corn tortilla","restaurant":"Los Tacos No. 1","cuisine":"Mexican"},{"name":"Horchata","description":"Traditional Mexican rice milk drink with cinnamon and vanilla","restaurant":"Los Tacos No. 1","cuisine":"Mexican"},{"name":"Mulita de Adobada","description":"Double tortilla with al pastor pork, melted cheese, and salsa","restaurant":"Los Tacos No. 1","cuisine":"Mexican"},{"name":"Guacamole Clasico","description":"Fresh avocado with serrano pepper, onion, cilantro, and lime, served with chips","restaurant":"La Contenta","cuisine":"Mexican"},{"name":"Fish Tacos","description":"Beer-battered white fish with chipotle crema, cabbage slaw, and pico de gallo","restaurant":"La Contenta","cuisine":"Mexican"},{"name":"Pork Belly Tostada","description":"Crispy tostada with braised pork belly, avocado, and pickled onion","restaurant":"La Contenta","cuisine":"Mexican"},{"name":"Enchiladas de Mole","description":"Corn tortillas filled with chicken in rich mole negro sauce with sesame seeds","restaurant":"La Contenta","cuisine":"Mexican"},{"name":"Tacos de Carnitas","description":"Slow-roasted pulled pork tacos with salsa verde and pickled onion","restaurant":"La Contenta","cuisine":"Mexican"},{"name":"Churros con Chocolate","description":"Crispy cinnamon churros with warm Mexican chocolate dipping sauce","restaurant":"La Contenta","cuisine":"Mexican"},{"name":"Al Pastor Tacos","description":"Handmade corn tortillas with spit-roasted pork, pineapple, and cilantro","restaurant":"El Camion Cantina","cuisine":"Mexican"},{"name":"Birria Tacos","description":"Braised beef birria tacos with consomme for dipping","restaurant":"El Camion Cantina","cuisine":"Mexican"},{"name":"Elote","description":"Grilled Mexican street corn with mayo, cotija cheese, chili powder, and lime","restaurant":"El Camion Cantina","cuisine":"Mexican"},{"name":"Burrito de Pollo","description":"Large flour tortilla with grilled chicken, rice, beans, cheese, and pico de gallo","restaurant":"El Camion Cantina","cuisine":"Mexican"},{"name":"Nachos Supremos","description":"Tortilla chips with ground beef, cheese, jalapenos, guacamole, and sour cream","restaurant":"El Camion Cantina","cuisine":"Mexican"},{"name":"Tres Leches Cake","description":"Sponge cake soaked in three milks with whipped cream and cinnamon","restaurant":"El Camion Cantina","cuisine":"Mexican"},{"name":"Butter Chicken","description":"Tandoori chicken in rich tomato-cream sauce with fenugreek, served tableside","restaurant":"Adda","cuisine":"Indian"},{"name":"Lamb Seekh Kebab","description":"Spiced ground lamb skewers cooked in tandoor with mint chutney","restaurant":"Adda","cuisine":"Indian"},{"name":"Chicken Biryani","description":"Fragrant basmati rice layered with spiced chicken, saffron, and caramelized onion","restaurant":"Adda","cuisine":"Indian"},{"name":"Fish Curry","description":"Coastal-style fish curry with coconut milk, curry leaves, and tamarind","restaurant":"Adda","cuisine":"Indian"},{"name":"Garlic Naan","description":"Tandoor-baked leavened bread with garlic butter and cilantro","restaurant":"Adda","cuisine":"Indian"},{"name":"Gulab Jamun","description":"Warm milk dumplings soaked in rose cardamom syrup","restaurant":"Adda","cuisine":"Indian"},{"name":"Chicken Tikka Masala","description":"Tandoori chicken pieces in creamy tomato-spice sauce with fenugreek","restaurant":"Dhaba","cuisine":"Indian"},{"name":"Saag Paneer","description":"Fresh spinach puree with cubes of house-made paneer cheese","restaurant":"Dhaba","cuisine":"Indian"},{"name":"Lamb Rogan Josh","description":"Braised lamb in aromatic Kashmiri spice gravy with yogurt","restaurant":"Dhaba","cuisine":"Indian"},{"name":"Samosa Chaat","description":"Crispy potato samosas topped with chickpea curry, yogurt, and tamarind chutney","restaurant":"Dhaba","cuisine":"Indian"},{"name":"Dal Makhani","description":"Slow-cooked black lentils with cream, butter, and spices","restaurant":"Dhaba","cuisine":"Indian"},{"name":"Tandoori Mixed Grill","description":"Assortment of tandoori chicken, lamb chop, seekh kebab, and shrimp","restaurant":"Dhaba","cuisine":"Indian"},{"name":"Chicken Vindaloo","description":"Spicy chicken curry with potatoes in tangy vinegar-based sauce","restaurant":"Panna II","cuisine":"Indian"},{"name":"Malai Kofta","description":"Fried paneer and vegetable dumplings in rich cream sauce","restaurant":"Panna II","cuisine":"Indian"},{"name":"Tandoori Chicken","description":"Half chicken marinated in yogurt and spices, roasted in tandoor","restaurant":"Panna II","cuisine":"Indian"},{"name":"Aloo Gobi","description":"Cauliflower and potato cooked with cumin, turmeric, and tomatoes","restaurant":"Panna II","cuisine":"Indian"},{"name":"Mango Lassi","description":"Creamy yogurt smoothie blended with sweet mango pulp","restaurant":"Panna II","cuisine":"Indian"},{"name":"Garlic Naan","description":"Fluffy tandoor-baked bread brushed with garlic butter","restaurant":"Panna II","cuisine":"Indian"},{"name":"Original Egg Roll","description":"Nom Wah's famous egg roll since 1920 with mixed vegetables and chicken","restaurant":"Nom Wah Tea Parlor","cuisine":"Chinese, Dim Sum"},{"name":"Shrimp Ha Gow","description":"Steamed crystal shrimp dumplings with translucent wheat starch wrapper","restaurant":"Nom Wah Tea Parlor","cuisine":"Chinese, Dim Sum"},{"name":"Siu Mai","description":"Open-top pork and shrimp dumplings topped with fish roe","restaurant":"Nom Wah Tea Parlor","cuisine":"Chinese, Dim Sum"},{"name":"Turnip Cake","description":"Pan-fried daikon radish cake with dried shrimp and scallion","restaurant":"Nom Wah Tea Parlor","cuisine":"Chinese, Dim Sum"},{"name":"Roast Pork Bun","description":"Fluffy steamed bao filled with sweet BBQ roast pork","restaurant":"Nom Wah Tea Parlor","cuisine":"Chinese, Dim Sum"},{"name":"Pan Fried Noodles","description":"Crispy wheat flour noodles with soy sauce glaze and scallions","restaurant":"Nom Wah Tea Parlor","cuisine":"Chinese, Dim Sum"},{"name":"Salt and Pepper Squid","description":"Wok-fried calamari with chili, garlic, and salt-pepper seasoning","restaurant":"Nom Wah Tea Parlor","cuisine":"Chinese, Dim Sum"},{"name":"Har Gow","description":"Classic steamed shrimp dumplings in translucent rice flour wrapper","restaurant":"Jing Fong","cuisine":"Chinese, Cantonese, Dim Sum"},{"name":"Char Siu Bao","description":"Steamed fluffy buns filled with sweet barbecue roast pork","restaurant":"Jing Fong","cuisine":"Chinese, Cantonese, Dim Sum"},{"name":"Spare Ribs with Black Bean","description":"Steamed pork spare ribs with fermented black bean and chili","restaurant":"Jing Fong","cuisine":"Chinese, Cantonese, Dim Sum"},{"name":"Cheung Fun","description":"Silky rice noodle rolls filled with shrimp, drizzled with sweet soy","restaurant":"Jing Fong","cuisine":"Chinese, Cantonese, Dim Sum"},{"name":"Peking Duck","description":"Whole roasted duck served with pancakes, scallion, and hoisin sauce","restaurant":"Jing Fong","cuisine":"Chinese, Cantonese, Dim Sum"},{"name":"Lo Mein","description":"Wok-tossed egg noodles with vegetables and choice of protein","restaurant":"Jing Fong","cuisine":"Chinese, Cantonese, Dim Sum"},{"name":"Dan Tat","description":"Flaky Portuguese-style egg custard tart","restaurant":"Jing Fong","cuisine":"Chinese, Cantonese, Dim Sum"},{"name":"Spicy Cumin Lamb Hand-Ripped Noodles","description":"Hand-pulled biang biang noodles with cumin-spiced lamb and chili oil","restaurant":"Xi'an Famous Foods","cuisine":"Chinese, Northwestern Chinese"},{"name":"Liang Pi Cold Skin Noodles","description":"Chewy cold wheat noodles with sesame paste, chili oil, and vinegar","restaurant":"Xi'an Famous Foods","cuisine":"Chinese, Northwestern Chinese"},{"name":"Lamb Burger","description":"Spicy cumin lamb stuffed in freshly baked flatbread","restaurant":"Xi'an Famous Foods","cuisine":"Chinese, Northwestern Chinese"},{"name":"Stewed Pork Burger","description":"Braised pork belly with spices in crispy flatbread","restaurant":"Xi'an Famous Foods","cuisine":"Chinese, Northwestern Chinese"},{"name":"Spicy and Tingly Beef Hand-Ripped Noodles","description":"Hand-pulled noodles with Sichuan peppercorn beef in numbing chili sauce","restaurant":"Xi'an Famous Foods","cuisine":"Chinese, Northwestern Chinese"},{"name":"N1 Spicy Cumin Lamb Noodle Soup","description":"Hand-ripped noodles in rich lamb broth with cumin lamb slices","restaurant":"Xi'an Famous Foods","cuisine":"Chinese, Northwestern Chinese"},{"name":"Premium Beef Combo","description":"Selection of prime brisket, short rib, and beef tongue for tabletop grilling","restaurant":"Baekjeong NYC","cuisine":"Korean, Korean BBQ"},{"name":"Pork Belly","description":"Thick-cut pork belly slices for grilling with ssamjang and lettuce wraps","restaurant":"Baekjeong NYC","cuisine":"Korean, Korean BBQ"},{"name":"Cheese Corn","description":"Sweet corn kernels baked with mozzarella cheese","restaurant":"Baekjeong NYC","cuisine":"Korean, Korean BBQ"},{"name":"Steamed Egg","description":"Silky Korean steamed egg custard cooked in stone pot","restaurant":"Baekjeong NYC","cuisine":"Korean, Korean BBQ"},{"name":"Bulgogi","description":"Marinated prime beef in sweet soy sauce, grilled at the table","restaurant":"Baekjeong NYC","cuisine":"Korean, Korean BBQ"},{"name":"Japchae","description":"Sweet potato glass noodles stir-fried with vegetables and beef","restaurant":"Baekjeong NYC","cuisine":"Korean, Korean BBQ"},{"name":"Kimchi Jjigae","description":"Spicy kimchi stew with pork, tofu, and scallion","restaurant":"Baekjeong NYC","cuisine":"Korean, Korean BBQ"},{"name":"Bossam","description":"Slow-boiled pork belly slices with fresh lettuce, garlic, and ssamjang","restaurant":"Her Name Is Han","cuisine":"Korean"},{"name":"Seafood Pancake","description":"Crispy Korean pancake loaded with shrimp, squid, and scallion","restaurant":"Her Name Is Han","cuisine":"Korean"},{"name":"Spicy Seafood Tofu Stew","description":"Bubbling soon-tofu jjigae with shrimp, clams, and soft tofu in chili broth","restaurant":"Her Name Is Han","cuisine":"Korean"},{"name":"Grilled Mackerel","description":"Whole salt-grilled atka mackerel with steamed rice and banchan","restaurant":"Her Name Is Han","cuisine":"Korean"},{"name":"Bibimbap","description":"Hot stone bowl with rice, seasoned vegetables, beef, and gochujang","restaurant":"Her Name Is Han","cuisine":"Korean"},{"name":"Tteokbokki","description":"Spicy rice cakes in sweet-hot gochujang sauce with fish cake","restaurant":"Her Name Is Han","cuisine":"Korean"},{"name":"Uni Bibimbap","description":"Hot stone rice bowl with fresh sea urchin, sesame, and gochujang","restaurant":"Osamil","cuisine":"Korean"},{"name":"Kimchi Pancake","description":"Crispy fermented kimchi pancake with pork and scallion","restaurant":"Osamil","cuisine":"Korean"},{"name":"Gochujang Glazed Squid","description":"Grilled whole squid with sweet-spicy gochujang glaze","restaurant":"Osamil","cuisine":"Korean"},{"name":"Kimchi Fried Rice","description":"Wok-fried rice with aged kimchi, topped with prime hanger steak","restaurant":"Osamil","cuisine":"Korean"},{"name":"Korean Fried Chicken","description":"Double-fried chicken wings in soy garlic or spicy sauce","restaurant":"Osamil","cuisine":"Korean"},{"name":"Soondubu Jjigae","description":"Silken tofu stew with kimchi, pork, and egg in clay pot","restaurant":"Osamil","cuisine":"Korean"},{"name":"Grilled Octopus","description":"Charred octopus with fingerling potatoes, capers, and red pepper coulis","restaurant":"Barbounia","cuisine":"Mediterranean, Greek"},{"name":"Lamb Chops","description":"Grilled lamb chops with roasted eggplant puree, tzatziki, and za'atar","restaurant":"Barbounia","cuisine":"Mediterranean, Greek"},{"name":"Branzino","description":"Whole grilled Mediterranean sea bass with lemon, olive oil, and herbs","restaurant":"Barbounia","cuisine":"Mediterranean, Greek"},{"name":"Hummus","description":"Creamy chickpea dip with tahini, lemon, and warm pita bread","restaurant":"Barbounia","cuisine":"Mediterranean, Greek"},{"name":"Shakshuka","description":"Baked eggs in spiced tomato sauce with feta cheese and sourdough toast","restaurant":"Barbounia","cuisine":"Mediterranean, Greek"},{"name":"Mediterranean Salad","description":"Mixed greens, tomato, cucumber, olives, feta, and lemon-herb vinaigrette","restaurant":"Barbounia","cuisine":"Mediterranean, Greek"},{"name":"Falafel","description":"Crispy chickpea fritters with tahini sauce and pickled turnip","restaurant":"Zaytinya","cuisine":"Mediterranean, Turkish, Greek, Lebanese"},{"name":"Braised Lamb Shank","description":"Slow-braised lamb shank with orzo pasta and roasted tomatoes","restaurant":"Zaytinya","cuisine":"Mediterranean, Turkish, Greek, Lebanese"},{"name":"Flaming Saganaki","description":"Pan-seared kasseri cheese flambed tableside with lemon","restaurant":"Zaytinya","cuisine":"Mediterranean, Turkish, Greek, Lebanese"},{"name":"Taramasalata","description":"Whipped carp roe dip with lemon, olive oil, and warm pita","restaurant":"Zaytinya","cuisine":"Mediterranean, Turkish, Greek, Lebanese"},{"name":"Duck Borek","description":"Spiral-shaped phyllo pastry filled with spiced duck and pistachios","restaurant":"Zaytinya","cuisine":"Mediterranean, Turkish, Greek, Lebanese"},{"name":"Moroccan Fried Chicken","description":"Crispy fried chicken with harissa honey glaze and preserved lemon","restaurant":"Zaytinya","cuisine":"Mediterranean, Turkish, Greek, Lebanese"},{"name":"Baklava","description":"Layered phyllo with walnuts and pistachios, drizzled with honey syrup","restaurant":"Zaytinya","cuisine":"Mediterranean, Turkish, Greek, Lebanese"},{"name":"Buttermilk Biscuit Sandwich","description":"Flaky biscuit with fried chicken, honey butter, and house pickles","restaurant":"Jacob's Pickles","cuisine":"American, Southern"},{"name":"Low Country Meatloaf","description":"Smoked meatloaf with mashed potatoes, gravy, and seasonal vegetables","restaurant":"Jacob's Pickles","cuisine":"American, Southern"},{"name":"Shrimp and Grits","description":"Sauteed shrimp with creamy cheddar grits, bacon, and scallion","restaurant":"Jacob's Pickles","cuisine":"American, Southern"},{"name":"Catfish Tacos","description":"Beer-battered catfish with slaw, pickled onions, and remoulade","restaurant":"Jacob's Pickles","cuisine":"American, Southern"},{"name":"Mac and Cheese","description":"Baked four-cheese macaroni with breadcrumb crust","restaurant":"Jacob's Pickles","cuisine":"American, Southern"},{"name":"Sausage Gravy Biscuit","description":"Split biscuit smothered in house-made sausage gravy","restaurant":"Jacob's Pickles","cuisine":"American, Southern"},{"name":"Pickle Plate","description":"Seasonal house-made pickles and fermented vegetables","restaurant":"Jacob's Pickles","cuisine":"American, Southern"},{"name":"The Smith Burger","description":"Dry-aged beef burger with cheddar, caramelized onions, and special sauce on brioche","restaurant":"The Smith","cuisine":"American, New American"},{"name":"Kale and Quinoa Salad","description":"Tuscan kale with quinoa, dried cranberries, almonds, and lemon vinaigrette","restaurant":"The Smith","cuisine":"American, New American"},{"name":"Pan-Roasted Branzino","description":"Mediterranean sea bass with roasted vegetables and salsa verde","restaurant":"The Smith","cuisine":"American, New American"},{"name":"Pot of Mussels","description":"Prince Edward Island mussels in white wine, garlic, and herbs with grilled bread","restaurant":"The Smith","cuisine":"American, New American"},{"name":"Truffle Fries","description":"Hand-cut fries with truffle oil, parmesan, and herbs","restaurant":"The Smith","cuisine":"American, New American"},{"name":"Pan-Roasted Chicken","description":"Half roasted chicken with whipped potatoes and seasonal vegetables","restaurant":"The Smith","cuisine":"American, New American"},{"name":"Market Plate","description":"Choice of protein with three seasonal vegetable sides from the daily market board","restaurant":"Westville","cuisine":"American"},{"name":"Westville Burger","description":"Grass-fed beef burger with lettuce, tomato, and special sauce on a brioche bun","restaurant":"Westville","cuisine":"American"},{"name":"Grilled Salmon","description":"Atlantic salmon fillet with seasonal vegetables and herb sauce","restaurant":"Westville","cuisine":"American"},{"name":"Kale Caesar Salad","description":"Tuscan kale with anchovy dressing, croutons, and shaved parmesan","restaurant":"Westville","cuisine":"American"},{"name":"Sweet Potato Fries","description":"Crispy sweet potato fries with chipotle aioli","restaurant":"Westville","cuisine":"American"},{"name":"Roasted Cauliflower Steak","description":"Whole roasted cauliflower with tahini, pomegranate, and herbs","restaurant":"Westville","cuisine":"American"},{"name":"Special Pho","description":"Hanoi-style beef pho with rare filet mignon, oxtail, brisket, bone marrow, and breadstick","restaurant":"Hanoi House","cuisine":"Vietnamese"},{"name":"Summer Rolls","description":"Fresh rice paper rolls with pork sausage, shrimp, herbs, and peanut sauce","restaurant":"Hanoi House","cuisine":"Vietnamese"},{"name":"Braised Beef Banh Mi","description":"Braised short rib on baguette with pickled daikon, cilantro, and jalapeno","restaurant":"Hanoi House","cuisine":"Vietnamese"},{"name":"Bun Cha","description":"Grilled pork patties and belly with rice vermicelli, herbs, and dipping sauce","restaurant":"Hanoi House","cuisine":"Vietnamese"},{"name":"Turmeric Fish","description":"Pan-seared turmeric-marinated fish with dill, scallion, and rice noodles","restaurant":"Hanoi House","cuisine":"Vietnamese"},{"name":"Coconut Coffee Panna Cotta","description":"Vietnamese coffee-flavored panna cotta with coconut cream","restaurant":"Hanoi House","cuisine":"Vietnamese"},{"name":"Saigon Pho","description":"Traditional beef pho with rice noodles, rare steak, brisket, herbs, and bean sprouts","restaurant":"Saigon Shack","cuisine":"Vietnamese"},{"name":"Banh Mi Dac Biet","description":"Classic Vietnamese sandwich with pate, ham, pork roll, pickled vegetables, and jalapeno","restaurant":"Saigon Shack","cuisine":"Vietnamese"},{"name":"Summer Rolls","description":"Fresh rice paper rolls with shrimp, pork, vermicelli, and peanut hoisin sauce","restaurant":"Saigon Shack","cuisine":"Vietnamese"},{"name":"Bun Bo Hue","description":"Spicy beef and pork noodle soup with lemongrass and chili oil","restaurant":"Saigon Shack","cuisine":"Vietnamese"},{"name":"Lemongrass Chicken","description":"Grilled lemongrass chicken over broken rice with fried egg and pickles","restaurant":"Saigon Shack","cuisine":"Vietnamese"},{"name":"Vietnamese Iced Coffee","description":"Strong drip coffee with sweetened condensed milk over ice","restaurant":"Saigon Shack","cuisine":"Vietnamese"}];
+
+init();
+</script>
+</body>
+</html>

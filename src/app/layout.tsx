@@ -20,12 +20,30 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "FoodClaw — Discover Dishes by Nutrition",
   description: "Find restaurant dishes that match your dietary needs and nutritional goals.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "FoodClaw",
+  },
+  openGraph: {
+    title: "FoodClaw — Discover Dishes by Nutrition",
+    description: "Find restaurant dishes that match your dietary needs and nutritional goals.",
+    siteName: "FoodClaw",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FoodClaw — Discover Dishes by Nutrition",
+    description: "Find restaurant dishes that match your dietary needs and nutritional goals.",
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#22c55e",
 };
 
 export default function RootLayout({

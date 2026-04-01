@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { useAuth } from "@/lib/auth/context";
 
 const DIETARY_OPTIONS = [
   "Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Nut-Free", "Halal", "Kosher",
@@ -28,6 +29,7 @@ const CUISINE_OPTIONS = [
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { register } = useAuth();
   const [step, setStep] = useState(1);
   const [dietary, setDietary] = useState<string[]>([]);
   const [goal, setGoal] = useState("balanced");
@@ -38,6 +40,8 @@ export default function OnboardingPage() {
   const [cuisines, setCuisines] = useState<string[]>([]);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   function toggleDietary(item: string) {
@@ -54,45 +58,39 @@ export default function OnboardingPage() {
 
   async function handleFinish() {
     setSaving(true);
+    setError("");
     try {
+      const result = await register(email, name, password);
+      if (result.error) {
+        setError(result.error);
+        setSaving(false);
+        setStep(1);
+        return;
+      }
+
       const dietaryFlags: Record<string, boolean> = {};
       for (const d of dietary) {
         const key = d.toLowerCase().replace("-", "_");
         dietaryFlags[key] = true;
       }
 
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
+      await fetch("/api/users/profile", {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
-          name,
           dietary_restrictions: dietaryFlags,
           nutritional_goals: {
             priority: goal,
             ...(calorieCap && { calorie_limit: parseInt(calorieCap) }),
             ...(proteinMin && { protein_min_g: parseInt(proteinMin) }),
           },
+          max_wait_minutes: maxWait[0],
+          search_radius_miles: searchRadius[0],
+          preferred_cuisines: cuisines,
         }),
       });
 
-      if (res.ok) {
-        const user = await res.json();
-        localStorage.setItem("foodclaw_user_id", user.id);
-
-        await fetch("/api/users/profile", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: user.id,
-            max_wait_minutes: maxWait[0],
-            search_radius_miles: searchRadius[0],
-            preferred_cuisines: cuisines,
-          }),
-        });
-
-        router.push("/");
-      }
+      router.push("/");
     } finally {
       setSaving(false);
     }
@@ -132,7 +130,12 @@ export default function OnboardingPage() {
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
               </div>
-              <Button className="w-full" disabled={!name || !email} onClick={() => setStep(2)}>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" />
+              </div>
+              {error && <p className="text-sm text-destructive">{error}</p>}
+              <Button className="w-full" disabled={!name || !email || password.length < 8} onClick={() => setStep(2)}>
                 Continue
               </Button>
             </CardContent>

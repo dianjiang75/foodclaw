@@ -1,8 +1,16 @@
 import { SignJWT, jwtVerify } from "jose";
 
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "foodclaw-dev-secret-change-in-production"
-);
+let _secret: Uint8Array | null = null;
+function getSecret(): Uint8Array {
+  if (!_secret) {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (process.env.NODE_ENV === "production" && (!jwtSecret || jwtSecret.includes("change-in-production"))) {
+      throw new Error("JWT_SECRET must be set to a secure value in production");
+    }
+    _secret = new TextEncoder().encode(jwtSecret || "foodclaw-dev-secret-change-in-production");
+  }
+  return _secret;
+}
 const ALG = "HS256";
 const EXPIRY = "7d";
 
@@ -17,12 +25,12 @@ export async function signToken(payload: JWTPayload): Promise<string> {
     .setProtectedHeader({ alg: ALG })
     .setIssuedAt()
     .setExpirationTime(EXPIRY)
-    .sign(SECRET);
+    .sign(getSecret());
 }
 
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, getSecret());
     return {
       sub: payload.sub as string,
       email: payload.email as string,

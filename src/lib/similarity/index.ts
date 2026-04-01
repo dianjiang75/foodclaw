@@ -93,7 +93,13 @@ export async function findSimilarDishes(
 
       if (!candidateVector) return null;
 
-      const similarity = cosineSimilarity(sourceVector, candidateVector);
+      let similarity = cosineSimilarity(sourceVector, candidateVector);
+
+      // Boost for same category or cuisine
+      if (candidate.category === sourceDish.category) similarity += 0.05;
+      const sourceCuisines = sourceDish.restaurant.cuisineType || [];
+      const candidateCuisines = candidate.restaurant.cuisineType || [];
+      if (sourceCuisines.some((c: string) => candidateCuisines.includes(c))) similarity += 0.03;
 
       return {
         dish: {

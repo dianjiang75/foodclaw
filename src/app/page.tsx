@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { Search, ChefHat, Store, Sparkles, MapPin, Star, Clock } from "lucide-react";
+import { Search, ChefHat, Store, Sparkles, MapPin, Star, Clock, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -191,6 +191,9 @@ export default function HomePage() {
               />
             </div>
             <FilterDrawer filters={filters} onChange={setFilters} />
+            <Link href="/favorites" className="w-9 h-9 rounded-full bg-rose-500/10 flex items-center justify-center hover:bg-rose-500/20 transition-colors" aria-label="Favorites">
+              <Heart className="w-4 h-4 text-rose-500" />
+            </Link>
             <ThemeToggle />
             <Link href="/profile">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm hover:bg-primary/20 transition-colors">

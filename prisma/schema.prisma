@@ -205,6 +205,8 @@ model UserProfile {
   name                 String
   passwordHash         String?  @map("password_hash")
   dietaryRestrictions  Json?    @map("dietary_restrictions")
+  allergenExclusions   String[] @map("allergen_exclusions")
+  customRestrictions   String[] @map("custom_restrictions")
   nutritionalGoals     Json?    @map("nutritional_goals")
   maxWaitMinutes       Int      @default(30) @map("max_wait_minutes")
   searchRadiusMiles    Decimal  @default(2.0) @map("search_radius_miles") @db.Decimal(4, 1)

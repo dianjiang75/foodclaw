@@ -44,7 +44,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { dietary_restrictions, nutritional_goals, max_wait_minutes, search_radius_miles, preferred_cuisines } = body;
+    const { dietary_restrictions, nutritional_goals, max_wait_minutes, search_radius_miles, preferred_cuisines, allergens, custom_restrictions } = body;
 
     const user = await prisma.userProfile.update({
       where: { id: auth.sub as string },
@@ -54,6 +54,8 @@ export async function PATCH(request: Request) {
         ...(max_wait_minutes !== undefined && { maxWaitMinutes: max_wait_minutes }),
         ...(search_radius_miles !== undefined && { searchRadiusMiles: search_radius_miles }),
         ...(preferred_cuisines !== undefined && { preferredCuisines: preferred_cuisines }),
+        ...(allergens !== undefined && { allergenExclusions: allergens }),
+        ...(custom_restrictions !== undefined && { customRestrictions: custom_restrictions }),
       },
     });
 
