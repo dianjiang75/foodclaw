@@ -224,40 +224,68 @@ export const PHOTOS_BY_DISH: Record<string, string> = {
   "Turmeric Fish": "https://images.unsplash.com/photo-bP__qCYnh9M?w=800&h=500&fit=crop", // fish dish
 };
 
-// Keyword fallback for dishes not in the specific mapping
+// Keyword fallback — REAL verified Unsplash photo IDs that actually load
 const PHOTOS_BY_TYPE: Record<string, string> = {
-  sushi: "https://images.unsplash.com/photo-p0niMe1u4Mo?w=800&h=500&fit=crop",
-  taco: "https://images.unsplash.com/photo-7rqlS3CObsA?w=800&h=500&fit=crop",
-  ramen: "https://images.unsplash.com/photo-3Yicc4IhVsk?w=800&h=500&fit=crop",
-  pho: "https://images.unsplash.com/photo-eN9vAXAQvEw?w=800&h=500&fit=crop",
-  noodle: "https://images.unsplash.com/photo-uhrGEOdGmts?w=800&h=500&fit=crop",
-  curry: "https://images.unsplash.com/photo-ZjZJfpWQibs?w=800&h=500&fit=crop",
-  soup: "https://images.unsplash.com/photo-1EcdFgIYBgM?w=800&h=500&fit=crop",
-  chicken: "https://images.unsplash.com/photo-PkVuvSYuFmw?w=800&h=500&fit=crop",
-  rice: "https://images.unsplash.com/photo-8Qb_oh6k4R4?w=800&h=500&fit=crop",
-  dumpling: "https://images.unsplash.com/photo-0S1jRLQZwVY?w=800&h=500&fit=crop",
-  burger: "https://images.unsplash.com/photo-gjACmQqnfW0?w=800&h=500&fit=crop",
-  pasta: "https://images.unsplash.com/photo-oW5eupy_Yhg?w=800&h=500&fit=crop",
-  salad: "https://images.unsplash.com/photo-iVYPVBdq5rU?w=800&h=500&fit=crop",
-  fish: "https://images.unsplash.com/photo-bP__qCYnh9M?w=800&h=500&fit=crop",
-  shrimp: "https://images.unsplash.com/photo-BFEC7ft8Pz0?w=800&h=500&fit=crop",
-  lamb: "https://images.unsplash.com/photo-oNzpuKsHNJ8?w=800&h=500&fit=crop",
-  pork: "https://images.unsplash.com/photo-qEQhzgRvo2E?w=800&h=500&fit=crop",
-  sandwich: "https://images.unsplash.com/photo-FCUsxq-11_8?w=800&h=500&fit=crop",
-  steak: "https://images.unsplash.com/photo-oNzpuKsHNJ8?w=800&h=500&fit=crop",
-  fries: "https://images.unsplash.com/photo-xy7BK6oDD2s?w=800&h=500&fit=crop",
+  sushi: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&h=500&fit=crop",
+  nigiri: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&h=500&fit=crop",
+  sashimi: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&h=500&fit=crop",
+  taco: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800&h=500&fit=crop",
+  ramen: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&h=500&fit=crop",
+  udon: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&h=500&fit=crop",
+  pho: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&h=500&fit=crop",
+  noodle: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800&h=500&fit=crop",
+  pad_thai: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800&h=500&fit=crop",
+  curry: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=800&h=500&fit=crop",
+  soup: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&h=500&fit=crop",
+  chicken: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=800&h=500&fit=crop",
+  katsu: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=800&h=500&fit=crop",
+  rice: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800&h=500&fit=crop",
+  dumpling: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&h=500&fit=crop",
+  gyoza: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&h=500&fit=crop",
+  burger: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800&h=500&fit=crop",
+  pizza: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&h=500&fit=crop",
+  pasta: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=800&h=500&fit=crop",
+  salad: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=500&fit=crop",
+  fish: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&h=500&fit=crop",
+  salmon: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&h=500&fit=crop",
+  shrimp: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=500&fit=crop",
+  lamb: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=500&fit=crop",
+  pork: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=500&fit=crop",
+  steak: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=500&fit=crop",
+  sandwich: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800&h=500&fit=crop",
+  banh_mi: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800&h=500&fit=crop",
+  fries: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&h=500&fit=crop",
+  bibimbap: "https://images.unsplash.com/photo-1553163147-622ab57be1c7?w=800&h=500&fit=crop",
+  korean: "https://images.unsplash.com/photo-1553163147-622ab57be1c7?w=800&h=500&fit=crop",
+  tofu: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=500&fit=crop",
+  bowl: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=500&fit=crop",
+  poke: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=500&fit=crop",
+  ice_cream: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=800&h=500&fit=crop",
+  dessert: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=800&h=500&fit=crop",
+  coffee: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&h=500&fit=crop",
+  falafel: "https://images.unsplash.com/photo-1593001874117-c99c800e3eb7?w=800&h=500&fit=crop",
+  hummus: "https://images.unsplash.com/photo-1593001874117-c99c800e3eb7?w=800&h=500&fit=crop",
+  roll: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&h=500&fit=crop",
+  wing: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=800&h=500&fit=crop",
+  pancake: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&h=500&fit=crop",
+  waffle: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&h=500&fit=crop",
+  bruschetta: "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=800&h=500&fit=crop",
+  risotto: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=800&h=500&fit=crop",
+  burrito: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800&h=500&fit=crop",
+  quesadilla: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=800&h=500&fit=crop",
+  mango: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=500&fit=crop",
 };
 
 const FALLBACK_PHOTO = "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&h=500&fit=crop";
 
 export function matchPhoto(dishName: string): string {
-  // 1. Exact dish name match
-  if (PHOTOS_BY_DISH[dishName]) return PHOTOS_BY_DISH[dishName];
+  // 1. Exact dish name match (skip — PHOTOS_BY_DISH has broken short IDs)
+  // TODO: fix PHOTOS_BY_DISH with real full Unsplash IDs
 
-  // 2. Keyword fallback
-  const lower = dishName.toLowerCase();
+  // 2. Keyword fallback using verified working Unsplash URLs
+  const lower = dishName.toLowerCase().replace(/['']/g, "");
   for (const [keyword, photo] of Object.entries(PHOTOS_BY_TYPE)) {
-    if (lower.includes(keyword)) return photo;
+    if (lower.includes(keyword.replace(/_/g, " ")) || lower.includes(keyword)) return photo;
   }
 
   // 3. Generic fallback

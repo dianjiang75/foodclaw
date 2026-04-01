@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { Search, ChefHat, Store } from "lucide-react";
+import { Search, ChefHat, Store, Sparkles, MapPin, Star, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,10 +14,10 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { RestaurantCard, type RestaurantCardData } from "@/components/restaurant-card";
 
 const SORT_OPTIONS = [
-  { value: "macro_match", label: "Best Match" },
-  { value: "distance", label: "Nearest" },
-  { value: "rating", label: "Top Rated" },
-  { value: "wait_time", label: "Shortest Wait" },
+  { value: "macro_match", label: "Best Match", icon: Sparkles },
+  { value: "distance", label: "Nearest", icon: MapPin },
+  { value: "rating", label: "Top Rated", icon: Star },
+  { value: "wait_time", label: "Shortest Wait", icon: Clock },
 ] as const;
 
 interface SearchState {
@@ -205,19 +205,23 @@ export default function HomePage() {
           {/* Sort options (dishes only) */}
           {activeTab === "dishes" && (
             <div className="flex gap-1.5 overflow-x-auto no-scrollbar -mx-4 px-4">
-              {SORT_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  className={`text-[11px] px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap font-semibold ${
-                    search.sort === opt.value
-                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
-                      : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
-                  }`}
-                  onClick={() => setSearch((s) => ({ ...s, sort: opt.value, offset: 0 }))}
-                >
-                  {opt.label}
-                </button>
-              ))}
+              {SORT_OPTIONS.map((opt) => {
+                const SortIcon = opt.icon;
+                return (
+                  <button
+                    key={opt.value}
+                    className={`inline-flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-full transition-all duration-200 whitespace-nowrap font-semibold ${
+                      search.sort === opt.value
+                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/25"
+                        : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                    onClick={() => setSearch((s) => ({ ...s, sort: opt.value, offset: 0 }))}
+                  >
+                    <SortIcon className="w-3.5 h-3.5" />
+                    {opt.label}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
