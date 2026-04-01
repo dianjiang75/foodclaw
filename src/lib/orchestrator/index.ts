@@ -32,6 +32,8 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     radiusMiles: query.radius_miles,
     categories: query.categories ?? [],
     sortBy: query.sort_by ?? null,
+    calorieLimit: query.calorie_limit ?? null,
+    proteinMin: query.protein_min_g ?? null,
   };
 
   const cached = await getCachedQuery<SearchResults>(cacheParams);
@@ -49,7 +51,9 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
 
   const macroWhere: Record<string, unknown> = {};
   if (query.calorie_limit) {
-    macroWhere.caloriesMin = { lte: query.calorie_limit };
+    // Use caloriesMax to ensure the dish is truly under the cap
+    // (caloriesMin could be under while caloriesMax is over)
+    macroWhere.caloriesMax = { lte: query.calorie_limit };
   }
   if (query.protein_min_g) {
     macroWhere.proteinMaxG = { gte: query.protein_min_g };
@@ -64,12 +68,22 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
       if (ftsResults.length > 0) {
         textSearchDishIds = ftsResults.map((r) => r.id);
       } else {
-        // tsvector returned nothing — fallback to ILIKE
-        textWhere = { name: { contains: query.query, mode: "insensitive" } };
+        // tsvector returned nothing — fallback to ILIKE on name AND description
+        textWhere = {
+          OR: [
+            { name: { contains: query.query, mode: "insensitive" } },
+            { description: { contains: query.query, mode: "insensitive" } },
+          ],
+        };
       }
     } catch {
       // Full-text search not available (tsvector column missing) — fallback
-      textWhere = { name: { contains: query.query, mode: "insensitive" } };
+      textWhere = {
+        OR: [
+          { name: { contains: query.query, mode: "insensitive" } },
+          { description: { contains: query.query, mode: "insensitive" } },
+        ],
+      };
     }
   }
 
@@ -77,10 +91,12 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   const cuisineCategories = (query.categories || []).filter((c) =>
     CUISINE_IDS.has(c)
   );
+  // Capitalize cuisine names to match DB format ("thai" → "Thai")
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   const allCuisines = [
     ...(query.cuisine_preferences || []),
     ...cuisineCategories,
-  ];
+  ].map(capitalize);
 
   // Build meal category filter (non-cuisine categories map to dish category)
   const mealCategories = (query.categories || []).filter(
@@ -216,10 +232,17 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     : radiusFiltered;
 
   // 5. Run Apollo evaluator for dietary safety
-  const verified = verify(waitFiltered, query.dietary_restrictions);
+  const verified = verify(waitFiltered, query.dietary_restrictions, query.allergens);
 
   // 5b. In-memory sorts for fields that can't be sorted at DB level
-  if (query.sort_by === "distance") {
+  if (query.sort_by === "rating") {
+    verified.sort((a, b) => {
+      const ra = a.review_summary?.average_rating ?? -1;
+      const rb = b.review_summary?.average_rating ?? -1;
+      // Dishes with reviews sort by rating desc; dishes without reviews go last
+      return rb - ra;
+    });
+  } else if (query.sort_by === "distance") {
     verified.sort((a, b) => {
       const da = a.restaurant.distance_miles ?? Infinity;
       const db = b.restaurant.distance_miles ?? Infinity;
@@ -298,7 +321,8 @@ function buildOrderBy(
   if (query.sort_by) {
     switch (query.sort_by) {
       case "rating":
-        return { reviewSummary: { averageDishRating: "desc" } };
+        // Rating sort is handled in-memory after query to properly place
+        // dishes without reviews (NULLs) at the end. Use createdAt as DB fallback.
       case "wait_time":
       case "distance":
       case "macro_match":

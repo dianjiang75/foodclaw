@@ -27,23 +27,74 @@ const ALLERGY_CRITICAL: (keyof DietaryFlags)[] = [
 ];
 
 /**
+ * Allergen-to-dietary-flag mapping.
+ * Maps FDA Big 9 allergens to the dietary flags that would exclude them.
+ * If a user excludes "peanuts", we check for nut_free flag on the dish.
+ */
+const ALLERGEN_TO_FLAG: Record<string, keyof DietaryFlags> = {
+  peanuts: "nut_free",
+  tree_nuts: "nut_free",
+  wheat: "gluten_free",
+  gluten: "gluten_free",
+  milk: "dairy_free",
+  eggs: "dairy_free",
+  // These allergens don't map to a dietary flag — filtered by description keyword matching
+  // fish, shellfish, soybeans, sesame, celery, mustard, lupin, molluscs, sulphites
+};
+
+/** Keywords that indicate an allergen is present in a dish description. */
+const ALLERGEN_KEYWORDS: Record<string, string[]> = {
+  fish: ["fish", "salmon", "tuna", "cod", "branzino", "mackerel", "anchovy", "catfish"],
+  shellfish: ["shrimp", "crab", "lobster", "clam", "mussel", "oyster", "squid", "octopus", "prawn", "scallop"],
+  soybeans: ["soy", "tofu", "edamame", "miso", "tempeh"],
+  sesame: ["sesame", "tahini"],
+  eggs: ["egg", "omelette", "tamago", "meringue"],
+  milk: ["cheese", "cream", "butter", "yogurt", "milk", "ricotta", "burrata", "mozzarella", "paneer", "mascarpone"],
+};
+
+/**
  * Apollo Evaluator — dietary safety verification.
  *
- * Double-checks every dish against the user's dietary restrictions.
+ * Double-checks every dish against the user's dietary restrictions and allergen exclusions.
  * Removes unsafe dishes and adds warning labels to uncertain ones.
  */
 export function verify(
   dishes: DishResult[],
-  restrictions: DietaryFlags
+  restrictions: DietaryFlags,
+  allergenExclusions?: string[]
 ): DishResult[] {
   const activeRestrictions = Object.entries(restrictions)
     .filter(([, v]) => v === true)
     .map(([k]) => k as keyof DietaryFlags);
 
-  if (activeRestrictions.length === 0) return dishes;
+  const allergens = allergenExclusions ?? [];
+  if (activeRestrictions.length === 0 && allergens.length === 0) return dishes;
 
   return dishes
     .filter((dish) => {
+      // Allergen keyword filtering — check dish description for allergen indicators
+      for (const allergen of allergens) {
+        // If allergen maps to a dietary flag, use that
+        const flagKey = ALLERGEN_TO_FLAG[allergen];
+        if (flagKey) {
+          const flag = dish.dietary_flags?.[flagKey];
+          if (flag === false) return false;
+          if (flag !== true) {
+            // Unknown — check description keywords
+            const keywords = ALLERGEN_KEYWORDS[allergen] || [allergen];
+            const desc = (dish.description || "").toLowerCase();
+            const name = (dish.name || "").toLowerCase();
+            if (keywords.some((kw) => desc.includes(kw) || name.includes(kw))) return false;
+          }
+        } else {
+          // No flag mapping — use keyword matching only
+          const keywords = ALLERGEN_KEYWORDS[allergen] || [allergen];
+          const desc = (dish.description || "").toLowerCase();
+          const name = (dish.name || "").toLowerCase();
+          if (keywords.some((kw) => desc.includes(kw) || name.includes(kw))) return false;
+        }
+      }
+
       for (const restriction of activeRestrictions) {
         const flag = dish.dietary_flags?.[restriction];
         const confidence = dish.dietary_confidence ?? 0;
