@@ -31,7 +31,18 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy Prisma generated client (in case trace misses it)
 COPY --from=builder --chown=nextjs:nodejs /app/src/generated ./src/generated
 
+# Copy Prisma schema, config, and migrations for deploy-time migration
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
+
+# Entrypoint: run migrations then start server
+COPY --chown=nextjs:nodejs entrypoint.sh ./entrypoint.sh
+RUN chmod +x entrypoint.sh
+
 USER nextjs
 EXPOSE 8080
 
-CMD ["node", "server.js"]
+CMD ["./entrypoint.sh"]
