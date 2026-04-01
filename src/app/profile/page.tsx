@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { Plus, X } from "lucide-react";
+import { Plus, X, LogOut, User } from "lucide-react";
+import { useAuth } from "@/lib/auth/context";
 
 const DIETARY_OPTIONS = [
   "vegan", "vegetarian", "pescatarian", "keto", "paleo",
@@ -63,6 +64,7 @@ interface UserProfile {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { user: authUser, logout } = useAuth();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [dietary, setDietary] = useState<string[]>([]);
   const [allergens, setAllergens] = useState<string[]>([]);
@@ -75,20 +77,27 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const userId = localStorage.getItem("foodclaw_user_id");
-    if (!userId) {
-      router.push("/onboarding");
+    if (!authUser) {
+      router.push("/login");
       return;
     }
 
-    fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: "" }),
-    }).catch(() => {});
-
-    setUser({ id: userId, email: "", name: "", dietary_restrictions: null, nutritional_goals: null });
-  }, [router]);
+    fetch("/api/users/profile")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data) return;
+        setUser(data);
+        if (data.dietary_restrictions) {
+          setDietary(Object.entries(data.dietary_restrictions).filter(([, v]) => v).map(([k]) => k));
+        }
+        if (data.nutritional_goals?.priority) {
+          setGoal(data.nutritional_goals.priority);
+        }
+        if (data.max_wait_minutes) setMaxWait([data.max_wait_minutes]);
+        if (data.search_radius_miles) setSearchRadius([data.search_radius_miles]);
+      })
+      .catch(() => {});
+  }, [authUser, router]);
 
   function toggleDietary(d: string) {
     setDietary((prev) =>
@@ -115,7 +124,7 @@ export default function ProfilePage() {
   }
 
   async function handleSave() {
-    if (!user) return;
+    if (!authUser) return;
     setSaving(true);
     setSaved(false);
     try {
@@ -126,11 +135,8 @@ export default function ProfilePage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: user.id,
           dietary_restrictions: flags,
           nutritional_goals: { priority: goal },
-          allergens,
-          custom_restrictions: customRestrictions,
           max_wait_minutes: maxWait[0],
           search_radius_miles: searchRadius[0],
         }),
@@ -149,6 +155,21 @@ export default function ProfilePage() {
           <Button variant="ghost" size="sm" className="text-xs">Home</Button>
         </Link>
       </div>
+
+      {/* User info */}
+      {authUser && (
+        <Card>
+          <CardContent className="flex items-center gap-3 pt-4">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <User className="w-5 h-5 text-primary" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-sm truncate">{authUser.name}</p>
+              <p className="text-xs text-muted-foreground truncate">{authUser.email}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Dietary Preferences */}
       <Card>
@@ -283,13 +304,14 @@ export default function ProfilePage() {
 
       <Button
         variant="outline"
-        className="w-full text-xs"
+        className="w-full text-xs text-destructive hover:text-destructive"
         onClick={() => {
-          localStorage.removeItem("foodclaw_user_id");
-          router.push("/onboarding");
+          logout();
+          router.push("/login");
         }}
       >
-        Reset Profile
+        <LogOut className="w-3.5 h-3.5 mr-1.5" />
+        Log Out
       </Button>
     </div>
   );

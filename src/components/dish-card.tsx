@@ -1,9 +1,11 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { UtensilsCrossed, MapPin, Clock, Heart } from "lucide-react";
 import { ConfidenceDot } from "@/components/confidence-dot";
+import { useAuth } from "@/lib/auth/context";
 
 export interface DishCardData {
   id: string;
@@ -30,7 +32,36 @@ function avg(range: { min: number | null; max: number | null } | null): number {
   return Math.round((range.min + range.max) / 2);
 }
 
-export function DishCard({ dish }: { dish: DishCardData }) {
+export function DishCard({ dish, initialFavorited = false }: { dish: DishCardData; initialFavorited?: boolean }) {
+  const { user } = useAuth();
+  const [favorited, setFavorited] = useState(initialFavorited);
+  const [toggling, setToggling] = useState(false);
+
+  const toggleFavorite = useCallback(async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user || toggling) return;
+    setToggling(true);
+    setFavorited((prev) => !prev);
+    try {
+      const res = await fetch("/api/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dish_id: dish.id }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setFavorited(data.saved);
+      } else {
+        setFavorited((prev) => !prev);
+      }
+    } catch {
+      setFavorited((prev) => !prev);
+    } finally {
+      setToggling(false);
+    }
+  }, [user, toggling, dish.id]);
+
   const cal = avg(dish.macros.calories);
   const pro = avg(dish.macros.protein_g);
   const carb = avg(dish.macros.carbs_g);
@@ -70,10 +101,13 @@ export function DishCard({ dish }: { dish: DishCardData }) {
 
           {/* Favorite heart */}
           <button
-            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/80 dark:bg-card/80 backdrop-blur-sm flex items-center justify-center shadow-sm transition-transform duration-200 hover:scale-110 active:scale-95"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full backdrop-blur-sm flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-110 active:scale-95 ${
+              favorited ? "bg-red-500/90" : "bg-white/80 dark:bg-card/80"
+            }`}
+            onClick={toggleFavorite}
+            aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
           >
-            <Heart className="w-4 h-4 text-muted-foreground" />
+            <Heart className={`w-4 h-4 transition-colors ${favorited ? "text-white fill-white" : "text-muted-foreground"}`} />
           </button>
 
           {/* Bottom info on photo */}
@@ -96,11 +130,11 @@ export function DishCard({ dish }: { dish: DishCardData }) {
         </div>
 
         {/* Content */}
-        <div className="p-3 space-y-2">
+        <div className="p-3.5 space-y-2.5">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="font-semibold text-[13px] leading-tight truncate">{dish.name}</h3>
-              <p className="text-[11px] text-muted-foreground truncate mt-0.5">{dish.restaurant_name}</p>
+              <h3 className="font-bold text-sm leading-tight truncate">{dish.name}</h3>
+              <p className="text-xs text-muted-foreground truncate mt-0.5">{dish.restaurant_name}</p>
             </div>
             <ConfidenceDot confidence={dish.macro_confidence} source={dish.macro_source} />
           </div>
