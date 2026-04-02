@@ -91,7 +91,9 @@ export function CategoryPills({ selected = [], onSelect }: CategoryPillsProps) {
                   onSelect(isSelected ? selected.filter(c => c !== cat.id) : [...selected, cat.id]);
                 }
               }}
-              className="flex flex-col items-center gap-1.5 shrink-0 group"
+              aria-pressed={isSelected}
+              aria-label={`Filter by ${cat.label}`}
+              className="flex flex-col items-center gap-1.5 shrink-0 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
             >
               <div className={`w-14 h-14 rounded-2xl border shadow-sm flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-hover:shadow-md group-active:scale-95 ${
                 isSelected ? "bg-primary/10 border-primary/40 ring-2 ring-primary/20" : "bg-card border-border/40"

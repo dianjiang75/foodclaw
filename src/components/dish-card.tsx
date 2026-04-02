@@ -82,7 +82,7 @@ export function DishCard({ dish, initialFavorited = false }: { dish: DishCardDat
                 src={dish.photo_url}
                 alt={dish.name}
                 fill
-                sizes="(max-width: 640px) 100vw, 50vw"
+                sizes="(max-width: 399px) 100vw, (max-width: 1023px) 50vw, 33vw"
                 className="object-cover transition-all duration-500 opacity-0 data-[loaded=true]:opacity-100 group-hover:scale-105"
                 onLoad={(e) => e.currentTarget.setAttribute("data-loaded", "true")}
               />

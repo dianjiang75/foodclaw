@@ -24,7 +24,7 @@ export function MacroBar({ calories, protein_g, carbs_g, fat_g, highlight, compa
   if (compact) {
     return (
       <div className="space-y-1">
-        <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted" role="img" aria-label={`Macros: ${cal} calories, ${pro}g protein, ${carb}g carbs, ${fat}g fat`}>
           <div className="bg-ns-protein transition-all duration-300" style={{ width: `${(pro / total) * 100}%` }} />
           <div className="bg-ns-carbs transition-all duration-300" style={{ width: `${(carb / total) * 100}%` }} />
           <div className="bg-ns-fat transition-all duration-300" style={{ width: `${(fat / total) * 100}%` }} />
@@ -45,7 +45,7 @@ export function MacroBar({ calories, protein_g, carbs_g, fat_g, highlight, compa
   return (
     <div className="space-y-1.5">
       {/* Segmented bar */}
-      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted">
+      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted" role="img" aria-label={`Macros: ${cal} calories, ${pro}g protein, ${carb}g carbs, ${fat}g fat`}>
         <div
           className={`bg-ns-protein transition-all duration-300 ${highlight === "protein" ? "brightness-110" : ""}`}
           style={{ width: `${(pro / total) * 100}%` }}
