@@ -6,6 +6,7 @@ const config: Config = {
   roots: ["<rootDir>/src", "<rootDir>/__tests__"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^jose$": "<rootDir>/__mocks__/jose.ts",
   },
   transform: {
     "^.+\\.tsx?$": [
@@ -16,6 +17,9 @@ const config: Config = {
     ],
   },
   testMatch: ["**/__tests__/**/*.test.ts"],
+  transformIgnorePatterns: [
+    "node_modules/(?!(next-themes|@anthropic-ai|jose)/)",
+  ],
 };
 
 export default config;

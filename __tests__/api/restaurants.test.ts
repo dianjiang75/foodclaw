@@ -58,10 +58,10 @@ describe("GET /api/restaurants/[id]", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.name).toBe("Thai House");
-    expect(body.latitude).toBe(40.7);
-    expect(body.delivery).toHaveLength(1);
-    expect(body.delivery[0].platform).toBe("UBER_EATS");
+    expect(body.data.name).toBe("Thai House");
+    expect(body.data.latitude).toBe(40.7);
+    expect(body.data.delivery).toHaveLength(1);
+    expect(body.data.delivery[0].platform).toBe("UBER_EATS");
   });
 
   it("returns 404 when not found", async () => {
@@ -85,9 +85,9 @@ describe("GET /api/restaurants/[id]/menu", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.restaurant_id).toBe(VALID_UUID);
-    expect(body.categories).toHaveLength(2);
-    const mains = body.categories.find((c: { name: string }) => c.name === "Mains");
+    expect(body.data.restaurant_id).toBe(VALID_UUID);
+    expect(body.data.categories).toHaveLength(2);
+    const mains = body.data.categories.find((c: { name: string }) => c.name === "Mains");
     expect(mains.dishes[0].name).toBe("Pad Thai");
   });
 });
@@ -105,9 +105,9 @@ describe("GET /api/restaurants/[id]/traffic", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.data_available).toBe(true);
-    expect(body.busyness_pct).toBe(75);
-    expect(body.estimated_wait_minutes).toBe(30);
+    expect(body.data.data_available).toBe(true);
+    expect(body.data.busyness_pct).toBe(75);
+    expect(body.data.estimated_wait_minutes).toBe(30);
   });
 
   it("returns null data when not available", async () => {
@@ -117,7 +117,7 @@ describe("GET /api/restaurants/[id]/traffic", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.data_available).toBe(false);
-    expect(body.busyness_pct).toBeNull();
+    expect(body.data.data_available).toBe(false);
+    expect(body.data.busyness_pct).toBeNull();
   });
 });

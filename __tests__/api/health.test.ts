@@ -39,10 +39,10 @@ describe("GET /api/health", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body.status).toBe("healthy");
-    expect(body.checks.database).toBe("ok");
-    expect(body.checks.redis).toBe("ok");
-    expect(body.durationMs).toBeDefined();
+    expect(body.data.status).toBe("healthy");
+    expect(body.data.checks.database).toBe("ok");
+    expect(body.data.checks.redis).toBe("ok");
+    expect(body.data.durationMs).toBeDefined();
   });
 
   it("returns 503 and unhealthy when database is down", async () => {
@@ -55,9 +55,9 @@ describe("GET /api/health", () => {
     const body = await response.json();
 
     expect(response.status).toBe(503);
-    expect(body.status).toBe("unhealthy");
-    expect(body.checks.database).toBe("error");
-    expect(body.checks.redis).toBe("ok");
+    expect(body.data.status).toBe("unhealthy");
+    expect(body.data.checks.database).toBe("error");
+    expect(body.data.checks.redis).toBe("ok");
   });
 
   it("returns 503 and unhealthy when redis is down", async () => {
@@ -70,9 +70,9 @@ describe("GET /api/health", () => {
     const body = await response.json();
 
     expect(response.status).toBe(503);
-    expect(body.status).toBe("unhealthy");
-    expect(body.checks.database).toBe("ok");
-    expect(body.checks.redis).toBe("error");
+    expect(body.data.status).toBe("unhealthy");
+    expect(body.data.checks.database).toBe("ok");
+    expect(body.data.checks.redis).toBe("error");
   });
 
   it("returns 200 degraded when external APIs are down but core is up", async () => {
@@ -84,10 +84,10 @@ describe("GET /api/health", () => {
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body.status).toBe("degraded");
-    expect(body.checks.database).toBe("ok");
-    expect(body.checks.redis).toBe("ok");
-    expect(body.checks.google_places).toBe("error");
-    expect(body.checks.usda).toBe("error");
+    expect(body.data.status).toBe("degraded");
+    expect(body.data.checks.database).toBe("ok");
+    expect(body.data.checks.redis).toBe("ok");
+    expect(body.data.checks.google_places).toBe("error");
+    expect(body.data.checks.usda).toBe("error");
   });
 });

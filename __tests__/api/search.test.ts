@@ -26,7 +26,7 @@ describe("GET /api/search", () => {
         nutritional_goal: "max_protein",
       })
     );
-    expect(body).toEqual(mockResults);
+    expect(body.data).toEqual(mockResults);
   });
 
   it("returns 400 when lat/lng missing", async () => {

@@ -127,6 +127,15 @@ const mockDishes = [
   },
 ];
 
+jest.mock("@/lib/middleware/rate-limiter", () => ({
+  checkApiRateLimit: jest.fn().mockResolvedValue({ allowed: true, remaining: 99, retryAfterSeconds: null }),
+}));
+
+jest.mock("bcryptjs", () => ({
+  hash: jest.fn().mockResolvedValue("$2a$12$hashedpassword"),
+  compare: jest.fn().mockResolvedValue(true),
+}));
+
 jest.mock("@/lib/db/client", () => ({
   prisma: {
     userProfile: {
@@ -160,6 +169,7 @@ jest.mock("@/lib/similarity", () => ({
 
 import { prisma } from "@/lib/db/client";
 import { search } from "@/lib/orchestrator";
+import { signToken } from "@/lib/auth/jwt";
 import { POST as register } from "@/app/api/auth/register/route";
 import { POST as login } from "@/app/api/auth/login/route";
 import { PATCH as updateProfile } from "@/app/api/users/profile/route";
@@ -170,13 +180,20 @@ import { GET as getSimilar } from "@/app/api/dishes/[id]/similar/route";
 import { POST as submitFeedback } from "@/app/api/feedback/route";
 import { findSimilarDishes } from "@/lib/similarity";
 
-function jsonReq(body: unknown): Request {
+function jsonReq(body: unknown, token?: string): Request {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
   return new Request("http://localhost", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(body),
   });
 }
+
+// Use proper UUIDs for params since routes validate UUID format
+const DISH_UUID = "11111111-1111-4111-8111-111111111111";
+const DISH_UUID2 = "22222222-2222-4222-8222-222222222222";
+const RESTAURANT_UUID = "aaaa1111-1111-4111-8111-111111111111";
 
 function makeParams(id: string) {
   return { params: Promise.resolve({ id }) };
@@ -185,7 +202,7 @@ function makeParams(id: string) {
 describe("E2E: User creates profile and searches for dishes", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("registers a vegan user with max protein goal", async () => {
+  it("registers a vegan user with password", async () => {
     (prisma.userProfile.create as jest.Mock).mockResolvedValue({
       id: "u1", email: "test@vegan.com", name: "Vegan User",
     });
@@ -193,31 +210,34 @@ describe("E2E: User creates profile and searches for dishes", () => {
     const res = await register(jsonReq({
       email: "test@vegan.com",
       name: "Vegan User",
+      password: "secret123",
       dietary_restrictions: { vegan: true },
       nutritional_goals: { priority: "max_protein" },
     }));
     const body = await res.json();
 
     expect(res.status).toBe(201);
-    expect(body.id).toBe("u1");
+    expect(body.data.token).toBeDefined();
+    expect(body.data.user.id).toBe("u1");
   });
 
-  it("logs in and retrieves profile", async () => {
+  it("logs in with password and retrieves token", async () => {
     (prisma.userProfile.findUnique as jest.Mock).mockResolvedValue({
       id: "u1", email: "test@vegan.com", name: "Vegan User",
+      passwordHash: "$2a$12$hashedpassword",
       dietaryRestrictions: { vegan: true },
       nutritionalGoals: { priority: "max_protein" },
     });
 
-    const res = await login(jsonReq({ email: "test@vegan.com" }));
+    const res = await login(jsonReq({ email: "test@vegan.com", password: "secret123" }));
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.dietary_restrictions.vegan).toBe(true);
-    expect(body.nutritional_goals.priority).toBe("max_protein");
+    expect(body.data.token).toBeDefined();
+    expect(body.data.user.dietary_restrictions.vegan).toBe(true);
   });
 
-  it("updates max wait time and search radius", async () => {
+  it("updates max wait time and search radius with JWT auth", async () => {
     (prisma.userProfile.update as jest.Mock).mockResolvedValue({
       id: "u1",
       dietaryRestrictions: { vegan: true },
@@ -226,16 +246,22 @@ describe("E2E: User creates profile and searches for dishes", () => {
       searchRadiusMiles: 1.5,
     });
 
-    const res = await updateProfile(jsonReq({
-      user_id: "u1",
-      max_wait_minutes: 20,
-      search_radius_miles: 1.5,
-    }));
+    const token = await signToken({ sub: "u1", email: "test@vegan.com", name: "Vegan User" });
+    const req = new Request("http://localhost/api/users/profile", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ max_wait_minutes: 20, search_radius_miles: 1.5 }),
+    });
+
+    const res = await updateProfile(req);
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.max_wait_minutes).toBe(20);
-    expect(body.search_radius_miles).toBe(1.5);
+    expect(body.data.max_wait_minutes).toBe(20);
+    expect(body.data.search_radius_miles).toBe(1.5);
   });
 });
 
@@ -270,9 +296,8 @@ describe("E2E: Vegan user search returns only vegan dishes sorted by protein", (
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    // Only vegan dishes returned
-    expect(body.dishes.length).toBe(1);
-    expect(body.dishes[0].name).toBe("Falafel Plate");
+    expect(body.data.dishes.length).toBe(1);
+    expect(body.data.dishes[0].name).toBe("Falafel Plate");
   });
 });
 
@@ -280,19 +305,19 @@ describe("E2E: User clicks a dish and sees full detail", () => {
   beforeEach(() => jest.clearAllMocks());
 
   it("returns dish with macros, reviews, and restaurant info", async () => {
-    const d = mockDishes[0]; // Grilled Chicken Breast
+    const d = { ...mockDishes[0], id: DISH_UUID }; // Grilled Chicken Breast
     (prisma.dish.findUnique as jest.Mock).mockResolvedValue(d);
 
-    const res = await getDish(new Request("http://localhost"), makeParams("d1"));
+    const res = await getDish(new Request("http://localhost"), makeParams(DISH_UUID));
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.name).toBe("Grilled Chicken Breast");
-    expect(body.macros.calories).toEqual({ min: 420, max: 520 });
-    expect(body.macros.protein_g).toEqual({ min: 42, max: 52 });
-    expect(body.restaurant.name).toBe("Green Leaf Cafe");
-    expect(body.review_summary.praises).toContain("generous portions");
-    expect(body.photos.length).toBe(1);
+    expect(body.data.name).toBe("Grilled Chicken Breast");
+    expect(body.data.macros.calories).toEqual({ min: 420, max: 520 });
+    expect(body.data.macros.protein_g).toEqual({ min: 42, max: 52 });
+    expect(body.data.restaurant.name).toBe("Green Leaf Cafe");
+    expect(body.data.review_summary.praises).toContain("generous portions");
+    expect(body.data.photos.length).toBe(1);
   });
 });
 
@@ -305,13 +330,12 @@ describe("E2E: Long wait triggers similar dishes recommendation", () => {
       updatedAt: new Date(),
     });
 
-    const res = await getTraffic(new Request("http://localhost"), makeParams("r1"));
+    const res = await getTraffic(new Request("http://localhost"), makeParams(RESTAURANT_UUID));
     const body = await res.json();
 
-    expect(body.data_available).toBe(true);
-    expect(body.busyness_pct).toBe(90);
-    // estimateWaitMinutes(90) would be ~36 min, which exceeds 20 min threshold
-    expect(body.estimated_wait_minutes).toBeGreaterThan(20);
+    expect(body.data.data_available).toBe(true);
+    expect(body.data.busyness_pct).toBe(90);
+    expect(body.data.estimated_wait_minutes).toBeGreaterThan(20);
 
     // User should then see similar dishes
     (findSimilarDishes as jest.Mock).mockResolvedValue([
@@ -320,13 +344,13 @@ describe("E2E: Long wait triggers similar dishes recommendation", () => {
     ]);
 
     const simRes = await getSimilar(
-      new Request("http://localhost/api/dishes/d1/similar?lat=40.7264&lng=-73.9878&limit=4"),
-      makeParams("d1")
+      new Request(`http://localhost/api/dishes/${DISH_UUID}/similar?lat=40.7264&lng=-73.9878&limit=4`),
+      makeParams(DISH_UUID)
     );
     const simBody = await simRes.json();
 
-    expect(simBody.dishes.length).toBe(2);
-    expect(simBody.dishes[0].name).toBe("Falafel Plate");
+    expect(simBody.data.dishes.length).toBe(2);
+    expect(simBody.data.dishes[0].name).toBe("Falafel Plate");
   });
 });
 
@@ -354,7 +378,7 @@ describe("E2E: Search with no dietary restrictions returns all dishes", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.dishes.length).toBe(4);
+    expect(body.data.dishes.length).toBe(4);
   });
 });
 
@@ -379,8 +403,7 @@ describe("E2E: Search with calorie limit filters results", () => {
     expect(search).toHaveBeenCalledWith(
       expect.objectContaining({ calorie_limit: 600 })
     );
-    // d1 (420-520) and d3 (480-580) are under 600; d2 (520-640) and d4 (650-780) exceed
-    expect(body.dishes.length).toBe(2);
+    expect(body.data.dishes.length).toBe(2);
   });
 });
 
@@ -391,14 +414,14 @@ describe("E2E: Community feedback submission", () => {
     (prisma.communityFeedback.create as jest.Mock).mockResolvedValue({ id: "fb1" });
 
     const res = await submitFeedback(jsonReq({
-      dish_id: "d1",
-      user_id: "u1",
+      dish_id: DISH_UUID,
+      user_id: "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
       feedback_type: "portion_bigger",
       details: "Portion was much larger than expected",
     }));
     const body = await res.json();
 
     expect(res.status).toBe(201);
-    expect(body.id).toBe("fb1");
+    expect(body.data.id).toBe("fb1");
   });
 });

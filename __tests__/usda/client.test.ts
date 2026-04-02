@@ -1,5 +1,6 @@
 import { searchFood, getFoodDetails, estimateMacros } from "@/lib/usda/client";
 import { NUTRIENT_IDS } from "@/lib/usda/types";
+import { redis } from "@/lib/cache/redis";
 
 // Mock Redis
 jest.mock("@/lib/cache/redis", () => ({
@@ -78,7 +79,6 @@ describe("USDA Client", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Reset Redis cache mock to return null (cache miss)
-    const { redis } = require("@/lib/cache/redis");
     (redis.get as jest.Mock).mockResolvedValue(null);
   });
 
@@ -191,7 +191,6 @@ describe("USDA Client", () => {
 
   describe("Redis caching", () => {
     it("returns cached results on cache hit", async () => {
-      const { redis } = require("@/lib/cache/redis");
       (redis.get as jest.Mock).mockResolvedValueOnce(
         JSON.stringify(chickenSearchResponse.foods)
       );

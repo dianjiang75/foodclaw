@@ -69,12 +69,12 @@ describe("GET /api/dishes/[id]", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.id).toBe(VALID_UUID);
-    expect(body.name).toBe("Pad Thai");
-    expect(body.macros.calories).toEqual({ min: 400, max: 550 });
-    expect(body.restaurant.name).toBe("Thai House");
-    expect(body.review_summary.summary).toBe("Great flavors");
-    expect(body.photos).toHaveLength(1);
+    expect(body.data.id).toBe(VALID_UUID);
+    expect(body.data.name).toBe("Pad Thai");
+    expect(body.data.macros.calories).toEqual({ min: 400, max: 550 });
+    expect(body.data.restaurant.name).toBe("Thai House");
+    expect(body.data.review_summary.summary).toBe("Great flavors");
+    expect(body.data.photos).toHaveLength(1);
   });
 
   it("returns 400 for invalid UUID", async () => {
@@ -121,7 +121,7 @@ describe("GET /api/dishes/[id]/photos", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.photos).toHaveLength(1);
-    expect(body.photos[0].id).toBe("p1");
+    expect(body.data.photos).toHaveLength(1);
+    expect(body.data.photos[0].id).toBe("p1");
   });
 });

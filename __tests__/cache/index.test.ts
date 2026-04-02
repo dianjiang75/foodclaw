@@ -78,9 +78,12 @@ describe("Cache Layer", () => {
         radiusMiles: 2.0,
         categories: [],
         sortBy: null,
+        calorieLimit: null,
+        proteinMin: null,
+        allergens: [],
       });
 
-      expect(key).toBe("query:all:gluten_free|vegan:max_protein:none:default:40.736,-73.991:r2.0");
+      expect(key).toBe("query:all:gluten_free|vegan:max_protein:none:default:calnone:protnone:algnone:40.736,-73.991:r2.0");
     });
 
     it("sorts filters alphabetically regardless of input order", () => {
@@ -93,6 +96,9 @@ describe("Cache Layer", () => {
         radiusMiles: 2.0,
         categories: [],
         sortBy: null,
+        calorieLimit: null,
+        proteinMin: null,
+        allergens: [],
       });
       const key2 = buildQueryCacheKey({
         searchText: null,
@@ -103,6 +109,9 @@ describe("Cache Layer", () => {
         radiusMiles: 2.0,
         categories: [],
         sortBy: null,
+        calorieLimit: null,
+        proteinMin: null,
+        allergens: [],
       });
 
       expect(key1).toBe(key2);
@@ -118,9 +127,12 @@ describe("Cache Layer", () => {
         radiusMiles: 1.5,
         categories: [],
         sortBy: null,
+        calorieLimit: null,
+        proteinMin: null,
+        allergens: [],
       });
 
-      expect(key).toBe("query:all:none:none:none:default:40.735,-73.991:r1.5");
+      expect(key).toBe("query:all:none:none:none:default:calnone:protnone:algnone:40.735,-73.991:r1.5");
     });
 
     it("rounds lat/lng to 3 decimal places (~100m)", () => {
@@ -133,9 +145,12 @@ describe("Cache Layer", () => {
         radiusMiles: 2.0,
         categories: [],
         sortBy: null,
+        calorieLimit: null,
+        proteinMin: null,
+        allergens: [],
       });
 
-      expect(key).toBe("query:all:vegan:none:none:default:40.736,-73.991:r2.0");
+      expect(key).toBe("query:all:vegan:none:none:default:calnone:protnone:algnone:40.736,-73.991:r2.0");
     });
 
     it("includes search text in cache key", () => {
@@ -148,6 +163,9 @@ describe("Cache Layer", () => {
         radiusMiles: 2.0,
         categories: [],
         sortBy: null,
+        calorieLimit: null,
+        proteinMin: null,
+        allergens: [],
       });
 
       expect(key).toContain("pad thai");
@@ -165,6 +183,9 @@ describe("Cache Layer", () => {
         radiusMiles: 2.0,
         categories: [] as string[],
         sortBy: null,
+        calorieLimit: null,
+        proteinMin: null,
+        allergens: [],
       };
 
       const expectedData = [{ dish: "Tofu Pad Thai", score: 0.95 }];
@@ -184,6 +205,9 @@ describe("Cache Layer", () => {
         radiusMiles: 2.0,
         categories: [] as string[],
         sortBy: null,
+        calorieLimit: null,
+        proteinMin: null,
+        allergens: [],
       };
 
       await setCachedQuery(params, [{ dish: "test" }]);
