@@ -69,7 +69,7 @@ export async function fullTextSearchDishes(
   const results = await prisma.$queryRaw<{ id: string; rank: number }[]>`
     SELECT
       id,
-      ts_rank(search_vector, to_tsquery('english', ${tsquery})) AS rank
+      ts_rank_cd(search_vector, to_tsquery('english', ${tsquery}), 2) AS rank
     FROM dishes
     WHERE search_vector @@ to_tsquery('english', ${tsquery})
       AND is_available = true
@@ -84,10 +84,11 @@ export async function fullTextSearchDishes(
   const simpleResults = await prisma.$queryRaw<{ id: string; rank: number }[]>`
     SELECT
       id,
-      ts_rank(
+      ts_rank_cd(
         setweight(to_tsvector('simple', coalesce(name, '')), 'A') ||
         setweight(to_tsvector('simple', coalesce(description, '')), 'B'),
-        to_tsquery('simple', ${tsquery})
+        to_tsquery('simple', ${tsquery}),
+        2
       ) AS rank
     FROM dishes
     WHERE (

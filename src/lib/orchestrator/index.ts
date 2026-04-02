@@ -67,11 +67,14 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   // Full-text search: use tsvector when available, fallback to ILIKE
   let textWhere: Record<string, unknown> = {};
   let textSearchDishIds: string[] | null = null;
+  let ftsRankMap: Map<string, number> | null = null;
   if (query.query) {
     try {
       const ftsResults = await fullTextSearchDishes(query.query, 200);
       if (ftsResults.length > 0) {
         textSearchDishIds = ftsResults.map((r) => r.id);
+        // Preserve FTS rank scores for relevance scoring
+        ftsRankMap = new Map(ftsResults.map((r) => [r.id, r.rank]));
       } else {
         // tsvector returned nothing — fallback to ILIKE on name AND description
         textWhere = {
@@ -302,12 +305,22 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
       return macroMatchScore(b, query.nutritional_goal!) - macroMatchScore(a, query.nutritional_goal!);
     });
   } else if (!query.sort_by || (query.sort_by === "macro_match" && !query.nutritional_goal)) {
-    // Default "Best Match" — multi-factor relevance scoring
-    verified.sort((a, b) => relevanceScore(b) - relevanceScore(a));
+    // Default "Best Match" — multi-factor relevance scoring with FTS rank
+    verified.sort((a, b) => relevanceScore(b, ftsRankMap) - relevanceScore(a, ftsRankMap));
   }
 
-  // 5c. Restaurant diversity cap: max 3 dishes per restaurant, interleaved
+  // 5c. Restaurant diversity cap: max 3 dishes per restaurant
   const diversified = applyRestaurantDiversityCap(verified, 3);
+
+  // 5d. Re-sort after diversity cap for explicit sorts so order stays monotonic
+  // (the cap can remove items and break the sort order)
+  if (query.sort_by === "rating") {
+    diversified.sort((a, b) => (b.review_summary?.average_rating ?? -1) - (a.review_summary?.average_rating ?? -1));
+  } else if (query.sort_by === "distance") {
+    diversified.sort((a, b) => (a.restaurant.distance_miles ?? Infinity) - (b.restaurant.distance_miles ?? Infinity));
+  } else if (query.sort_by === "wait_time") {
+    diversified.sort((a, b) => (a.logistics?.estimated_wait_minutes ?? Infinity) - (b.logistics?.estimated_wait_minutes ?? Infinity));
+  }
 
   // 6. Cache full result set, then return paginated slice
   const fullResult: SearchResults = {
@@ -443,13 +456,29 @@ function haversine(lat1: number, lng1: number, lat2: number, lng2: number): numb
  * Multi-factor relevance score for default "Best Match" sorting.
  * Combines rating, proximity, data completeness, and review coverage.
  */
-function relevanceScore(dish: DishResult): number {
+function relevanceScore(dish: DishResult, ftsRankMap?: Map<string, number> | null): number {
   const rating = dish.review_summary?.average_rating ?? 0;
   const dist = dish.restaurant.distance_miles ?? 10;
   const hasPhoto = dish.photo_url ? 1 : 0;
   const hasReview = dish.review_summary ? 1 : 0;
   const confidence = dish.macro_confidence ?? 0;
 
+  // When a text query was used, incorporate FTS rank as a primary signal
+  const ftsRank = ftsRankMap?.get(dish.id) ?? 0;
+  if (ftsRank > 0) {
+    // Normalize rank (ts_rank_cd typically 0-1, clamp to be safe)
+    const normalizedRank = Math.min(ftsRank, 1);
+    return (
+      normalizedRank * 0.30 +                // 30% weight: text relevance
+      (rating / 5) * 0.25 +                  // 25% weight: dish quality
+      (1 / (1 + dist)) * 0.20 +             // 20% weight: proximity
+      hasReview * 0.10 +                     // 10% weight: has review data
+      confidence * 0.10 +                    // 10% weight: macro confidence
+      hasPhoto * 0.05                        //  5% weight: has photo
+    );
+  }
+
+  // Browsing mode (no text query) — original weights
   return (
     (rating / 5) * 0.35 +           // 35% weight: dish quality
     (1 / (1 + dist)) * 0.25 +       // 25% weight: proximity (closer = higher)
