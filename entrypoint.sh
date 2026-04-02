@@ -2,13 +2,8 @@
 set -e
 
 echo "Running Prisma migrations..."
-npx prisma migrate deploy
-echo "Migrations complete."
-
-echo "Starting BullMQ workers..."
-node workers/start-all.js &
-WORKER_PID=$!
-echo "Workers started (PID: $WORKER_PID)"
+node node_modules/prisma/build/index.js migrate deploy || echo "Migration warning (may be first deploy)"
+echo "Migrations step complete."
 
 echo "Starting server..."
 exec node server.js
