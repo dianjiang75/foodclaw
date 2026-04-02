@@ -46,6 +46,6 @@ BEGIN
   IF (SELECT count(*) FROM dishes WHERE macro_embedding IS NOT NULL) > 0 THEN
     DROP INDEX IF EXISTS idx_dish_macro_embedding;
     CREATE INDEX IF NOT EXISTS idx_dish_macro_embedding ON dishes
-      USING hnsw(macro_embedding vector_cosine_ops) WITH (m = 8, ef_construction = 32);
+      USING hnsw(macro_embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64);
   END IF;
 END $$;

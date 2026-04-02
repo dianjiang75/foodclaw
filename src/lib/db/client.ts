@@ -11,8 +11,9 @@ function createPrismaClient(): PrismaClient {
   const adapter = new PrismaPg({
     connectionString,
     max: parseInt(process.env.DB_POOL_MAX || "10", 10),
+    min: 2, // Keep warm connections for consistent latency
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000,
+    connectionTimeoutMillis: 5000, // Surface connection issues faster (was 10s)
   });
   return new PrismaClient({
     adapter,

@@ -47,6 +47,8 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     };
   }
 
+  logger.debug("Search cache miss", { query: query.query, durationMs: Date.now() - start });
+
   // 2. Build and execute database query
   const dietaryWhere = buildDietaryWhere(query.dietary_restrictions);
 

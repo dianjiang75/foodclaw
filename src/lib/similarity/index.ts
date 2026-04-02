@@ -99,39 +99,48 @@ async function findSimilarDishesViaVector(
   // Over-fetch to allow for post-query boosts reordering results
   const dbLimit = limit * 3;
 
-  const rows = await prisma.$queryRaw<VectorSimilarityRow[]>`
-    SELECT
-      d.id,
-      d.name,
-      d.restaurant_id,
-      d.calories_min,
-      d.calories_max,
-      d.protein_max_g::float AS protein_max_g,
-      d.macro_confidence::float AS macro_confidence,
-      d.dietary_flags,
-      d.macro_source,
-      1 - (d.macro_embedding <=> (
+  // Use a transaction so SET LOCAL settings are scoped and don't leak
+  const rows = await prisma.$transaction(async (tx) => {
+    // Enable iterative scans so filtered vector queries don't silently return
+    // fewer results for sparse categories (kosher, halal, vegan)
+    await tx.$executeRaw`SET LOCAL hnsw.iterative_scan = 'relaxed_order'`;
+    await tx.$executeRaw`SET LOCAL hnsw.max_scan_tuples = 10000`;
+    await tx.$executeRaw`SET LOCAL hnsw.ef_search = 100`;
+
+    return tx.$queryRaw<VectorSimilarityRow[]>`
+      SELECT
+        d.id,
+        d.name,
+        d.restaurant_id,
+        d.calories_min,
+        d.calories_max,
+        d.protein_max_g::float AS protein_max_g,
+        d.macro_confidence::float AS macro_confidence,
+        d.dietary_flags,
+        d.macro_source,
+        1 - (d.macro_embedding <=> (
+          SELECT macro_embedding FROM dishes WHERE id = ${dishId}::uuid
+        )) AS similarity,
+        r.name AS restaurant_name,
+        r.address,
+        r.google_rating::float AS google_rating
+      FROM dishes d
+      JOIN restaurants r ON d.restaurant_id = r.id
+      WHERE d.id != ${dishId}::uuid
+        AND d.restaurant_id != ${sourceRestaurantId}::uuid
+        AND d.is_available = true
+        AND r.is_active = true
+        AND d.macro_embedding IS NOT NULL
+        AND earth_box(
+          ll_to_earth(${options.latitude}, ${options.longitude}),
+          ${radiusMeters}
+        ) @> ll_to_earth(r.latitude::float, r.longitude::float)
+      ORDER BY d.macro_embedding <=> (
         SELECT macro_embedding FROM dishes WHERE id = ${dishId}::uuid
-      )) AS similarity,
-      r.name AS restaurant_name,
-      r.address,
-      r.google_rating::float AS google_rating
-    FROM dishes d
-    JOIN restaurants r ON d.restaurant_id = r.id
-    WHERE d.id != ${dishId}::uuid
-      AND d.restaurant_id != ${sourceRestaurantId}::uuid
-      AND d.is_available = true
-      AND r.is_active = true
-      AND d.macro_embedding IS NOT NULL
-      AND earth_box(
-        ll_to_earth(${options.latitude}, ${options.longitude}),
-        ${radiusMeters}
-      ) @> ll_to_earth(r.latitude::float, r.longitude::float)
-    ORDER BY d.macro_embedding <=> (
-      SELECT macro_embedding FROM dishes WHERE id = ${dishId}::uuid
-    )
-    LIMIT ${dbLimit}
-  `;
+      )
+      LIMIT ${dbLimit}
+    `;
+  });
 
   // Filter out low-similarity results and map to return type
   return rows
