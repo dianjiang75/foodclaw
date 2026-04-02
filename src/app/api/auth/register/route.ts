@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       { success: true, data: { token, user: { id: user.id, email: user.email, name: user.name } } },
       {
         status: 201,
-        headers: { "Set-Cookie": `token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}` },
+        headers: { "Set-Cookie": `token=${token}; Path=/; HttpOnly; SameSite=Lax; Secure; Max-Age=${7 * 24 * 60 * 60}` },
       }
     );
   } catch (error) {

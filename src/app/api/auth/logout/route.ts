@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   return new Response(null, {
     status: 204,
     headers: {
-      "Set-Cookie": "token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax",
+      "Set-Cookie": "token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax; Secure",
     },
   });
 }

@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         },
       },
       {
-        headers: { "Set-Cookie": `token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}` },
+        headers: { "Set-Cookie": `token=${token}; Path=/; HttpOnly; SameSite=Lax; Secure; Max-Age=${7 * 24 * 60 * 60}` },
       }
     );
   } catch {
