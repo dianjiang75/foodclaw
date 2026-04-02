@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/db/client";
 import { authenticateRequest } from "@/lib/auth/jwt";
 import { checkApiRateLimit } from "@/lib/middleware/rate-limiter";
+import { apiSuccess, apiError, apiUnauthorized, apiNotFound, apiRateLimited } from "@/lib/utils/api-response";
 
 export async function GET(request: Request) {
   const auth = await authenticateRequest(request);
   if (!auth) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return apiUnauthorized();
   }
 
   const user = await prisma.userProfile.findUnique({
@@ -13,10 +14,10 @@ export async function GET(request: Request) {
   });
 
   if (!user) {
-    return Response.json({ error: "User not found" }, { status: 404 });
+    return apiNotFound("User not found");
   }
 
-  return Response.json({
+  return apiSuccess({
     id: user.id,
     email: user.email,
     name: user.name,
@@ -31,15 +32,12 @@ export async function PATCH(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
   const rl = await checkApiRateLimit(ip, "write");
   if (!rl.allowed) {
-    return Response.json(
-      { error: "Too many requests", retryAfterSeconds: rl.retryAfterSeconds },
-      { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) } }
-    );
+    return apiRateLimited(rl.retryAfterSeconds);
   }
 
   const auth = await authenticateRequest(request);
   if (!auth) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
+    return apiUnauthorized();
   }
 
   try {
@@ -59,7 +57,7 @@ export async function PATCH(request: Request) {
       },
     });
 
-    return Response.json({
+    return apiSuccess({
       id: user.id,
       dietary_restrictions: user.dietaryRestrictions,
       nutritional_goals: user.nutritionalGoals,
@@ -67,6 +65,6 @@ export async function PATCH(request: Request) {
       search_radius_miles: Number(user.searchRadiusMiles),
     });
   } catch {
-    return Response.json({ error: "Profile update failed" }, { status: 500 });
+    return apiError("Profile update failed");
   }
 }

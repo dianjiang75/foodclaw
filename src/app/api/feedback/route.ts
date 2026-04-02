@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/db/client";
-import { checkApiRateLimit } from "@/lib/middleware/rate-limiter";
-import { apiSuccess, apiBadRequest, apiError, apiRateLimited } from "@/lib/utils/api-response";
+import { withRateLimit } from "@/lib/middleware/with-rate-limit";
+import { apiSuccess, apiBadRequest, apiError } from "@/lib/utils/api-response";
 
 const feedbackSchema = z.object({
   dish_id: z.string().uuid("Invalid dish_id"),
@@ -14,14 +14,8 @@ const feedbackSchema = z.object({
   photo_url: z.string().url("Invalid photo URL").max(2048).nullable().optional(),
 });
 
-export async function POST(request: Request) {
+export const POST = withRateLimit("write", async (request) => {
   try {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-    const rl = await checkApiRateLimit(ip, "write");
-    if (!rl.allowed) {
-      return apiRateLimited(rl.retryAfterSeconds);
-    }
-
     const body = await request.json().catch(() => null);
     if (!body) {
       return apiBadRequest("Invalid JSON body");
@@ -48,4 +42,4 @@ export async function POST(request: Request) {
   } catch {
     return apiError("Failed to submit feedback");
   }
-}
+});

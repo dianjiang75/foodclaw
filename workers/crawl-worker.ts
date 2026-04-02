@@ -51,6 +51,8 @@ const worker = new Worker<CrawlJobData>("menu-crawl", processCrawlJob, {
     max: 10,
     duration: 60000, // 10 jobs per minute to respect API rate limits
   },
+  removeOnComplete: { count: 100 },
+  removeOnFail: { count: 500 },
   settings: {
     backoffStrategy: (attemptsMade: number) => {
       // Exponential backoff: 5s, 25s, 125s
@@ -83,11 +85,19 @@ worker.on("completed", async (job) => {
       for (const dish of dishes) {
         const photo = dish.photos[0];
         if (photo?.sourceUrl) {
+          // Priority: lower number = higher priority
+          // Re-analysis of low-confidence dishes (< 0.7) gets priority 1
+          // New dishes without analysis get priority 2
+          // High-confidence dishes (re-crawl refresh) get priority 3
+          const confidence = dish.macroConfidence ? Number(dish.macroConfidence) : 0;
+          const priority = confidence === 0 ? 2 : confidence < 0.7 ? 1 : 3;
+
           await photoAnalysisQueue.add(
             `analyze-${dish.id}`,
             { dishId: dish.id, photoUrl: photo.sourceUrl, restaurantName: result.restaurantName },
             {
               jobId: `photo-${dish.id}`, // Deduplication: same dish won't be analyzed twice
+              priority,
               attempts: 2,
               backoff: { type: "exponential", delay: 5000 },
             }
@@ -105,8 +115,26 @@ worker.on("completed", async (job) => {
   }
 });
 
-worker.on("failed", (job, err) => {
-  console.error(`[crawl-worker] Job ${job?.id} failed:`, err.message);
+worker.on("failed", async (job, err) => {
+  console.error(`[crawl-worker] Job ${job?.id} failed (attempt ${job?.attemptsMade}):`, err.message);
+
+  // Move to dead letter queue after all retries exhausted
+  if (job && job.attemptsMade >= (job.opts.attempts ?? 3)) {
+    try {
+      const { deadLetterQueue } = await import("./queues");
+      await deadLetterQueue.add("crawl-failed", {
+        originalQueue: "menu-crawl",
+        jobId: job.id,
+        data: job.data,
+        error: err.message,
+        attempts: job.attemptsMade,
+        failedAt: new Date().toISOString(),
+      });
+      console.warn(`[crawl-worker] Job ${job.id} moved to dead letter queue`);
+    } catch {
+      // DLQ add failed — just log
+    }
+  }
 });
 
 export { worker };

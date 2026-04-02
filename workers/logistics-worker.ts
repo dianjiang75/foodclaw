@@ -40,6 +40,8 @@ const worker = new Worker<LogisticsJobData>(
       max: 20,
       duration: 60000,
     },
+    removeOnComplete: { count: 100 },
+    removeOnFail: { count: 500 },
   }
 );
 

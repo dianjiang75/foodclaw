@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/client";
+import { apiSuccess, apiError } from "@/lib/utils/api-response";
 
 export async function GET(
   _request: Request,
@@ -12,7 +13,7 @@ export async function GET(
       orderBy: { createdAt: "desc" },
     });
 
-    return Response.json({
+    return apiSuccess({
       photos: photos.map((p) => ({
         id: p.id,
         url: p.sourceUrl,
@@ -22,6 +23,6 @@ export async function GET(
       })),
     });
   } catch {
-    return Response.json({ error: "Failed to fetch photos" }, { status: 500 });
+    return apiError("Failed to fetch photos");
   }
 }

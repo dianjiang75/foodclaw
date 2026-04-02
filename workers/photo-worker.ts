@@ -28,8 +28,17 @@ async function processPhotoJob(job: Job<PhotoJobData>) {
 
   const { analyzeFoodPhoto } = await import("../src/lib/agents/vision-analyzer");
 
-  // Uses Gemini 2.5 Flash for best vision accuracy per dollar
+  // Uses Gemini Flash for best vision accuracy per dollar
   const analysis = await analyzeFoodPhoto(photoUrl);
+
+  // Skip low-confidence results — worse than no estimate
+  // Research (2025) uses 0.5 threshold; we use 0.4 to be slightly more permissive
+  if (analysis.confidence < 0.4) {
+    console.warn(
+      `[photo-worker] Skipping ${analysis.dish_name} — confidence ${(analysis.confidence * 100).toFixed(0)}% below 40% threshold`
+    );
+    return { dishId, dishName: analysis.dish_name, confidence: analysis.confidence, skipped: true };
+  }
 
   // Update dish with macro estimates from vision analysis
   await prisma.dish.update({
@@ -63,6 +72,8 @@ const worker = new Worker<PhotoJobData>("photo-analysis", processPhotoJob, {
     max: 5,
     duration: 60000, // 5 photos per minute to manage API costs
   },
+  removeOnComplete: { count: 100 },
+  removeOnFail: { count: 500 },
   settings: {
     backoffStrategy: (attemptsMade: number) => {
       return Math.pow(5, attemptsMade) * 1000; // 5s, 25s

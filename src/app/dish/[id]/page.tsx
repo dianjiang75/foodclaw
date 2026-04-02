@@ -185,12 +185,14 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
           >
             {dish.photos.map((photo, i) => (
               <div key={i} className="relative aspect-video w-full shrink-0 snap-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/10" />
                 <Image
                   src={photo.url}
                   alt={`${dish.name} photo ${i + 1}`}
                   fill
                   sizes="(max-width: 672px) 100vw, 672px"
-                  className="object-cover"
+                  className="object-cover transition-opacity duration-500 opacity-0 data-[loaded=true]:opacity-100"
+                  onLoad={(e) => e.currentTarget.setAttribute("data-loaded", "true")}
                   priority={i === 0}
                 />
               </div>
@@ -202,7 +204,7 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
               {dish.photos.map((_, i) => (
                 <button
                   key={i}
-                  className={`rounded-full transition-all duration-200 ${
+                  className={`rounded-full transition-all duration-200 p-2 ${
                     i === photoIndex ? "w-4 h-2 bg-white" : "w-2 h-2 bg-white/50"
                   }`}
                   onClick={() => {

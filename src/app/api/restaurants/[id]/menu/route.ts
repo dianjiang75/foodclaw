@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/client";
+import { apiSuccess, apiError } from "@/lib/utils/api-response";
 
 export async function GET(
   _request: Request,
@@ -19,7 +20,7 @@ export async function GET(
       grouped[cat].push(dish);
     }
 
-    return Response.json({
+    return apiSuccess({
       restaurant_id: id,
       categories: Object.entries(grouped).map(([category, items]) => ({
         name: category,
@@ -35,6 +36,6 @@ export async function GET(
       })),
     });
   } catch {
-    return Response.json({ error: "Failed to fetch menu" }, { status: 500 });
+    return apiError("Failed to fetch menu");
   }
 }

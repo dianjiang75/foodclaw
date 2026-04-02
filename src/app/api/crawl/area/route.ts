@@ -1,16 +1,8 @@
-import { checkApiRateLimit } from "@/lib/middleware/rate-limiter";
+import { withRateLimit } from "@/lib/middleware/with-rate-limit";
+import { fetchWithRetry } from "@/lib/utils/fetch-retry";
 
-export async function POST(request: Request) {
+export const POST = withRateLimit("crawl", async (request) => {
   try {
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-    const rl = await checkApiRateLimit(ip, "crawl");
-    if (!rl.allowed) {
-      return Response.json(
-        { error: "Too many requests", retryAfterSeconds: rl.retryAfterSeconds },
-        { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) } }
-      );
-    }
-
     const { latitude, longitude, radius_miles } = await request.json();
 
     if (latitude == null || longitude == null) {
@@ -25,7 +17,7 @@ export async function POST(request: Request) {
     const radiusMeters = Math.round((radius_miles || 0.5) * 1609.34);
     const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radiusMeters}&type=restaurant&key=${apiKey}`;
 
-    const res = await fetch(url);
+    const res = await fetchWithRetry(url, undefined, { maxRetries: 2 });
     if (!res.ok) {
       return Response.json({ error: "Google Places API failed" }, { status: 502 });
     }
@@ -45,9 +37,10 @@ export async function POST(request: Request) {
       // Auto-lookup Yelp business ID using Yelp Business Match API
       if (yelpKey && yelpKey !== "placeholder") {
         try {
-          const yelpRes = await fetch(
+          const yelpRes = await fetchWithRetry(
             `https://api.yelp.com/v3/businesses/matches?name=${encodeURIComponent(place.name)}&address1=${encodeURIComponent(place.vicinity || "")}&city=New York&state=NY&country=US&limit=1`,
-            { headers: { Authorization: `Bearer ${yelpKey}` } }
+            { headers: { Authorization: `Bearer ${yelpKey}` } },
+            { maxRetries: 2 }
           );
           if (yelpRes.ok) {
             const yelpData = await yelpRes.json();
@@ -73,4 +66,4 @@ export async function POST(request: Request) {
   } catch {
     return Response.json({ error: "Failed to trigger area crawl" }, { status: 500 });
   }
-}
+});

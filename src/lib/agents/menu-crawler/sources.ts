@@ -1,5 +1,7 @@
 import * as cheerio from "cheerio";
 import Anthropic from "@anthropic-ai/sdk";
+import { extractJson } from "@/lib/utils/parse-json";
+import { fetchWithRetry } from "@/lib/utils/fetch-retry";
 import type { MenuSourceStrategy, RawMenuItem, RestaurantInfo } from "./types";
 
 const MENU_EXTRACTION_PROMPT = `This is a photo of a restaurant menu. Extract ALL menu items with:
@@ -35,10 +37,9 @@ export const websiteSource: MenuSourceStrategy = {
       let menuHtml: string | null = null;
 
       // First try the main page for a menu link
-      const mainRes = await fetch(baseUrl, {
+      const mainRes = await fetchWithRetry(baseUrl, {
         headers: { "User-Agent": "FoodClaw/1.0 (menu-indexer)" },
-        signal: AbortSignal.timeout(10000),
-      });
+      }, { maxRetries: 2, timeoutMs: 10000 });
 
       if (mainRes.ok) {
         const html = await mainRes.text();
@@ -52,10 +53,9 @@ export const websiteSource: MenuSourceStrategy = {
             const menuUrl = href.startsWith("http")
               ? href
               : new URL(href, baseUrl).toString();
-            const menuRes = await fetch(menuUrl, {
+            const menuRes = await fetchWithRetry(menuUrl, {
               headers: { "User-Agent": "FoodClaw/1.0 (menu-indexer)" },
-              signal: AbortSignal.timeout(10000),
-            });
+            }, { maxRetries: 2, timeoutMs: 10000 });
             if (menuRes.ok) {
               menuHtml = await menuRes.text();
             }
@@ -67,10 +67,9 @@ export const websiteSource: MenuSourceStrategy = {
       if (!menuHtml) {
         for (const path of menuPaths) {
           try {
-            const res = await fetch(`${baseUrl}${path}`, {
+            const res = await fetchWithRetry(`${baseUrl}${path}`, {
               headers: { "User-Agent": "FoodClaw/1.0 (menu-indexer)" },
-              signal: AbortSignal.timeout(5000),
-            });
+            }, { maxRetries: 2, timeoutMs: 5000 });
             if (res.ok) {
               menuHtml = await res.text();
               break;
@@ -259,7 +258,7 @@ export const googlePhotosSource: MenuSourceStrategy = {
     try {
       // Get place details with photos
       const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${restaurant.googlePlaceId}&fields=photos&key=${apiKey}`;
-      const detailsRes = await fetch(detailsUrl);
+      const detailsRes = await fetchWithRetry(detailsUrl, undefined, { maxRetries: 2 });
       if (!detailsRes.ok) return null;
 
       const details = await detailsRes.json();
@@ -291,9 +290,13 @@ export const googlePhotosSource: MenuSourceStrategy = {
 
           const textBlock = response.content.find((b) => b.type === "text");
           if (textBlock && textBlock.type === "text") {
-            const parsed = JSON.parse(textBlock.text);
-            if (Array.isArray(parsed)) {
-              allItems.push(...parsed.map((item: RawMenuItem) => ({ ...item, photoUrl })));
+            try {
+              const parsed = extractJson<RawMenuItem[]>(textBlock.text);
+              if (Array.isArray(parsed)) {
+                allItems.push(...parsed.map((item: RawMenuItem) => ({ ...item, photoUrl })));
+              }
+            } catch {
+              // Skip unparseable photo menu extraction
             }
           }
         } catch {

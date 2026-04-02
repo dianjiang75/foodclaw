@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/client";
 import { estimateWaitMinutes } from "@/lib/agents/logistics-poller";
+import { apiSuccess, apiError } from "@/lib/utils/api-response";
 
 export const dynamic = "force-dynamic";
 
@@ -22,14 +23,14 @@ export async function GET(
     });
 
     if (!logistics) {
-      return Response.json({
+      return apiSuccess({
         busyness_pct: null,
         estimated_wait_minutes: null,
         data_available: false,
       });
     }
 
-    return Response.json({
+    return apiSuccess({
       busyness_pct: logistics.typicalBusynessPct,
       estimated_wait_minutes: logistics.typicalBusynessPct
         ? estimateWaitMinutes(logistics.typicalBusynessPct)
@@ -38,6 +39,6 @@ export async function GET(
       last_updated: logistics.updatedAt,
     });
   } catch {
-    return Response.json({ error: "Failed to fetch traffic" }, { status: 500 });
+    return apiError("Failed to fetch traffic");
   }
 }

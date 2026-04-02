@@ -1,30 +1,19 @@
 import { search } from "@/lib/orchestrator";
 import { validateSearchParams, DIETARY_OPTIONS } from "@/lib/validation/search";
-import { checkApiRateLimit } from "@/lib/middleware/rate-limiter";
+import { withRateLimit } from "@/lib/middleware/with-rate-limit";
+import { apiSuccess, apiBadRequest, apiError } from "@/lib/utils/api-response";
 import type { DietaryFlags } from "@/types";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+export const GET = withRateLimit("search", async (request) => {
   try {
-    // Rate limit: 60 req/min per IP
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
-    const rl = await checkApiRateLimit(ip, "search");
-    if (!rl.allowed) {
-      return Response.json(
-        { error: "Too many requests", retryAfterSeconds: rl.retryAfterSeconds },
-        { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) } }
-      );
-    }
     const { searchParams } = new URL(request.url);
 
     // Validate all input params
     const parsed = validateSearchParams(searchParams);
     if (!parsed.success) {
-      return Response.json(
-        { error: "Invalid search parameters", details: parsed.error.flatten().fieldErrors },
-        { status: 400 }
-      );
+      return apiBadRequest("Invalid search parameters", parsed.error.flatten().fieldErrors as Record<string, unknown>);
     }
 
     const p = parsed.data;
@@ -54,9 +43,14 @@ export async function GET(request: Request) {
       allergens: p.allergens ? p.allergens.split(",").filter(Boolean) : undefined,
     });
 
-    return Response.json(results);
+    return apiSuccess(results);
   } catch (error) {
-    console.error("Search error:", error);
-    return Response.json({ error: "Search failed" }, { status: 500 });
+    const { logger } = await import("@/lib/utils/logger");
+    logger.error("Search failed", {
+      route: "/api/search",
+      error: (error as Error).message,
+      query: new URL(request.url).searchParams.get("q") || undefined,
+    });
+    return apiError("Search failed");
   }
-}
+});

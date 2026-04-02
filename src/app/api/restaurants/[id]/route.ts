@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db/client";
-import { apiBadRequest, apiNotFound, apiError } from "@/lib/utils/api-response";
+import { apiSuccess, apiBadRequest, apiNotFound, apiError } from "@/lib/utils/api-response";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -23,7 +23,7 @@ export async function GET(
       return apiNotFound("Restaurant not found");
     }
 
-    return Response.json({
+    return apiSuccess({
       id: restaurant.id,
       name: restaurant.name,
       address: restaurant.address,

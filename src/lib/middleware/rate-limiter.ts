@@ -35,6 +35,49 @@ export function getRouteCategory(pathname: string): string | null {
   return null;
 }
 
+/**
+ * Lua script for atomic sliding-window rate limiting.
+ *
+ * KEYS[1] = sorted set key
+ * ARGV[1] = window start timestamp (ms)
+ * ARGV[2] = now timestamp (ms)
+ * ARGV[3] = max requests allowed in window
+ * ARGV[4] = unique member value for ZADD
+ * ARGV[5] = TTL in seconds for EXPIRE
+ *
+ * Returns: [currentCount, allowed (1/0), oldestScore or 0]
+ */
+const SLIDING_WINDOW_LUA = `
+local key = KEYS[1]
+local windowStart = tonumber(ARGV[1])
+local now = tonumber(ARGV[2])
+local maxRequests = tonumber(ARGV[3])
+local member = ARGV[4]
+local ttl = tonumber(ARGV[5])
+
+-- 1. Remove expired entries
+redis.call('ZREMRANGEBYSCORE', key, 0, windowStart)
+
+-- 2. Count remaining entries
+local count = redis.call('ZCARD', key)
+
+-- 3. If under limit, add the new entry and set TTL
+if count < maxRequests then
+  redis.call('ZADD', key, now, member)
+  redis.call('EXPIRE', key, ttl)
+  return {count + 1, 1, 0}
+end
+
+-- 4. Over limit — return oldest score for retry-after calculation
+local oldest = redis.call('ZRANGE', key, 0, 0, 'WITHSCORES')
+local oldestScore = 0
+if #oldest >= 2 then
+  oldestScore = tonumber(oldest[2])
+end
+
+return {count, 0, oldestScore}
+`;
+
 export async function checkApiRateLimit(
   ip: string,
   category: string
@@ -45,32 +88,40 @@ export async function checkApiRateLimit(
   const key = `ratelimit:${category}:${ip}`;
   const now = Date.now();
   const windowStart = now - config.windowSeconds * 1000;
+  const member = `${now}:${Math.random()}`;
 
   try {
-    await redis.zremrangebyscore(key, 0, windowStart);
-    const count = await redis.zcard(key);
+    const result = (await redis.eval(
+      SLIDING_WINDOW_LUA,
+      1,
+      key,
+      windowStart.toString(),
+      now.toString(),
+      config.maxRequests.toString(),
+      member,
+      config.windowSeconds.toString()
+    )) as [number, number, number];
 
-    if (count >= config.maxRequests) {
-      const oldest = await redis.zrange(key, 0, 0, "WITHSCORES");
-      const retryAfterMs =
-        oldest.length >= 2
-          ? Number(oldest[1]) + config.windowSeconds * 1000 - now
-          : config.windowSeconds * 1000;
+    const [count, allowed, oldestScore] = result;
 
+    if (allowed === 1) {
       return {
-        allowed: false,
-        remaining: 0,
-        retryAfterSeconds: Math.ceil(retryAfterMs / 1000),
+        allowed: true,
+        remaining: config.maxRequests - count,
+        retryAfterSeconds: null,
       };
     }
 
-    await redis.zadd(key, now, `${now}:${Math.random()}`);
-    await redis.expire(key, config.windowSeconds);
+    // Over limit — compute retry-after from the oldest entry in the window
+    const retryAfterMs =
+      oldestScore > 0
+        ? oldestScore + config.windowSeconds * 1000 - now
+        : config.windowSeconds * 1000;
 
     return {
-      allowed: true,
-      remaining: config.maxRequests - count - 1,
-      retryAfterSeconds: null,
+      allowed: false,
+      remaining: 0,
+      retryAfterSeconds: Math.ceil(retryAfterMs / 1000),
     };
   } catch {
     // If Redis is down, allow the request (fail open)

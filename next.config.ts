@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       { protocol: "https", hostname: "maps.googleapis.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
@@ -23,7 +24,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.justonecookbook.com" },
       { protocol: "https", hostname: "**.maangchi.com" },
       { protocol: "https", hostname: "**.wp.com" },
-      { protocol: "https", hostname: "**" },
+      // Removed wildcard { hostname: "**" } — was an open proxy security risk
     ],
   },
 };

@@ -29,8 +29,14 @@ export function MacroBar({ calories, protein_g, carbs_g, fat_g, highlight, compa
           <div className="bg-ns-carbs transition-all duration-300" style={{ width: `${(carb / total) * 100}%` }} />
           <div className="bg-ns-fat transition-all duration-300" style={{ width: `${(fat / total) * 100}%` }} />
         </div>
-        <p className="text-[11px] text-muted-foreground font-mono tabular-nums">
-          {cal} cal · {pro}p · {carb}c · {fat}f
+        <p className="text-[11px] font-mono tabular-nums">
+          <span className={highlight === "calories" ? "text-foreground font-semibold" : "text-muted-foreground"}>{cal} cal</span>
+          {" · "}
+          <span className={highlight === "protein" ? "text-ns-protein font-semibold" : "text-muted-foreground"}>{pro}p</span>
+          {" · "}
+          <span className={highlight === "carbs" ? "text-ns-carbs font-semibold" : "text-muted-foreground"}>{carb}c</span>
+          {" · "}
+          <span className={highlight === "fat" ? "text-ns-fat font-semibold" : "text-muted-foreground"}>{fat}f</span>
         </p>
       </div>
     );

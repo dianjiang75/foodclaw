@@ -1,15 +1,26 @@
 /**
  * Rate-limiting wrapper for API route handlers.
  * Usage: export const GET = withRateLimit("read", handler);
+ *
+ * The inner handler receives a plain Request so it works in tests
+ * without constructing NextRequest. Next.js passes NextRequest at
+ * runtime (which extends Request), so everything is compatible.
  */
-import { NextRequest, NextResponse } from "next/server";
 import { checkApiRateLimit, getRouteCategory } from "./rate-limiter";
+import { apiRateLimited } from "@/lib/utils/api-response";
 
-type RouteHandler = (
-  req: NextRequest,
+type RouteHandler<T extends Request = Request> = (
+  req: T,
   context?: { params: Promise<Record<string, string>> }
-) => Promise<NextResponse> | NextResponse;
+) => Promise<Response> | Response;
 
+/**
+ * Wraps a route handler with IP-based rate limiting.
+ *
+ * @param categoryOverride - Rate limit tier ("read", "write", "search", "crawl"),
+ *   or null to auto-detect from the route path.
+ * @param handler - The route handler to wrap.
+ */
 export function withRateLimit(
   categoryOverride: string | null,
   handler: RouteHandler
@@ -28,22 +39,13 @@ export function withRateLimit(
     const result = await checkApiRateLimit(ip, category);
 
     if (!result.allowed) {
-      return NextResponse.json(
-        { error: "Too many requests", retryAfterSeconds: result.retryAfterSeconds },
-        {
-          status: 429,
-          headers: {
-            "Retry-After": String(result.retryAfterSeconds ?? 60),
-            "X-RateLimit-Remaining": "0",
-          },
-        }
-      );
+      return apiRateLimited(result.retryAfterSeconds);
     }
 
     const response = await handler(req, context);
 
     // Add rate limit headers to successful responses
-    if (response instanceof NextResponse && result.remaining >= 0) {
+    if (result.remaining >= 0) {
       response.headers.set("X-RateLimit-Remaining", String(result.remaining));
     }
 

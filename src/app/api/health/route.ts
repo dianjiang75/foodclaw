@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/client";
 import { redis } from "@/lib/cache/redis";
+import { apiSuccess, apiError } from "@/lib/utils/api-response";
 
 export const dynamic = "force-dynamic";
 
@@ -53,12 +54,16 @@ export async function GET() {
   const coreHealthy = database === "ok" && redisStatus === "ok";
   const allHealthy = coreHealthy && googleApi === "ok" && usdaApi === "ok";
 
-  return Response.json(
-    {
-      status: allHealthy ? "healthy" : coreHealthy ? "degraded" : "unhealthy",
-      checks,
-      durationMs,
-    },
-    { status: coreHealthy ? 200 : 503 }
-  );
+  const healthData = {
+    status: allHealthy ? "healthy" : coreHealthy ? "degraded" : "unhealthy",
+    checks,
+    durationMs,
+  };
+
+  if (!coreHealthy) {
+    // Return same shape as success but with 503 status — health data is the payload
+    return apiSuccess(healthData, 503);
+  }
+
+  return apiSuccess(healthData);
 }

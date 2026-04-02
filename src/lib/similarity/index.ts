@@ -27,9 +27,32 @@ export interface RerouteSuggestion {
   savings_minutes: number;
 }
 
+/** Row shape returned by the pgvector similarity query. */
+interface VectorSimilarityRow {
+  id: string;
+  name: string;
+  restaurant_id: string;
+  calories_min: number | null;
+  calories_max: number | null;
+  protein_max_g: number | null;
+  macro_confidence: number | null;
+  dietary_flags: unknown;
+  macro_source: string | null;
+  similarity: number;
+  restaurant_name: string;
+  address: string;
+  google_rating: number | null;
+}
+
 /**
  * Find dishes with similar macro profiles using pgvector cosine similarity.
- * Falls back to manual cosine calculation if pgvector embedding is not populated.
+ *
+ * Primary path: uses pgvector `<=>` (cosine distance) operator with the HNSW
+ * index for O(log N) lookup when the source dish has a macro_embedding.
+ *
+ * Fallback path: computes cosine similarity in JS when the source dish has no
+ * macro_embedding (e.g., newly created dishes whose embeddings haven't been
+ * generated yet).
  */
 export async function findSimilarDishes(
   dishId: string,
@@ -45,12 +68,104 @@ export async function findSimilarDishes(
 
   if (!sourceDish) throw new Error(`Dish ${dishId} not found`);
 
+  // Check if the source dish has a pgvector embedding
+  const embeddingCheck = await prisma.$queryRaw<{ has_embedding: boolean }[]>`
+    SELECT macro_embedding IS NOT NULL AS has_embedding
+    FROM dishes WHERE id = ${dishId}::uuid
+  `;
+
+  const hasEmbedding = embeddingCheck[0]?.has_embedding ?? false;
+
+  if (hasEmbedding) {
+    return findSimilarDishesViaVector(dishId, sourceDish.restaurantId, options, limit);
+  }
+
+  // Fallback: JS-based cosine similarity for dishes without embeddings
+  return findSimilarDishesViaJS(sourceDish, options, limit);
+}
+
+/**
+ * pgvector path: O(log N) via HNSW index.
+ * Uses earthdistance for geo-filtering and `<=>` for cosine distance in a single query.
+ */
+async function findSimilarDishesViaVector(
+  dishId: string,
+  sourceRestaurantId: string,
+  options: SimilarityOptions,
+  limit: number
+): Promise<SimilarDish[]> {
+  const radiusMeters = options.radius_miles * 1609.34;
+
+  // Over-fetch to allow for post-query boosts reordering results
+  const dbLimit = limit * 3;
+
+  const rows = await prisma.$queryRaw<VectorSimilarityRow[]>`
+    SELECT
+      d.id,
+      d.name,
+      d.restaurant_id,
+      d.calories_min,
+      d.calories_max,
+      d.protein_max_g::float AS protein_max_g,
+      d.macro_confidence::float AS macro_confidence,
+      d.dietary_flags,
+      d.macro_source,
+      1 - (d.macro_embedding <=> (
+        SELECT macro_embedding FROM dishes WHERE id = ${dishId}::uuid
+      )) AS similarity,
+      r.name AS restaurant_name,
+      r.address,
+      r.google_rating::float AS google_rating
+    FROM dishes d
+    JOIN restaurants r ON d.restaurant_id = r.id
+    WHERE d.id != ${dishId}::uuid
+      AND d.restaurant_id != ${sourceRestaurantId}::uuid
+      AND d.is_available = true
+      AND r.is_active = true
+      AND d.macro_embedding IS NOT NULL
+      AND earth_box(
+        ll_to_earth(${options.latitude}, ${options.longitude}),
+        ${radiusMeters}
+      ) @> ll_to_earth(r.latitude::float, r.longitude::float)
+    ORDER BY d.macro_embedding <=> (
+      SELECT macro_embedding FROM dishes WHERE id = ${dishId}::uuid
+    )
+    LIMIT ${dbLimit}
+  `;
+
+  // Filter out low-similarity results and map to return type
+  return rows
+    .filter((row) => row.similarity > 0.85)
+    .slice(0, limit)
+    .map((row) => ({
+      id: row.id,
+      name: row.name,
+      restaurant_name: row.restaurant_name,
+      restaurant_id: row.restaurant_id,
+      calories_min: row.calories_min,
+      calories_max: row.calories_max,
+      protein_max_g: row.protein_max_g,
+      similarity_score: Math.round(row.similarity * 1000) / 1000,
+    }));
+}
+
+/**
+ * JS fallback path: O(N) scan with app-level haversine and cosine similarity.
+ * Used when the source dish has no macro_embedding (e.g., freshly created dishes).
+ */
+async function findSimilarDishesViaJS(
+  sourceDish: Awaited<ReturnType<typeof prisma.dish.findUnique>> & {
+    restaurant: Awaited<ReturnType<typeof prisma.restaurant.findUnique>>;
+  },
+  options: SimilarityOptions,
+  limit: number
+): Promise<SimilarDish[]> {
   // Compute normalized macro vector for the source dish
   const sourceVector = normalizeMacros(
-    sourceDish.caloriesMin,
-    sourceDish.proteinMaxG ? Number(sourceDish.proteinMaxG) : null,
-    sourceDish.carbsMaxG ? Number(sourceDish.carbsMaxG) : null,
-    sourceDish.fatMaxG ? Number(sourceDish.fatMaxG) : null
+    sourceDish!.caloriesMin,
+    sourceDish!.proteinMaxG ? Number(sourceDish!.proteinMaxG) : null,
+    sourceDish!.carbsMaxG ? Number(sourceDish!.carbsMaxG) : null,
+    sourceDish!.fatMaxG ? Number(sourceDish!.fatMaxG) : null
   );
 
   if (!sourceVector) {
@@ -58,11 +173,10 @@ export async function findSimilarDishes(
   }
 
   // Get candidate dishes (excluding the source dish and its restaurant)
-  // Filter by geographic radius using haversine at the application level
   const candidates = await prisma.dish.findMany({
     where: {
-      id: { not: dishId },
-      restaurantId: { not: sourceDish.restaurantId },
+      id: { not: sourceDish!.id },
+      restaurantId: { not: sourceDish!.restaurantId },
       isAvailable: true,
       caloriesMin: { not: null },
       restaurant: { isActive: true },
@@ -96,8 +210,8 @@ export async function findSimilarDishes(
       let similarity = cosineSimilarity(sourceVector, candidateVector);
 
       // Boost for same category or cuisine
-      if (candidate.category === sourceDish.category) similarity += 0.05;
-      const sourceCuisines = sourceDish.restaurant.cuisineType || [];
+      if (candidate.category === sourceDish!.category) similarity += 0.05;
+      const sourceCuisines = sourceDish!.restaurant!.cuisineType || [];
       const candidateCuisines = candidate.restaurant.cuisineType || [];
       if (sourceCuisines.some((c: string) => candidateCuisines.includes(c))) similarity += 0.03;
 

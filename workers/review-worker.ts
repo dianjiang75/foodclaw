@@ -38,7 +38,7 @@ export const reviewWorker = new Worker("review-aggregation", processReviewJob, {
   concurrency: 2,
   limiter: { max: 5, duration: 60_000 }, // 5 reviews/min
   removeOnComplete: { count: 100 },
-  removeOnFail: { count: 50 },
+  removeOnFail: { count: 500 },
 });
 
 reviewWorker.on("completed", (job) => {

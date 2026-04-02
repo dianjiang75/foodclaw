@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth/context";
 export interface DishCardData {
   id: string;
   name: string;
+  description?: string | null;
   restaurant_name: string;
   photo_url?: string | null;
   macros: {
@@ -76,12 +77,14 @@ export function DishCard({ dish, initialFavorited = false }: { dish: DishCardDat
         <div className="aspect-[3/2] w-full relative overflow-hidden">
           {dish.photo_url ? (
             <>
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/10" />
               <Image
                 src={dish.photo_url}
                 alt={dish.name}
                 fill
                 sizes="(max-width: 640px) 100vw, 50vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-all duration-500 opacity-0 data-[loaded=true]:opacity-100 group-hover:scale-105"
+                onLoad={(e) => e.currentTarget.setAttribute("data-loaded", "true")}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </>
@@ -135,6 +138,9 @@ export function DishCard({ dish, initialFavorited = false }: { dish: DishCardDat
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <h3 className="font-bold text-sm leading-tight truncate">{dish.name}</h3>
+              {dish.description && (
+                <p className="text-[10px] text-muted-foreground/70 truncate">{dish.description.split(",")[0]}</p>
+              )}
               <p className="text-xs text-muted-foreground truncate mt-0.5">{dish.restaurant_name}</p>
             </div>
             <ConfidenceDot confidence={dish.macro_confidence} source={dish.macro_source} />

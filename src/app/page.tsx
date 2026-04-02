@@ -90,13 +90,15 @@ export default function HomePage() {
 
       const res = await fetch(`/api/search?${params}`);
       if (res.ok) {
-        const data = await res.json();
+        const raw = await res.json();
+        const data = raw.data || raw; // Handle both {data: {dishes}} and {dishes} formats
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const items: DishCardData[] = (data.dishes || []).map((d: any) => {
           const rest = d.restaurant || {};
           return {
             id: d.id,
             name: d.name,
+            description: d.description,
             restaurant_name: rest.name || "Unknown",
             photo_url: d.photo_url,
             macros: {

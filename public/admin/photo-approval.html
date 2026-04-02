@@ -217,7 +217,7 @@ function renderGrid() {
   grid.innerHTML = filtered.map((dish, i) => {
     const s = getState(dish);
     const globalIdx = DISHES.indexOf(dish);
-    const searchQ = encodeURIComponent(dish.name + ' ' + dish.description.split(',')[0] + ' food');
+    const searchQ = encodeURIComponent(dish.name + ' ' + dish.cuisine + ' ' + dish.restaurant + ' food');
     const unsplashQ = encodeURIComponent(dish.name + ' food');
     const pexelsQ = encodeURIComponent(dish.name + ' dish');
 
@@ -354,7 +354,7 @@ async function searchImages(idx) {
   container.innerHTML = '<div class="loading">Searching for photos...</div>';
 
   try {
-    const q = encodeURIComponent(dish.name + ' ' + dish.description.split(',')[0]);
+    const q = encodeURIComponent(dish.name + ' ' + dish.cuisine + ' ' + dish.restaurant);
     const res = await fetch(`/api/admin/image-search?q=${q}&limit=8`);
     const data = await res.json();
 

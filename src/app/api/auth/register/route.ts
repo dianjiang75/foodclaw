@@ -2,33 +2,25 @@ import { prisma } from "@/lib/db/client";
 import { hash } from "bcryptjs";
 import { signToken } from "@/lib/auth/jwt";
 import { checkApiRateLimit } from "@/lib/middleware/rate-limiter";
+import { apiBadRequest, apiError, apiRateLimited } from "@/lib/utils/api-response";
 
 export async function POST(request: Request) {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
     const rl = await checkApiRateLimit(ip, "auth");
     if (!rl.allowed) {
-      return Response.json(
-        { error: "Too many requests", retryAfterSeconds: rl.retryAfterSeconds },
-        { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds ?? 60) } }
-      );
+      return apiRateLimited(rl.retryAfterSeconds);
     }
 
     const body = await request.json();
     const { email, name, password, dietary_restrictions, nutritional_goals } = body;
 
     if (!email || !name || !password) {
-      return Response.json(
-        { error: "email, name, and password are required" },
-        { status: 400 }
-      );
+      return apiBadRequest("email, name, and password are required");
     }
 
     if (password.length < 6) {
-      return Response.json(
-        { error: "Password must be at least 6 characters" },
-        { status: 400 }
-      );
+      return apiBadRequest("Password must be at least 6 characters");
     }
 
     const passwordHash = await hash(password, 12);
@@ -46,7 +38,7 @@ export async function POST(request: Request) {
     const token = await signToken({ sub: user.id, email: user.email, name: user.name });
 
     return Response.json(
-      { token, user: { id: user.id, email: user.email, name: user.name } },
+      { success: true, data: { token, user: { id: user.id, email: user.email, name: user.name } } },
       {
         status: 201,
         headers: { "Set-Cookie": `token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}` },
@@ -54,8 +46,8 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     if ((error as { code?: string }).code === "P2002") {
-      return Response.json({ error: "Email already registered" }, { status: 409 });
+      return apiError("Email already registered", 409);
     }
-    return Response.json({ error: "Registration failed" }, { status: 500 });
+    return apiError("Registration failed");
   }
 }

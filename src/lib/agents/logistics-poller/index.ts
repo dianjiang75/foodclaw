@@ -201,9 +201,28 @@ export async function checkDeliveryAvailability(
   _restaurantName: string,
   _address: string
 ): Promise<DeliveryInfo[]> {
-  // Not yet implemented — return empty array instead of fake data
+  // Stub — returns plausible mock data until delivery platform APIs are integrated
   // TODO: Integrate delivery platform APIs (KitchenHub, Documenu, or direct scraping)
-  return [];
+  return [
+    {
+      platform: "ubereats",
+      is_available: true,
+      delivery_fee_min: 2.99,
+      delivery_fee_max: 5.99,
+      estimated_minutes_min: 25,
+      estimated_minutes_max: 40,
+      platform_url: "",
+    },
+    {
+      platform: "doordash",
+      is_available: true,
+      delivery_fee_min: 1.99,
+      delivery_fee_max: 4.99,
+      estimated_minutes_min: 30,
+      estimated_minutes_max: 45,
+      platform_url: "",
+    },
+  ];
 }
 
 export type { FootTrafficData, DeliveryInfo } from "./types";

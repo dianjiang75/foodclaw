@@ -49,8 +49,8 @@
 }
 
 :root {
-  /* Surfaces — very light warm gray (clean but not flat white) */
-  --background: oklch(0.985 0.003 90);
+  /* Surfaces — clean white */
+  --background: oklch(1.0 0 0);
   --foreground: oklch(0.16 0.005 260);
   --card: oklch(0.998 0.001 90);
   --card-foreground: oklch(0.16 0.005 260);
@@ -154,6 +154,11 @@
   }
   html {
     @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Friendlier focus-visible ring */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary/50 rounded-sm;
   }
 }
 

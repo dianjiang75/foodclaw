@@ -52,6 +52,9 @@ export interface QueryCacheParams {
   radiusMiles: number;
   categories: string[];
   sortBy: string | null;
+  calorieLimit: number | null;
+  proteinMin: number | null;
+  allergens: string[];
 }
 
 /**
@@ -70,8 +73,11 @@ export function buildQueryCacheKey(params: QueryCacheParams): string {
   const radius = params.radiusMiles.toFixed(1);
   const cats = [...params.categories].sort().join("|") || "none";
   const sort = params.sortBy || "default";
+  const calCap = params.calorieLimit != null ? String(params.calorieLimit) : "none";
+  const protMin = params.proteinMin != null ? String(params.proteinMin) : "none";
+  const allergens = [...(params.allergens || [])].sort().join("|") || "none";
 
-  return `query:${text}:${filters}:${goal}:${cats}:${sort}:${lat},${lng}:r${radius}`;
+  return `query:${text}:${filters}:${goal}:${cats}:${sort}:cal${calCap}:prot${protMin}:alg${allergens}:${lat},${lng}:r${radius}`;
 }
 
 /**
@@ -101,7 +107,10 @@ export async function setCachedQuery(
  * Invalidate all cached data for a specific restaurant.
  * Uses prefix-based scan (restaurant:<id>:*) instead of full wildcard (*<id>*)
  * which is much faster as it narrows the keyspace.
- * Also invalidates all query caches since they may reference this restaurant.
+ *
+ * Does NOT invalidate query cache — query TTL is 5 min, stale entries
+ * expire naturally. Blanket query invalidation via SCAN was O(N) on
+ * the entire keyspace and overkill for single-restaurant updates.
  */
 export async function invalidateRestaurant(
   restaurantId: string
@@ -125,9 +134,6 @@ export async function invalidateRestaurant(
       deleted += keys.length;
     }
   } while (cursor !== "0");
-
-  // Also invalidate query cache since search results may include this restaurant
-  deleted += await invalidateAllQueries();
 
   return deleted;
 }

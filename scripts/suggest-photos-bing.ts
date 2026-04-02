@@ -84,7 +84,7 @@ function scoreImage(result: SearchResult): number {
 
 async function searchForDish(dish: Dish): Promise<string | null> {
   try {
-    const query = `${dish.name} ${dish.description.split(",")[0]}`;
+    const query = `${dish.name} ${dish.cuisine} ${dish.restaurant}`;
     const url = `http://localhost:3000/api/admin/image-search?q=${encodeURIComponent(query)}&limit=10`;
     const res = await fetch(url);
     if (!res.ok) return null;
@@ -92,7 +92,7 @@ async function searchForDish(dish: Dish): Promise<string | null> {
 
     if (!data.images || data.images.length === 0) {
       // Fallback: simpler query
-      const url2 = `http://localhost:3000/api/admin/image-search?q=${encodeURIComponent(dish.name + " food")}&limit=10`;
+      const url2 = `http://localhost:3000/api/admin/image-search?q=${encodeURIComponent(dish.name + " " + dish.cuisine + " food")}&limit=10`;
       const res2 = await fetch(url2);
       if (!res2.ok) return null;
       const data2 = await res2.json();
