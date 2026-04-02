@@ -52,4 +52,4 @@ RUN chmod +x entrypoint.sh
 USER nextjs
 EXPOSE 8080
 
-CMD ["./entrypoint.sh"]
+CMD ["/bin/sh", "./entrypoint.sh"]
