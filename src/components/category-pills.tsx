@@ -105,7 +105,7 @@ export function CategoryPills({ selected = [], onSelect }: CategoryPillsProps) {
               <span className="text-[11px] font-medium text-muted-foreground group-hover:text-foreground transition-colors whitespace-nowrap">
                 {cat.label}
               </span>
-            </Link>
+            </button>
           );
         })}
       </div>

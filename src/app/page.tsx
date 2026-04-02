@@ -202,8 +202,11 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Category pills — each links to its own page */}
-          <CategoryPills />
+          {/* Category pills — inline filters */}
+          <CategoryPills
+            selected={search.categories}
+            onSelect={(cats) => setSearch((s) => ({ ...s, categories: cats, offset: 0 }))}
+          />
 
           {/* Sort options (dishes only) */}
           {activeTab === "dishes" && (

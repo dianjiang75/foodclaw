@@ -54,7 +54,8 @@ Save these numbers — you'll compare after making changes. A change that increa
 1. List all files in `agent-workspace/learning-digests/` sorted by date (newest first)
 2. Read the **most recent digest(s)** — today's or yesterday's
 3. Also read `agent-workspace/improvement-logs/` for the last 3 logs to avoid re-doing past work
-4. Extract every **Action Item** and **Code Recommendation**
+4. **Read `agent-workspace/user-test-reports/BACKLOG.md`** — CRITICAL issues from user testing get Impact=5, Urgency=5 automatically. MAJOR issues get Impact=4, Urgency=4. User-facing bugs take priority over learning digest items. After fixing an issue, move its entry to "Resolved Issues" in BACKLOG.md.
+5. Extract every **Action Item** and **Code Recommendation**
 
 ### Risk Tier Classification
 

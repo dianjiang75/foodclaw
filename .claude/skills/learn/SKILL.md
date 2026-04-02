@@ -35,6 +35,7 @@ Cover every area in a single session. Take as long as needed — thoroughness ma
 
 For each session:
 
+0. **Check user test reports** — Read the latest file in `agent-workspace/user-test-reports/`. If CRITICAL or MAJOR issues were found, prioritize researching solutions for those issues first. Include a "User Test Findings" section in the digest.
 1. **Search broadly** — Run 4-6 web searches on the day's topic, focusing on 2025-2026 content
 2. **Go deep** — Fetch 2-3 of the most promising articles/docs for detailed reading
 3. **Check for llms.txt** — For tech topics, check if the relevant docs have an `llms.txt` or `llms-full.txt` file and read it
