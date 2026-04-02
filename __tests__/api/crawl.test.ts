@@ -2,6 +2,9 @@ jest.mock("@/../workers/queues", () => ({
   menuCrawlQueue: {
     add: jest.fn().mockResolvedValue({ id: "job-1" }),
   },
+  flowProducer: {
+    add: jest.fn().mockResolvedValue({ job: { id: "flow-1" } }),
+  },
 }));
 
 jest.mock("@/lib/middleware/rate-limiter", () => ({

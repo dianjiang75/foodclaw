@@ -30,16 +30,16 @@ export const POST = withRateLimit("crawl", async (request) => {
       type: "restaurant",
     });
 
-    const { menuCrawlQueue } = await import("@/../workers/queues");
+    const { flowProducer } = await import("@/../workers/queues");
 
     // Also lookup Yelp business IDs for each restaurant
     const yelpKey = process.env.YELP_API_KEY;
 
-    let queued = 0;
+    // Build FlowProducer children — one crawl job per restaurant
+    const children = [];
     for (const place of places) {
       let yelpBusinessId: string | null = null;
 
-      // Auto-lookup Yelp business ID using Yelp Business Match API
       if (yelpKey && yelpKey !== "placeholder") {
         try {
           const yelpRes = await fetchWithRetry(
@@ -56,17 +56,31 @@ export const POST = withRateLimit("crawl", async (request) => {
         }
       }
 
-      await menuCrawlQueue.add(
-        "area-crawl",
-        { googlePlaceId: place.id, yelpBusinessId },
-        { attempts: 3, backoff: { type: "exponential", delay: 5000 } }
-      );
-      queued++;
+      children.push({
+        name: "area-crawl",
+        queueName: "menu-crawl",
+        data: { googlePlaceId: place.id, yelpBusinessId },
+        opts: {
+          jobId: `crawl-${place.id}`,
+          attempts: 3,
+          backoff: { type: "exponential" as const, delay: 5000 },
+        },
+      });
+    }
+
+    // Atomic add: either all jobs are enqueued or none
+    if (children.length > 0) {
+      await flowProducer.add({
+        name: "area-crawl-complete",
+        queueName: "menu-crawl",
+        data: { latitude, longitude, restaurantCount: children.length },
+        children,
+      });
     }
 
     return Response.json({
       restaurants_found: places.length,
-      jobs_queued: queued,
+      jobs_queued: children.length,
     }, { status: 202 });
   } catch {
     return Response.json({ error: "Failed to trigger area crawl" }, { status: 500 });

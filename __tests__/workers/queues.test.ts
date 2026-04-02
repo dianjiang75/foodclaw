@@ -8,7 +8,7 @@ jest.mock("ioredis", () => {
   }));
 });
 
-// Mock BullMQ Queue
+// Mock BullMQ Queue + FlowProducer
 jest.mock("bullmq", () => ({
   Queue: jest.fn().mockImplementation((name: string) => ({
     name,
@@ -23,6 +23,10 @@ jest.mock("bullmq", () => ({
   })),
   Worker: jest.fn().mockImplementation(() => ({
     on: jest.fn(),
+    close: jest.fn(),
+  })),
+  FlowProducer: jest.fn().mockImplementation(() => ({
+    add: jest.fn().mockResolvedValue({ job: { id: "flow-1" } }),
     close: jest.fn(),
   })),
 }));
