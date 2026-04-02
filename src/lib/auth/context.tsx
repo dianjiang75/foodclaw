@@ -76,6 +76,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("foodclaw_user");
     localStorage.removeItem("foodclaw_user_id");
     document.cookie = "token=; Path=/; Max-Age=0";
+    // Server-side token revocation
+    fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
   }, []);
 
   return (

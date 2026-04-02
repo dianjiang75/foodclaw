@@ -157,6 +157,113 @@ const USDA_SYNONYMS: Record<string, string> = {
   "coconut milk": "coconut milk, canned",
   "soy sauce": "soy sauce",
   "fish sauce": "fish sauce",
+  // Peppers (added March 2026 — USDA v14.3)
+  "jalapeno": "peppers, jalapeno, raw",
+  "jalapeño": "peppers, jalapeno, raw",
+  "poblano": "peppers, poblano, raw",
+  "serrano": "peppers, serrano, raw",
+  "habanero": "peppers, hot chili, raw",
+  // Seafood
+  "squid": "squid, cooked",
+  "octopus": "octopus, cooked",
+  "crab": "crab, cooked",
+  "lobster": "lobster, cooked",
+  "scallop": "scallops, cooked",
+  "clam": "clams, cooked",
+  "mussel": "mussels, cooked",
+  // Common Asian ingredients
+  "paneer": "cheese, paneer",
+  "naan": "bread, naan",
+  "lentils": "lentils, cooked",
+  "chickpeas": "chickpeas, cooked",
+  "edamame": "edamame, cooked",
+  "sesame oil": "oil, sesame",
+  "miso": "miso",
+  "tempeh": "tempeh",
+  "kimchi": "kimchi",
+  // Common cooking ingredients
+  "flour": "wheat flour, white, all-purpose",
+  "sugar": "sugar, granulated",
+  "honey": "honey",
+  "maple syrup": "maple syrup",
+  "bacon": "bacon, cooked",
+  "ham": "ham, cooked",
+  "lamb": "lamb, cooked",
+  "duck": "duck, cooked",
+  // Common Latin/Mediterranean
+  "plantain": "plantain, cooked",
+  "black beans": "black beans, cooked",
+  "quinoa": "quinoa, cooked",
+  "feta": "cheese, feta",
+  "mozzarella": "cheese, mozzarella",
+  "parmesan": "cheese, parmesan",
+  "ricotta": "cheese, ricotta",
+  "prosciutto": "ham, prosciutto",
+  "pancetta": "bacon, pork, cooked",
+  // Common baking/dessert
+  "cream cheese": "cream cheese",
+  "whipped cream": "cream, whipped",
+  "chocolate": "chocolate, dark",
+  "cocoa": "cocoa, dry powder",
+  "cornstarch": "cornstarch",
+  // Common grains
+  "couscous": "couscous, cooked",
+  "bulgur": "bulgur, cooked",
+  "barley": "barley, cooked",
+  "oats": "oats, regular, cooked",
+  "polenta": "cornmeal, cooked",
+  "tortilla": "tortilla, flour",
+  // More proteins
+  "turkey": "turkey breast, cooked",
+  "venison": "deer, cooked",
+  "bison": "bison, cooked",
+  "anchovies": "anchovy, canned",
+  "sardines": "sardines, canned",
+  "prawns": "shrimp, cooked",
+  "calamari": "squid, cooked",
+  // Vegetables
+  "zucchini": "zucchini, raw",
+  "eggplant": "eggplant, cooked",
+  "bell pepper": "peppers, sweet, raw",
+  "mushrooms": "mushrooms, cooked",
+  "cabbage": "cabbage, raw",
+  "cauliflower": "cauliflower, cooked",
+  "corn": "corn, sweet, cooked",
+  "peas": "peas, green, cooked",
+  "asparagus": "asparagus, cooked",
+  "artichoke": "artichoke, cooked",
+  "celery": "celery, raw",
+  "cucumber": "cucumber, raw",
+  "lettuce": "lettuce, raw",
+  "arugula": "arugula, raw",
+  "watercress": "cress, raw",
+  "bean sprouts": "mung beans, sprouted, raw",
+  "bamboo shoots": "bamboo shoots, canned",
+  // Fruits
+  "mango": "mango, raw",
+  "pineapple": "pineapple, raw",
+  "papaya": "papaya, raw",
+  "banana": "banana, raw",
+  "lime": "lime juice, raw",
+  "lemon": "lemon juice, raw",
+  "coconut": "coconut meat, raw",
+  // Nuts/seeds
+  "cashews": "cashews, raw",
+  "walnuts": "walnuts",
+  "pistachios": "pistachios, raw",
+  "pine nuts": "pine nuts",
+  "sesame seeds": "sesame seeds",
+  "chia seeds": "chia seeds",
+  "flaxseed": "flaxseed",
+  // Sauces/condiments
+  "tahini": "tahini",
+  "sriracha": "hot sauce",
+  "mayo": "mayonnaise",
+  "mayonnaise": "mayonnaise",
+  "ketchup": "ketchup",
+  "mustard": "mustard, prepared",
+  "vinegar": "vinegar",
+  "coconut cream": "coconut cream, canned",
 };
 
 /**
@@ -227,13 +334,48 @@ function pickBestMatch(
 }
 
 /**
+ * Preparation method calorie multipliers.
+ * USDA data is typically for "cooked" items, but the cooking method
+ * affects absorbed oil and water loss. These factors adjust the
+ * USDA base values. Research (NYU 2025) shows deep-frying adds
+ * ~15-25% calories from oil absorption; steaming/boiling retains
+ * moisture and adds nothing.
+ */
+const PREPARATION_MULTIPLIERS: Record<string, { calories: number; fat: number }> = {
+  "deep-fried": { calories: 1.20, fat: 1.40 },
+  "fried": { calories: 1.15, fat: 1.30 },
+  "pan-fried": { calories: 1.12, fat: 1.25 },
+  "stir-fried": { calories: 1.10, fat: 1.20 },
+  "sauteed": { calories: 1.08, fat: 1.15 },
+  "sautéed": { calories: 1.08, fat: 1.15 },
+  "roasted": { calories: 1.03, fat: 1.05 },
+  "grilled": { calories: 1.0, fat: 1.0 },
+  "baked": { calories: 1.0, fat: 1.0 },
+  "broiled": { calories: 1.0, fat: 1.0 },
+  "steamed": { calories: 0.98, fat: 1.0 },
+  "boiled": { calories: 0.97, fat: 1.0 },
+  "poached": { calories: 0.97, fat: 1.0 },
+  "braised": { calories: 1.02, fat: 1.05 },
+  "smoked": { calories: 1.0, fat: 1.0 },
+  "raw": { calories: 1.0, fat: 1.0 },
+};
+
+function getPreparationMultiplier(method?: string): { calories: number; fat: number } {
+  if (!method) return { calories: 1.0, fat: 1.0 };
+  const normalized = method.toLowerCase().trim();
+  return PREPARATION_MULTIPLIERS[normalized] ?? { calories: 1.0, fat: 1.0 };
+}
+
+/**
  * Search for a food, pick the best match, and return macros scaled
  * to the specified portion size in grams. Uses query decomposition
  * for compound ingredient names that don't match USDA directly.
+ * Optionally adjusts for cooking method (frying adds oil absorption, etc.).
  */
 export async function estimateMacros(
   foodName: string,
-  portionGrams: number
+  portionGrams: number,
+  preparationMethod?: string,
 ): Promise<USDAMacroEstimate> {
   const queries = decomposeIngredientName(foodName);
 
@@ -288,11 +430,12 @@ export async function estimateMacros(
 
   const best = pickBestMatch(allResults)!;
   const scale = portionGrams / 100; // USDA values are per 100g
+  const prepMultiplier = getPreparationMultiplier(preparationMethod);
 
-  const calories = getNutrientFromSearchItem(best.food, NUTRIENT_IDS.ENERGY) * scale;
+  const calories = getNutrientFromSearchItem(best.food, NUTRIENT_IDS.ENERGY) * scale * prepMultiplier.calories;
   const protein = getNutrientFromSearchItem(best.food, NUTRIENT_IDS.PROTEIN) * scale;
   const carbs = getNutrientFromSearchItem(best.food, NUTRIENT_IDS.CARBS) * scale;
-  const fat = getNutrientFromSearchItem(best.food, NUTRIENT_IDS.FAT) * scale;
+  const fat = getNutrientFromSearchItem(best.food, NUTRIENT_IDS.FAT) * scale * prepMultiplier.fat;
   const fiber = getNutrientFromSearchItem(best.food, NUTRIENT_IDS.FIBER) * scale;
 
   return {

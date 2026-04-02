@@ -1,4 +1,5 @@
 import { SignJWT, jwtVerify } from "jose";
+import { redis } from "@/lib/cache/redis";
 
 let _secret: Uint8Array | null = null;
 function getSecret(): Uint8Array {
@@ -55,9 +56,33 @@ export function extractToken(request: Request): string | null {
   return null;
 }
 
-/** Verify request and return user payload, or null. */
+/** Blacklist a token (on logout). Stored in Redis until the token's natural expiry. */
+export async function revokeToken(token: string): Promise<void> {
+  try {
+    // Decode without verifying to get expiry, then blacklist until that time
+    const payload = await verifyToken(token);
+    if (!payload) return;
+    // Blacklist for 7 days (max token lifetime)
+    await redis.set(`bl:${token}`, "1", "EX", 7 * 24 * 60 * 60);
+  } catch {
+    // Token invalid — nothing to revoke
+  }
+}
+
+/** Check if a token has been revoked. */
+async function isRevoked(token: string): Promise<boolean> {
+  try {
+    const val = await redis.get(`bl:${token}`);
+    return val !== null;
+  } catch {
+    return false; // Redis down — allow through (fail-open)
+  }
+}
+
+/** Verify request and return user payload, or null. Checks blacklist. */
 export async function authenticateRequest(request: Request): Promise<JWTPayload | null> {
   const token = extractToken(request);
   if (!token) return null;
+  if (await isRevoked(token)) return null;
   return verifyToken(token);
 }

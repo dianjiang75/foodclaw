@@ -12,7 +12,10 @@ import { seedRestaurants } from "./seed-manhattan-data";
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
-// Dish-specific Unsplash photos — verified working URLs from Unsplash API (March 2026).
+// Load user-approved photos from the approval tool
+import approvedPhotos from "./approved-photos.json";
+
+// Legacy mapping — replaced by approved-photos.json
 export const PHOTOS_BY_DISH: Record<string, string> = {
   // === THAI ===
   "Somtum Thai": "https://images.unsplash.com/photo-mgjmgc0BPgw?w=800&h=500&fit=crop", // papaya salad bowl
@@ -279,10 +282,11 @@ const PHOTOS_BY_TYPE: Record<string, string> = {
 const FALLBACK_PHOTO = "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&h=500&fit=crop";
 
 export function matchPhoto(dishName: string): string {
-  // 1. Exact dish name match (skip — PHOTOS_BY_DISH has broken short IDs)
-  // TODO: fix PHOTOS_BY_DISH with real full Unsplash IDs
+  // 1. User-approved photos (from approval tool)
+  const approved = (approvedPhotos as Record<string, string>)[dishName];
+  if (approved) return approved;
 
-  // 2. Keyword fallback using verified working Unsplash URLs
+  // 2. Keyword fallback
   const lower = dishName.toLowerCase().replace(/['']/g, "");
   for (const [keyword, photo] of Object.entries(PHOTOS_BY_TYPE)) {
     if (lower.includes(keyword.replace(/_/g, " ")) || lower.includes(keyword)) return photo;
@@ -350,20 +354,24 @@ async function main() {
       },
     });
 
-    // Add logistics (current time window)
-    const now = new Date();
-    const busyness = 20 + Math.floor(Math.random() * 60);
-    for (let h = Math.max(0, now.getHours() - 2); h <= Math.min(23, now.getHours() + 2); h++) {
-      const b = Math.max(10, Math.min(100, busyness + (h - now.getHours()) * 8 + Math.floor(Math.random() * 15 - 7)));
-      await prisma.restaurantLogistics.create({
-        data: {
-          restaurantId: restaurant.id,
-          dayOfWeek: now.getDay(),
-          hour: h,
-          typicalBusynessPct: b,
-          estimatedWaitMinutes: Math.round(b * 0.35),
-        },
-      });
+    // Add logistics for all days and key hours (so wait time data is always available)
+    const baseBusyness = 20 + Math.floor(Math.random() * 40);
+    for (let day = 0; day <= 6; day++) {
+      // Lunch (11-14) and dinner (17-21) hours — most relevant for food discovery
+      for (let h = 0; h < 24; h++) {
+        const peakBonus = (h >= 12 && h <= 13) || (h >= 18 && h <= 19) ? 25 : 0;
+        const weekendBonus = day === 0 || day === 6 ? 10 : 0;
+        const b = Math.max(10, Math.min(100, baseBusyness + peakBonus + weekendBonus + Math.floor(Math.random() * 15 - 7)));
+        await prisma.restaurantLogistics.create({
+          data: {
+            restaurantId: restaurant.id,
+            dayOfWeek: day,
+            hour: h,
+            typicalBusynessPct: b,
+            estimatedWaitMinutes: Math.round(b * 0.35),
+          },
+        });
+      }
     }
 
     // Create dishes
