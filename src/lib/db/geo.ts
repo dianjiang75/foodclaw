@@ -64,6 +64,8 @@ export async function fullTextSearchDishes(
 
   if (!tsquery) return [];
 
+  // Try English dictionary first, then fall back to 'simple' for foreign words
+  // (e.g., "sushi", "nori", "ramen" are not in the English stemmer dictionary)
   const results = await prisma.$queryRaw<{ id: string; rank: number }[]>`
     SELECT
       id,
@@ -75,5 +77,27 @@ export async function fullTextSearchDishes(
     LIMIT ${limit}
   `;
 
-  return results;
+  if (results.length > 0) return results;
+
+  // Fallback: use 'simple' dictionary (no stemming — exact token match)
+  // This catches foreign food terms the English dictionary discards
+  const simpleResults = await prisma.$queryRaw<{ id: string; rank: number }[]>`
+    SELECT
+      id,
+      ts_rank(
+        setweight(to_tsvector('simple', coalesce(name, '')), 'A') ||
+        setweight(to_tsvector('simple', coalesce(description, '')), 'B'),
+        to_tsquery('simple', ${tsquery})
+      ) AS rank
+    FROM dishes
+    WHERE (
+      setweight(to_tsvector('simple', coalesce(name, '')), 'A') ||
+      setweight(to_tsvector('simple', coalesce(description, '')), 'B')
+    ) @@ to_tsquery('simple', ${tsquery})
+      AND is_available = true
+    ORDER BY rank DESC
+    LIMIT ${limit}
+  `;
+
+  return simpleResults;
 }

@@ -16,11 +16,38 @@ function createPrismaClient(): PrismaClient {
   });
   return new PrismaClient({
     adapter,
-    log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
+    log:
+      process.env.NODE_ENV === "development"
+        ? [{ emit: "event", level: "query" }, "warn", "error"]
+        : ["error"],
   });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+function withSlowQueryLogging(client: PrismaClient): PrismaClient {
+  if (process.env.NODE_ENV !== "development") return client;
+
+  const SLOW_QUERY_THRESHOLD_MS = 500;
+
+  client.$on("query" as never, (e: unknown) => {
+    const event = e as {
+      query: string;
+      params: string;
+      duration: number;
+      target: string;
+    };
+    if (event.duration >= SLOW_QUERY_THRESHOLD_MS) {
+      console.warn(
+        `[Prisma Slow Query] ${event.duration}ms | ${event.query} | params: ${event.params}`
+      );
+    }
+  });
+
+  return client;
+}
+
+export const prisma = withSlowQueryLogging(
+  globalForPrisma.prisma ?? createPrismaClient()
+);
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;

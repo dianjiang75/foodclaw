@@ -6,7 +6,7 @@ import {
   type QueryCacheParams,
 } from "@/lib/cache";
 import { verify } from "@/lib/evaluator";
-import { fullTextSearchDishes } from "@/lib/db/geo";
+import { fullTextSearchDishes, getRestaurantIdsWithinRadius } from "@/lib/db/geo";
 import type {
   DishResult,
   SearchResults,
@@ -57,7 +57,9 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     macroWhere.caloriesMax = { lte: query.calorie_limit };
   }
   if (query.protein_min_g) {
-    macroWhere.proteinMaxG = { gte: query.protein_min_g };
+    // Use proteinMinG to ensure even the low estimate meets the minimum
+    // (proteinMaxG could meet it while proteinMinG doesn't)
+    macroWhere.proteinMinG = { gte: query.protein_min_g };
   }
 
   // Full-text search: use tsvector when available, fallback to ILIKE
@@ -104,6 +106,38 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     (c) => !CUISINE_IDS.has(c)
   );
 
+  // 2b. Geo pre-filter: get nearby restaurant IDs at the DB level (earthdistance)
+  let nearbyRestaurantIds: string[] | null = null;
+  const hasGeoParams =
+    query.latitude != null && query.longitude != null && query.radius_miles != null;
+
+  if (hasGeoParams) {
+    const geoResults = await getRestaurantIdsWithinRadius(
+      query.latitude,
+      query.longitude,
+      query.radius_miles
+    );
+
+    if (geoResults.length === 0) {
+      // No restaurants within radius — return empty results immediately
+      logger.debug("Search: no restaurants within radius", {
+        lat: query.latitude,
+        lng: query.longitude,
+        radiusMiles: query.radius_miles,
+        durationMs: Date.now() - start,
+      });
+      const emptyResult: SearchResults = {
+        dishes: [],
+        total_count: 0,
+        cached: false,
+      };
+      await setCachedQuery(cacheParams, emptyResult);
+      return emptyResult;
+    }
+
+    nearbyRestaurantIds = geoResults.map((r) => r.id);
+  }
+
   // Fetch a larger window for caching (top 100), then paginate from cache on subsequent requests
   const fetchLimit = Math.max(limit, 100);
 
@@ -119,6 +153,8 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
       ...(mealCategories.length
         ? { category: { in: mealCategories, mode: "insensitive" } }
         : {}),
+      // If geo pre-filter returned IDs, restrict to those restaurants
+      ...(nearbyRestaurantIds ? { restaurantId: { in: nearbyRestaurantIds } } : {}),
       restaurant: {
         isActive: true,
         ...(allCuisines.length
@@ -231,7 +267,8 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   const waitFiltered = query.max_wait_minutes
     ? radiusFiltered.filter((d) => {
         const wait = d.logistics?.estimated_wait_minutes;
-        return wait == null || wait <= query.max_wait_minutes!;
+        // Strict < to match user expectation: "max 15 min" excludes 16 min
+        return wait == null || wait < query.max_wait_minutes!;
       })
     : radiusFiltered;
 
@@ -273,7 +310,7 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
   // 6. Cache full result set, then return paginated slice
   const fullResult: SearchResults = {
     dishes: diversified,
-    total_count: verified.length,
+    total_count: diversified.length,
     cached: false,
   };
 
@@ -284,6 +321,36 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     results: diversified.length,
     durationMs: Date.now() - start,
   });
+
+  // 7. If text search returned no results, fall back to showing popular dishes
+  if (diversified.length === 0 && query.query) {
+    logger.debug("No results for query, falling back to popular dishes", { query: query.query });
+    // Re-run without text filter to get general results
+    const fallbackResults = await prisma.dish.findMany({
+      where: {
+        isAvailable: true,
+        ...dietaryWhere,
+        restaurant: { isActive: true },
+      },
+      include: {
+        restaurant: true,
+        reviewSummary: true,
+        photos: { take: 1, orderBy: { createdAt: "desc" } },
+      },
+      take: limit,
+      orderBy: { caloriesMin: "desc" },
+    });
+
+    if (fallbackResults.length > 0) {
+      const fallbackDishes = fallbackResults.map((dish) => mapDishToResult(dish, query));
+      return {
+        dishes: fallbackDishes,
+        total_count: fallbackDishes.length,
+        cached: false,
+        fallback: true,
+      };
+    }
+  }
 
   return {
     dishes: diversified.slice(offset, offset + limit),
@@ -431,30 +498,16 @@ function applyRestaurantDiversityCap(
   dishes: DishResult[],
   maxPerRestaurant: number
 ): DishResult[] {
-  // Group dishes by restaurant, preserving sort order within each group
-  const buckets = new Map<string, DishResult[]>();
-  for (const dish of dishes) {
+  // Cap dishes per restaurant while preserving the primary sort order.
+  // Does NOT interleave — that would break protein/rating/distance sorts.
+  const counts = new Map<string, number>();
+  return dishes.filter((dish) => {
     const rid = dish.restaurant.id;
-    if (!buckets.has(rid)) buckets.set(rid, []);
-    const bucket = buckets.get(rid)!;
-    if (bucket.length < maxPerRestaurant) {
-      bucket.push(dish);
-    }
-  }
-
-  // Interleave: round-robin across restaurants in first-appearance order
-  const result: DishResult[] = [];
-  const restaurantOrder = [...buckets.keys()];
-  for (let round = 0; round < maxPerRestaurant; round++) {
-    for (const rid of restaurantOrder) {
-      const bucket = buckets.get(rid)!;
-      if (round < bucket.length) {
-        result.push(bucket[round]);
-      }
-    }
-  }
-
-  return result;
+    const count = counts.get(rid) ?? 0;
+    if (count >= maxPerRestaurant) return false;
+    counts.set(rid, count + 1);
+    return true;
+  });
 }
 
 export type { UserSearchQuery, DishResult, SearchResults } from "./types";
