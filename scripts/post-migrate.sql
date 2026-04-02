@@ -3,6 +3,9 @@
 -- Run after `npx prisma migrate dev`:
 --   psql $DATABASE_URL -f scripts/post-migrate.sql
 
+-- ─── Extensions ────────────────────────────────────────
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- ─── pgvector embedding column ──────────────────────────
 ALTER TABLE dishes ADD COLUMN IF NOT EXISTS macro_embedding vector(4);
 
@@ -49,3 +52,7 @@ BEGIN
       USING hnsw(macro_embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64);
   END IF;
 END $$;
+
+-- ─── pg_trgm index for fuzzy search ────────────────────
+-- Supports the similarity() function and % operator for typo-tolerant autocomplete
+CREATE INDEX IF NOT EXISTS idx_dishes_name_trgm ON dishes USING GIST(name gist_trgm_ops);
