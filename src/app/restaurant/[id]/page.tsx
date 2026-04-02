@@ -112,8 +112,27 @@ export default function RestaurantDetailPage({
 
   const totalDishes = menu.reduce((sum, cat) => sum + cat.dishes.length, 0);
 
+  const jsonLd = restaurant ? {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    name: restaurant.name,
+    address: { "@type": "PostalAddress", streetAddress: restaurant.address },
+    servesCuisine: restaurant.cuisine_type,
+    priceRange: "$".repeat(restaurant.price_level || 2),
+    aggregateRating: restaurant.google_rating ? {
+      "@type": "AggregateRating",
+      ratingValue: restaurant.google_rating,
+      bestRating: 5,
+    } : undefined,
+    telephone: restaurant.phone,
+    url: restaurant.website,
+  } : null;
+
   return (
     <div className="max-w-lg mx-auto px-4 py-4 pb-24 space-y-5">
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      )}
       {/* Header */}
       <div>
         <Link

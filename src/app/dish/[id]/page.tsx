@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -71,6 +71,7 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
   const [similar, setSimilar] = useState<DishCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const photoContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function load() {
@@ -84,7 +85,17 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
           // Fetch traffic and similar dishes in parallel
           const [tRes, sRes] = await Promise.all([
             fetch(`/api/restaurants/${data.restaurant.id}/traffic`).catch(() => null),
-            fetch(`/api/dishes/${id}/similar?lat=40.7264&lng=-73.9878&limit=4`).catch(() => null),
+            new Promise<Response | null>((resolve) => {
+              if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                  (pos) => fetch(`/api/dishes/${id}/similar?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}&limit=4`).then(resolve).catch(() => resolve(null)),
+                  () => fetch(`/api/dishes/${id}/similar?lat=40.7264&lng=-73.9878&limit=4`).then(resolve).catch(() => resolve(null)),
+                  { timeout: 3000 }
+                );
+              } else {
+                fetch(`/api/dishes/${id}/similar?lat=40.7264&lng=-73.9878&limit=4`).then(resolve).catch(() => resolve(null));
+              }
+            }),
           ]);
 
           if (tRes?.ok) setTraffic(await tRes.json());
@@ -134,8 +145,26 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
   const waitMinutes = traffic?.estimated_wait_minutes ?? null;
   const showSimilarProminent = waitMinutes != null && waitMinutes > 20 && similar.length > 0;
 
+  // Schema.org structured data for SEO
+  const jsonLd = dish ? {
+    "@context": "https://schema.org",
+    "@type": "MenuItem",
+    name: dish.name,
+    description: dish.description,
+    offers: dish.price ? { "@type": "Offer", price: dish.price, priceCurrency: "USD" } : undefined,
+    nutrition: dish.macros?.calories ? {
+      "@type": "NutritionInformation",
+      calories: `${dish.macros.calories.min}-${dish.macros.calories.max} cal`,
+      proteinContent: dish.macros.protein_g ? `${dish.macros.protein_g.min}-${dish.macros.protein_g.max}g` : undefined,
+    } : undefined,
+    image: dish.photos?.[0],
+  } : null;
+
   return (
     <div className="max-w-2xl mx-auto pb-8">
+      {jsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      )}
       {/* Back button */}
       <div className="px-4 py-3">
         <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">&larr; Back</Link>
@@ -146,6 +175,7 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
         <div className="relative bg-muted">
           {/* Swipeable container using CSS scroll-snap */}
           <div
+            ref={photoContainerRef}
             className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar"
             onScroll={(e) => {
               const el = e.currentTarget;
@@ -175,7 +205,10 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
                   className={`rounded-full transition-all duration-200 ${
                     i === photoIndex ? "w-4 h-2 bg-white" : "w-2 h-2 bg-white/50"
                   }`}
-                  onClick={() => setPhotoIndex(i)}
+                  onClick={() => {
+                    setPhotoIndex(i);
+                    photoContainerRef.current?.scrollTo({ left: i * (photoContainerRef.current?.clientWidth ?? 0), behavior: "smooth" });
+                  }}
                   aria-label={`Photo ${i + 1}`}
                 />
               ))}
