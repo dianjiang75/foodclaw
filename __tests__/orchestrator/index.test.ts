@@ -160,10 +160,9 @@ describe("Apollo Evaluator", () => {
       nut_free: null,
     };
 
+    // Vegan is now ALLERGY_CRITICAL — low confidence (0.8 < 0.85) dishes are excluded
     const result = verify([lowConfVegan], restrictions);
-    expect(result).toHaveLength(1);
-    expect(result[0].warnings.length).toBeGreaterThan(0);
-    expect(result[0].warnings[0]).toContain("not verified");
+    expect(result).toHaveLength(0);
   });
 
   it("applies strict filtering for allergy-critical restrictions (nut_free)", () => {

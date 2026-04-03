@@ -24,6 +24,8 @@ const ALLERGY_CRITICAL: (keyof DietaryFlags)[] = [
   "nut_free",
   "gluten_free",
   "dairy_free",  // lactose intolerance + casein allergy
+  "vegan",       // ethical + health — must not serve animal products
+  "vegetarian",  // must not serve meat/fish
 ];
 
 /**
@@ -50,7 +52,9 @@ const ALLERGEN_TO_FLAG: Record<string, keyof DietaryFlags> = {
 const KNOWN_ALLERGEN_DISHES: Partial<Record<keyof DietaryFlags, string[]>> = {
   nut_free: ["pad thai", "kung pao", "satay", "baklava", "pesto", "mole", "dan dan", "mapo", "som tum"],
   gluten_free: ["ramen", "udon", "nabeyaki", "spaghetti", "linguine", "penne", "fettuccine", "lo mein", "chow mein", "tiramisu", "ladyfinger", "croissant", "baguette", "pizza", "calzone", "gyoza", "dumpling", "wonton"],
-  dairy_free: ["alfredo", "carbonara", "mac and cheese", "gratin", "fondue", "queso", "tiramisu", "cheesecake", "butter chicken"],
+  dairy_free: ["alfredo", "carbonara", "mac and cheese", "gratin", "fondue", "queso", "tiramisu", "cheesecake", "butter chicken", "cacio e pepe"],
+  vegan: ["eel", "unagi", "omakase", "bolognese", "ragu", "meatball", "steak", "burger", "lamb", "pork", "bacon", "prosciutto", "sashimi", "sushi", "omelette", "frittata", "tiramisu", "cheesecake"],
+  vegetarian: ["eel", "unagi", "omakase", "sashimi", "bolognese", "ragu", "meatball", "steak", "lamb chop", "pork belly", "bacon", "prosciutto", "kebab"],
 };
 
 /** Keywords that indicate an allergen is present in a dish description.
@@ -64,9 +68,9 @@ const ALLERGEN_KEYWORDS: Record<string, string[]> = {
   shellfish: ["shrimp", "crab", "lobster", "clam", "mussel", "oyster", "squid", "octopus", "prawn", "scallop", "crawfish", "crayfish"],
   soybeans: ["soy", "tofu", "edamame", "miso", "tempeh", "soybean"],
   sesame: ["sesame", "tahini"],
-  wheat: ["wheat", "flour", "bread", "naan", "pita", "tortilla", "crouton", "breadcrumb", "panko"],
+  wheat: ["wheat", "flour", "bread", "naan", "pita", "tortilla", "crouton", "breadcrumb", "panko", "sourdough", "toast", "brioche", "biscuit", "pastry", "croissant", "baguette", "ciabatta", "focaccia"],
   eggs: ["egg", "eggs", "omelette", "tamago", "meringue", "frittata", "quiche"],
-  milk: ["cheese", "cream", "butter", "yogurt", "milk", "ricotta", "burrata", "mozzarella", "paneer", "mascarpone", "ghee", "whey"],
+  milk: ["cheese", "cream", "butter", "yogurt", "milk", "ricotta", "burrata", "mozzarella", "paneer", "mascarpone", "ghee", "whey", "feta", "pecorino", "parmigiano", "parmesan", "brie", "gouda", "cheddar", "gruyere", "provolone", "cacio"],
 };
 
 /**
@@ -172,6 +176,29 @@ export function verify(
           } else if (restriction === "dairy_free") {
             keywordSources.push(ALLERGEN_KEYWORDS["milk"] || []);
             keywordSources.push(KNOWN_ALLERGEN_DISHES["dairy_free"] || []);
+          } else if (restriction === "vegan") {
+            // Vegan: exclude any animal product keywords
+            keywordSources.push(ALLERGEN_KEYWORDS["milk"] || []);
+            keywordSources.push(ALLERGEN_KEYWORDS["eggs"] || []);
+            keywordSources.push(ALLERGEN_KEYWORDS["fish"] || []);
+            keywordSources.push(ALLERGEN_KEYWORDS["shellfish"] || []);
+            keywordSources.push(KNOWN_ALLERGEN_DISHES["vegan"] || []);
+            keywordSources.push([
+              "chicken", "beef", "pork", "lamb", "duck", "turkey", "veal",
+              "bacon", "ham", "sausage", "salami", "prosciutto", "pepperoni",
+              "steak", "ribeye", "sirloin", "brisket", "chorizo", "meat",
+              "eel", "unagi", "honey",
+            ]);
+          } else if (restriction === "vegetarian") {
+            keywordSources.push(ALLERGEN_KEYWORDS["fish"] || []);
+            keywordSources.push(ALLERGEN_KEYWORDS["shellfish"] || []);
+            keywordSources.push(KNOWN_ALLERGEN_DISHES["vegetarian"] || []);
+            keywordSources.push([
+              "chicken", "beef", "pork", "lamb", "duck", "turkey", "veal",
+              "bacon", "ham", "sausage", "salami", "prosciutto", "pepperoni",
+              "steak", "ribeye", "sirloin", "brisket", "chorizo", "meat",
+              "eel", "unagi",
+            ]);
           }
 
           const allKeywords = keywordSources.flat();
