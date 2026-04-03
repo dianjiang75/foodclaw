@@ -1,7 +1,7 @@
-# NutriScout Deep Database Architecture Guide
+# FoodClaw Deep Database Architecture Guide
 
 Implementation-ready reference for PostgreSQL 16 + pgvector, Redis 7, Prisma ORM, and BullMQ.
-Tailored to the NutriScout schema as of 2026-03-30.
+Tailored to the FoodClaw schema as of 2026-03-30.
 
 ---
 
@@ -20,7 +20,7 @@ Tailored to the NutriScout schema as of 2026-03-30.
 
 ## 1. pgvector: HNSW vs IVFFlat
 
-### Verdict: Use HNSW for NutriScout
+### Verdict: Use HNSW for FoodClaw
 
 Your current `post-migrate.sql` uses IVFFlat with `lists = 100`. This is **wrong** for your use case. Here is why and what to do instead.
 
@@ -402,7 +402,7 @@ CREATE INDEX idx_dishes_is_gluten_free ON dishes (id) WHERE is_gluten_free = tru
 
 ### Composite Index for the Common Query Pattern
 
-The most common NutriScout query is "vegan dishes sorted by protein near me." Create a composite:
+The most common FoodClaw query is "vegan dishes sorted by protein near me." Create a composite:
 
 ```sql
 -- Covers: dietary filter + protein sort + calorie filter
@@ -450,7 +450,7 @@ CREATE INDEX idx_restaurants_location ON restaurants
 
 ### Recommendation: Stick with earthdistance for Now
 
-For NutriScout's use case (radius search for restaurants within 1-10 miles in a metro area), earthdistance is adequate. The 0.3% accuracy difference is irrelevant for food delivery. PostGIS adds deployment complexity for minimal gain.
+For FoodClaw's use case (radius search for restaurants within 1-10 miles in a metro area), earthdistance is adequate. The 0.3% accuracy difference is irrelevant for food delivery. PostGIS adds deployment complexity for minimal gain.
 
 **Switch to PostGIS only if** you need: KNN-indexed queries ("5 nearest restaurants"), polygon-based delivery zones, or route-distance calculations.
 
@@ -951,7 +951,7 @@ await invalidateEntity(`rest:abc`);
 // This deletes all search results, menu caches, dish details that included restaurant "abc"
 ```
 
-### 5.6 Redis Configuration for NutriScout
+### 5.6 Redis Configuration for FoodClaw
 
 ```typescript
 // src/lib/cache/redis.ts — production-ready
@@ -1333,7 +1333,7 @@ export function setupDLQMonitoring() {
 
 ## 7. Full-Text Search: tsvector vs Elasticsearch
 
-### Verdict: PostgreSQL tsvector Is Sufficient for NutriScout
+### Verdict: PostgreSQL tsvector Is Sufficient for FoodClaw
 
 | Factor | PostgreSQL FTS (tsvector) | Elasticsearch |
 |--------|--------------------------|---------------|
@@ -1497,7 +1497,7 @@ CREATE INDEX IF NOT EXISTS idx_dishes_name_trgm ON dishes USING GIN(name gin_trg
 
 ### 8.1 Prisma Migration Workflow
 
-NutriScout has a split migration approach: Prisma manages the schema, `post-migrate.sql` handles pgvector/extensions. This is the correct approach since Prisma cannot natively manage:
+FoodClaw has a split migration approach: Prisma manages the schema, `post-migrate.sql` handles pgvector/extensions. This is the correct approach since Prisma cannot natively manage:
 - pgvector columns and indexes
 - Custom PostgreSQL functions and triggers
 - earthdistance indexes

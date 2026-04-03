@@ -27,7 +27,7 @@
 - Background: #F5DDC2 (warm cream)
 - Highlight: #FB8818 (amber)
 
-**Recommended NutriScout Palette**:
+**Recommended FoodClaw Palette**:
 - Primary: Warm emerald green (health + freshness + not generic)
 - Accent: Coral/salmon (appetizing, warm, food-associated)
 - Background: Warm cream #FAFAF5 (not pure white)

@@ -146,7 +146,7 @@ Sources:
 4. Freshness/availability signals (wait time, open now) -- 10%
 5. Data completeness (photo, reviews, macro confidence) -- 10%
 
-**Personalization**: iFood's 2024-2025 results showed 97% uplift in conversion by personalizing collection recommendations. NutriScout could eventually incorporate user dietary preferences and order history into ranking, but this is a future consideration.
+**Personalization**: iFood's 2024-2025 results showed 97% uplift in conversion by personalizing collection recommendations. FoodClaw could eventually incorporate user dietary preferences and order history into ranking, but this is a future consideration.
 
 Sources:
 - [iFood: Personalized Dish and Restaurant Recommendations](https://arxiv.org/html/2508.03670v1)

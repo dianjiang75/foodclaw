@@ -1,4 +1,4 @@
-# Comprehensive Research: AI Food Photo Analysis, Macro Estimation Pipelines, and Image Processing for NutriScout
+# Comprehensive Research: AI Food Photo Analysis, Macro Estimation Pipelines, and Image Processing for FoodClaw
 **Date**: 2026-03-30
 **Focus**: Food Photo AI Pipeline
 **Research Depth**: 12 web searches, 23 tool uses, comprehensive analysis

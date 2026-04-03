@@ -1,4 +1,4 @@
-# NutriScout: Comprehensive Onboarding, Retention & Engagement Strategy
+# FoodClaw: Comprehensive Onboarding, Retention & Engagement Strategy
 **Date**: 2026-03-30
 **Focus**: Onboarding, Retention & Engagement
 **Research Depth**: 10 web searches, 20 tool uses, comprehensive analysis
@@ -28,7 +28,7 @@
 
 The top-converting onboarding flows in health and nutrition apps share a common pattern: they are **longer than you'd expect** but broken into psychologically satisfying micro-steps. The critical insight from 2025-2026 data is that **longer onboarding flows convert better** for health apps, because they build emotional investment and perceived personalization before the paywall.
 
-### The Optimal Flow for NutriScout (Recommended 18-25 Screens)
+### The Optimal Flow for FoodClaw (Recommended 18-25 Screens)
 
 **Phase 1: Identity & Goal Setting (Screens 1-5)**
 
@@ -147,15 +147,15 @@ Noom has one of the highest-converting onboarding flows in health tech, and it d
 - "Your personalized plan has been reserved" creates urgency
 - Social proof reinforcement: "85% of users with your profile reached their goal"
 
-### What NutriScout Should Steal From Noom
+### What FoodClaw Should Steal From Noom
 
 1. **Insert social proof at known drop-off points.** Noom places success stories at exactly the screens where analytics showed users were leaving. You should instrument your onboarding funnel and add testimonials at your specific drop-off points.
 
 2. **Processing animations increase conversions 10-20%.** When you show "Analyzing your dietary profile..." with a loading bar, users perceive higher value in the results. This is called the "labor illusion" -- people value things more when they see effort being invested.
 
-3. **The behavioral quiz technique.** For NutriScout, this could be a "Food Discovery Profile" quiz: are you an Adventurous Eater, a Macro Optimizer, a Comfort Seeker, a Health Purist? This creates identity investment in the app before any money changes hands.
+3. **The behavioral quiz technique.** For FoodClaw, this could be a "Food Discovery Profile" quiz: are you an Adventurous Eater, a Macro Optimizer, a Comfort Seeker, a Health Purist? This creates identity investment in the app before any money changes hands.
 
-4. **Goal timeline prediction.** Noom shows "You'll reach your goal weight by [date]." NutriScout could show: "Based on your profile, you'll discover 12 new compliant dishes this month" or "Your average macro accuracy will improve by 35% in 2 weeks."
+4. **Goal timeline prediction.** Noom shows "You'll reach your goal weight by [date]." FoodClaw could show: "Based on your profile, you'll discover 12 new compliant dishes this month" or "Your average macro accuracy will improve by 35% in 2 weeks."
 
 5. **Never reveal the total number of screens.** Noom uses section-based progress bars that reset, so users never see "Step 47 of 96." Each section feels like a short quiz.
 
@@ -172,7 +172,7 @@ Noom has one of the highest-converting onboarding flows in health tech, and it d
 
 **The Core Problem:** 46% of users opt out of push notifications after receiving 2-5 messages in a single week. 32% opt out after 6-10 messages per week. Yet push notifications are one of the strongest retention levers available.
 
-### Optimal Frequency and Timing for NutriScout
+### Optimal Frequency and Timing for FoodClaw
 
 **Frequency Target: 3-5 notifications per week maximum**
 
@@ -189,7 +189,7 @@ Noom has one of the highest-converting onboarding flows in health tech, and it d
 For health and fitness apps specifically:
 - **Best engagement windows:** 5-7 AM (early exercisers) and 5-8 PM (after-work crowd)
 - **Worst times:** 11 AM-12 PM (lowest CTR)
-- **For NutriScout specifically:** Target meal decision points: 10:30-11:30 AM (lunch planning) and 4:30-5:30 PM (dinner planning)
+- **For FoodClaw specifically:** Target meal decision points: 10:30-11:30 AM (lunch planning) and 4:30-5:30 PM (dinner planning)
 
 ### Personalized Notification Timing
 
@@ -240,7 +240,7 @@ Well-executed gamification boosts engagement by **100-150%** compared to non-gam
 
 **S-Tier (Proven, High-Impact)**
 
-| Mechanic | Why It Works | NutriScout Implementation |
+| Mechanic | Why It Works | FoodClaw Implementation |
 |----------|-------------|--------------------------|
 | **Streaks** | Loss aversion is stronger than gain motivation. Once a user has a 14-day streak, breaking it feels like a loss. | "Discovery Streak" -- consecutive days of logging or discovering a new dish. Show streak count prominently on home screen. |
 | **Progress visualization** | Users need to see movement toward a goal. A filling progress bar triggers dopamine. | "Dishes Discovered" progress ring. "Macro Accuracy" percentage improving over time. Weekly progress cards. |
@@ -249,7 +249,7 @@ Well-executed gamification boosts engagement by **100-150%** compared to non-gam
 
 **A-Tier (Effective When Done Right)**
 
-| Mechanic | Why It Works | NutriScout Implementation |
+| Mechanic | Why It Works | FoodClaw Implementation |
 |----------|-------------|--------------------------|
 | **Challenges** | Time-bounded goals create urgency and community. | "7-Day Halal Explorer Challenge: try a dish from 7 different cuisines" |
 | **Leaderboards** | Work for competitive users (your fitness/biohacker segment) but can discourage casual users. | Opt-in leaderboards: "Top Discoverers This Week in [City]." Never show rank to users who'd be demoralized by a low position. |
@@ -257,11 +257,11 @@ Well-executed gamification boosts engagement by **100-150%** compared to non-gam
 
 **B-Tier (Use Sparingly)**
 
-| Mechanic | Caution | NutriScout Approach |
+| Mechanic | Caution | FoodClaw Approach |
 |----------|---------|---------------------|
 | **Badges/achievements** | Most badge systems feel meaningless. Users collect them and forget. | Only use badges that unlock real status or features: "Verified Reviewer" badge after 20 reviews earns priority in community features. |
 | **Points/currency** | Points without clear redemption value feel worthless. | If used, tie to tangible benefits: "100 Discovery Points = early access to new restaurant profiles" |
-| **Avatars/customization** | Works for younger demographics but can feel childish for 25-44 audience. | Skip for NutriScout's target audience. |
+| **Avatars/customization** | Works for younger demographics but can feel childish for 25-44 audience. | Skip for FoodClaw's target audience. |
 
 **F-Tier (Avoid -- These Kill Retention)**
 
@@ -278,7 +278,7 @@ The most powerful gamification is not about points or badges -- it is about **id
 - Peloton users identify as "Peloton people"
 - When a health tool becomes part of someone's identity, adherence stops being a willpower challenge and becomes self-expression
 
-**For NutriScout:** Build toward users identifying as "NutriScout discoverers" or having their own food identity: "I'm a Macro-Conscious Explorer" or "I'm a Halal Foodie." This identity should emerge from the behavioral quiz in onboarding and be reinforced throughout the product.
+**For FoodClaw:** Build toward users identifying as "FoodClaw discoverers" or having their own food identity: "I'm a Macro-Conscious Explorer" or "I'm a Halal Foodie." This identity should emerge from the behavioral quiz in onboarding and be reinforced throughout the product.
 
 ---
 
@@ -286,7 +286,7 @@ The most powerful gamification is not about points or badges -- it is about **id
 
 ### Industry Benchmarks (2025-2026 Data)
 
-| Metric | Industry Average (Health & Fitness) | Top Performers | NutriScout Target |
+| Metric | Industry Average (Health & Fitness) | Top Performers | FoodClaw Target |
 |--------|--------------------------------------|----------------|-------------------|
 | **Day 1 Retention** | 20-27% | 45% | 35% |
 | **Day 7 Retention** | 13-15% | 30% | 22% |
@@ -303,7 +303,7 @@ Identify your app's "magic number" -- the specific action count that predicts lo
 - **Slack's magic number:** 2,000 messages sent by a team
 - **Dropbox's magic number:** 1 file saved to a shared folder
 
-**NutriScout's likely magic numbers (to validate with data):**
+**FoodClaw's likely magic numbers (to validate with data):**
 - Saved 3+ dishes in first week
 - Used photo macro estimation 2+ times in first week
 - Checked wait times before visiting a restaurant at least once
@@ -408,7 +408,7 @@ function recommendDishes(userId: string): Dish[] {
 
 Apps with strong social features see a **30% boost in retention rates** compared to those without. 68% of users stick with an app when they regularly share their progress. Strava users open the app **35+ times per month**, compared to competitor averages under 15, largely driven by social features.
 
-### Social Feature Priority Matrix for NutriScout
+### Social Feature Priority Matrix for FoodClaw
 
 **Build First (Launch Features)**
 
@@ -422,7 +422,7 @@ Apps with strong social features see a **30% boost in retention rates** compared
 
 | Feature | Implementation | Retention Impact |
 |---------|---------------|-----------------|
-| **Follow friends** | Import contacts, follow other NutriScout users, see their discoveries | Network effect begins. Each followed user is a reason to return. |
+| **Follow friends** | Import contacts, follow other FoodClaw users, see their discoveries | Network effect begins. Each followed user is a reason to return. |
 | **Discovery feed** | Scrollable feed of what people you follow are eating/discovering | Creates a daily check-in habit. |
 | **Shared lists** | "Date Night Spots" or "Team Lunch Options" collaborative lists | Viral loop: sharing a list invites non-users to the app. |
 
@@ -442,7 +442,7 @@ Social features must be **invisible if unused** and **amplifying if engaged**. N
 
 ## 8. HABIT FORMATION -- THE HOOK MODEL APPLIED
 
-### The Hook Model for NutriScout
+### The Hook Model for FoodClaw
 
 ### Phase 1: TRIGGER
 
@@ -457,10 +457,10 @@ Social features must be **invisible if unused** and **amplifying if engaged**. N
 **Internal Triggers (You Build These Over Time)**
 | Internal State | Desired Association |
 |---------------|-------------------|
-| "I'm hungry, what should I eat?" | Open NutriScout |
-| "I wonder about the macros in this dish" | Take a photo with NutriScout |
-| "Is this restaurant crowded right now?" | Check NutriScout wait times |
-| "I need to find a halal/kosher restaurant in this new area" | Search NutriScout |
+| "I'm hungry, what should I eat?" | Open FoodClaw |
+| "I wonder about the macros in this dish" | Take a photo with FoodClaw |
+| "Is this restaurant crowded right now?" | Check FoodClaw wait times |
+| "I need to find a halal/kosher restaurant in this new area" | Search FoodClaw |
 
 ### Phase 2: ACTION (Make It Effortless)
 
@@ -499,7 +499,7 @@ Social features must be **invisible if unused** and **amplifying if engaged**. N
 
 ### Time to Habit Formation
 
-Research shows habit formation takes anywhere from 18 to 254 days, with a median of **66 days**. For NutriScout:
+Research shows habit formation takes anywhere from 18 to 254 days, with a median of **66 days**. For FoodClaw:
 - **Week 1-2:** External triggers drive all engagement
 - **Week 3-4:** Some users begin associating meal decisions with the app
 - **Month 2-3:** Habitual users check the app automatically. This is the retention wall.
@@ -593,7 +593,7 @@ churn_features = {
 
 ### Recommended: Soft Paywall with Generous Free Tier
 
-The data points to a critical paradox: H&F has the **highest trial-to-paid rate (35%)** but the **lowest first-renewal rate (30.3%)**. Users convert easily but feel ripped off after paying. NutriScout must avoid this trap.
+The data points to a critical paradox: H&F has the **highest trial-to-paid rate (35%)** but the **lowest first-renewal rate (30.3%)**. Users convert easily but feel ripped off after paying. FoodClaw must avoid this trap.
 
 **Free Tier (Enough to Be Genuinely Useful):**
 - Dish discovery with dietary filtering (core experience)

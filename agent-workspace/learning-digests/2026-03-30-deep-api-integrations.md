@@ -1,7 +1,7 @@
-# NutriScout Backend API Integrations -- Deep Research Report
+# FoodClaw Backend API Integrations -- Deep Research Report
 
 > **Generated:** March 30, 2026
-> **Purpose:** Comprehensive integration reference for every external API and data source NutriScout needs
+> **Purpose:** Comprehensive integration reference for every external API and data source FoodClaw needs
 
 ---
 
@@ -194,7 +194,7 @@ async function getPlaceDetailsWithMenu(placeId: string) {
 
 ### Overview
 
-Yelp provides rich review data and business information. For NutriScout, the key value is **review content** that mentions specific dishes and **dish-level metadata** via the Yelp Insights API.
+Yelp provides rich review data and business information. For FoodClaw, the key value is **review content** that mentions specific dishes and **dish-level metadata** via the Yelp Insights API.
 
 ### Endpoints & Authentication
 
@@ -485,7 +485,7 @@ async function getMultipleFoods(fdcIds: number[]) {
 | **Environmental impact** | Yes (Eco-Score) | No |
 | **API format** | REST/JSON | REST/JSON |
 
-### Recommendation for NutriScout
+### Recommendation for FoodClaw
 
 **Use BOTH:**
 - **Open Food Facts** as a free supplementary source for packaged food data, especially for international products and Nutri-Score/Eco-Score
@@ -830,14 +830,14 @@ The `populartimes` library on GitHub scrapes Google Maps data. **Warning:** This
 - **Meta v. Bright Data (2024):** Scraping logged-out public data was not unauthorized access
 - **Recent 2025-2026 lawsuits around AI training:** New legal boundaries being drawn around scraping for AI model training specifically
 
-### Best Practices for NutriScout
+### Best Practices for FoodClaw
 
 1. **Respect `robots.txt`** on every target domain
 2. **Rate limit aggressively** -- max 1 request per second per domain
 3. **Cache everything** -- don't re-scrape data that hasn't changed
 4. **Transform data** -- extract structured nutrition/price data rather than republishing descriptions verbatim
 5. **Attribute sources** -- credit the restaurant/platform where data originated
-6. **Provide opt-out** -- let restaurants request removal from NutriScout
+6. **Provide opt-out** -- let restaurants request removal from FoodClaw
 7. **Use official APIs first** -- only scrape when no API exists
 8. **Consult a lawyer** before production deployment of any scraping pipeline
 
@@ -957,7 +957,7 @@ Instead of scraping directly (and risking legal issues), consider these menu dat
 
 ### Overview
 
-Claude's vision capabilities allow NutriScout to **analyze food photos and estimate macronutrients** from images. This is a core feature: users photograph their dish and get approximate nutrition data.
+Claude's vision capabilities allow FoodClaw to **analyze food photos and estimate macronutrients** from images. This is a core feature: users photograph their dish and get approximate nutrition data.
 
 ### How Image Tokens Are Calculated
 
@@ -1099,9 +1099,9 @@ Assuming 3 photo analyses per user per day, 20% of users active daily:
 
 ## 10. Image Optimization & CDN
 
-### Strategy for NutriScout Food Photos
+### Strategy for FoodClaw Food Photos
 
-Food photos are the **most bandwidth-intensive asset** in NutriScout. Optimizing delivery directly impacts load times, user experience, and hosting costs.
+Food photos are the **most bandwidth-intensive asset** in FoodClaw. Optimizing delivery directly impacts load times, user experience, and hosting costs.
 
 ### Recommended Stack
 
@@ -1251,7 +1251,7 @@ If Cloudinary gets expensive at scale, Imgix is an alternative with simpler pric
 | **Reverse geocoding** | $5/1K | $0.75/1K | $0.50/1K | Free |
 | **Map tiles** | $7/1K loads | 50K free/mo | Included | Self-host |
 
-### Recommendation for NutriScout
+### Recommendation for FoodClaw
 
 **Primary: Radar.io** -- Best value, 90% cheaper than Google, excellent quality for US-focused apps.
 
@@ -1342,7 +1342,7 @@ OpenTable does NOT offer a public self-service API. You must:
 
 #### Integration Approach
 
-For NutriScout without full partner status, use the **OpenTable widget/deeplink** approach:
+For FoodClaw without full partner status, use the **OpenTable widget/deeplink** approach:
 
 ```typescript
 // Simple deeplink approach (no API partnership required)
@@ -1392,7 +1392,7 @@ async function findResyAvailability(
 }
 ```
 
-### Recommendation for NutriScout
+### Recommendation for FoodClaw
 
 1. **Apply for OpenTable partner status** early -- approval takes weeks/months
 2. **Use deeplinks/widgets** for initial MVP (no API access needed)

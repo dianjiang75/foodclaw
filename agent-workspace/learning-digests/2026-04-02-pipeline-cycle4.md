@@ -1,7 +1,7 @@
 # Learning Digest -- Pipeline Cycle 4
 **Date**: 2026-04-02
 **Focus**: Pipeline (restaurant/dish data pipeline, job queues, crawl-to-vision-to-review)
-**Agent**: NutriScout Learning Agent
+**Agent**: FoodClaw Learning Agent
 
 ---
 
@@ -58,7 +58,7 @@ From improvement logs (2026-04-01 and 2026-04-02):
 - [FlowProducer API reference v5.71](https://api.docs.bullmq.io/classes/v5.FlowProducer.html)
 - [BullMQ Job Dependencies with Flows](https://oneuptime.com/blog/post/2026-01-21-bullmq-job-dependencies-flows/view)
 
-**NutriScout applicability**: Replace the manual crawl-worker `completed` handler with a FlowProducer-based flow:
+**FoodClaw applicability**: Replace the manual crawl-worker `completed` handler with a FlowProducer-based flow:
 ```
 area-crawl (parent, menu-crawl queue)
   -> restaurant-crawl (child per restaurant, menu-crawl queue)
@@ -94,7 +94,7 @@ The existing digest at `2026-03-30-deep-database-architecture.md` (section 6.4) 
 
 ### 2.3 Menu Data Extraction Techniques
 
-**Current state**: NutriScout uses a 3-tier strategy:
+**Current state**: FoodClaw uses a 3-tier strategy:
 1. JSON-LD structured data extraction (best quality)
 2. CSS selector-based HTML parsing with fallback heading/list patterns
 3. Google Photos + Claude Haiku vision for menu photo OCR
@@ -102,14 +102,14 @@ The existing digest at `2026-03-30-deep-database-architecture.md` (section 6.4) 
 **Industry patterns (2025-2026)**:
 - **DoorDash approach**: LLM transcription of menu photos with ML guardrail layer for quality control. Uses traditional ML to validate LLM outputs at scale.
 - **Plate Parser**: Modular pipeline of OCR (EasyOCR) + image preprocessing (OpenCV adaptive thresholding) + LLM structured extraction + vector search for retrieval.
-- **Structured output schemas**: Using LLM constrained decoding (Gemini `responseMimeType: "application/json"` + `responseSchema`) is now standard. NutriScout already does this for vision analysis but NOT for the ingredient analysis prompt in `menu-crawler/index.ts`.
+- **Structured output schemas**: Using LLM constrained decoding (Gemini `responseMimeType: "application/json"` + `responseSchema`) is now standard. FoodClaw already does this for vision analysis but NOT for the ingredient analysis prompt in `menu-crawler/index.ts`.
 
 **Source**:
 - [DoorDash LLM Menu Transcription](https://careersatdoordash.com/blog/doordash-llm-transcribe-menu/)
 - [Plate Parser](https://medium.com/@hrishikesh19202/plate-parser-a-modular-llm-powered-system-for-intelligent-menu-digitization-and-retrieval-f30c1acade98)
 - [Structured data extraction with LLM schemas](https://simonwillison.net/2025/Feb/28/llm-schemas/)
 
-**NutriScout applicability**: The `analyzeIngredients()` function in `menu-crawler/index.ts` uses Claude Sonnet with a free-text prompt and `extractJson()` parsing. Switching to Anthropic's tool_use / JSON mode or migrating to Gemini with `responseSchema` for the ingredient analysis would reduce parse failures (the fallback placeholder path was added specifically because of parse failures).
+**FoodClaw applicability**: The `analyzeIngredients()` function in `menu-crawler/index.ts` uses Claude Sonnet with a free-text prompt and `extractJson()` parsing. Switching to Anthropic's tool_use / JSON mode or migrating to Gemini with `responseSchema` for the ingredient analysis would reduce parse failures (the fallback placeholder path was added specifically because of parse failures).
 
 ### 2.4 Job Queue Reliability Patterns
 
@@ -251,7 +251,7 @@ Create a shared helper `src/lib/google-places/client.ts`:
 
 - **Delivery platform API integration** (RED tier): Requires contracts with DoorDash/UberEats/Grubhub. Cannot be implemented without business agreements. Remains a stub.
 - **LayoutLM/Donut fine-tuned OCR**: Over-engineered for current scale. Gemini Flash vision is sufficient.
-- **Vector search for menu retrieval**: NutriScout already uses pgvector for dish similarity. Adding a separate vector store (Qdrant/Pinecone) for menus would be redundant.
+- **Vector search for menu retrieval**: FoodClaw already uses pgvector for dish similarity. Adding a separate vector store (Qdrant/Pinecone) for menus would be redundant.
 
 ---
 

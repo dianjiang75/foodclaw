@@ -1,4 +1,4 @@
-# NutriScout Go-To-Market & Growth Strategy: Comprehensive Playbook
+# FoodClaw Go-To-Market & Growth Strategy: Comprehensive Playbook
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@
 
 ### Recommendation: Denver, Colorado
 
-After evaluating Austin, Los Angeles, New York, and Denver across multiple criteria, **Denver emerges as the strongest first-launch city** for NutriScout.
+After evaluating Austin, Los Angeles, New York, and Denver across multiple criteria, **Denver emerges as the strongest first-launch city** for FoodClaw.
 
 ### Why Denver Wins
 
@@ -147,18 +147,18 @@ The dominant viral formats in food/nutrition TikTok right now:
 5. **High-protein recipe hacks**: Cottage cheese in everything (pasta, ice cream, pudding). Protein-enhanced versions of comfort food.
 6. **"Ordering for my macros" POV content**: Filming ordering at restaurants while hitting specific nutritional targets.
 
-### NutriScout's TikTok Playbook
+### FoodClaw's TikTok Playbook
 
 #### Content Pillars (post 5-7x/week)
 
 **Pillar 1: "Can You Eat This?" Series (2x/week)**
-- Format: Show a popular dish, then reveal dietary filter results from NutriScout
+- Format: Show a popular dish, then reveal dietary filter results from FoodClaw
 - Hook: "If you have celiac, can you eat THIS at Chipotle?" [pause] [reveal]
 - Why it works: Creates tension, serves underserved community, naturally demonstrates product
 - Example macro script: "POV: You're gluten-free and just moved to Denver. Let me show you every safe dish within 2 miles."
 
 **Pillar 2: "Macro Reveal" Series (2x/week)**
-- Format: Film popular restaurant dish, then show NutriScout's AI macro estimation
+- Format: Film popular restaurant dish, then show FoodClaw's AI macro estimation
 - Hook: "This Sweetgreen bowl LOOKS healthy but here are the real macros..." [use app to scan/estimate]
 - Why it works: Combines controversy (is this actually healthy?) with product demo
 - Target: 20-50k views per video, 2-5% conversion to app download
@@ -169,7 +169,7 @@ The dominant viral formats in food/nutrition TikTok right now:
 - Why it works: Emotional storytelling, underrepresented perspective, builds community loyalty
 
 **Pillar 4: "Versus" Comparisons (1x/week)**
-- Format: Compare two popular dishes side by side using NutriScout data
+- Format: Compare two popular dishes side by side using FoodClaw data
 - Hook: "Chipotle bowl vs. Sweetgreen bowl -- which actually has better macros?"
 - Why it works: Debate content gets shared and commented on heavily
 
@@ -231,7 +231,7 @@ Sources:
 ### Phase 1: Account Building (Weeks 1-4)
 
 **Step-by-step:**
-1. Create a Reddit account with format: "NutriScout_[FounderFirstName]" or just use a personal account
+1. Create a Reddit account with format: "FoodClaw_[FounderFirstName]" or just use a personal account
 2. Subscribe to all target subreddits
 3. **Do NOT post anything promotional for 30 days minimum**
 4. Spend 20 minutes daily commenting helpfully on posts:
@@ -253,7 +253,7 @@ Sources:
    - r/Denver: "Best restaurants in Denver for people with food allergies -- a comprehensive guide"
    - r/keto: "Denver keto dining guide -- every restaurant with keto-friendly options"
 2. These posts should be genuinely useful standalone content. They should NOT mention your app.
-3. When people inevitably ask "how did you compile this?" or "is there an app for this?" -- THEN you can mention NutriScout naturally in comments
+3. When people inevitably ask "how did you compile this?" or "is there an app for this?" -- THEN you can mention FoodClaw naturally in comments
 4. Post 1-2 of these high-value posts per week across different subreddits
 
 **Effort**: 3-5 hours/week for content creation
@@ -265,7 +265,7 @@ Sources:
 **Step-by-step:**
 1. Continue commenting daily. Ratio should be 10:1 (helpful comments to any app mention)
 2. When someone asks "what app do you use to track macros at restaurants?" -- answer naturally
-3. Create an r/NutriScout subreddit for product feedback and feature requests (only after you have 1,000+ users)
+3. Create an r/FoodClaw subreddit for product feedback and feature requests (only after you have 1,000+ users)
 4. Do AMAs in relevant subreddits: "I'm building a food discovery app for people with dietary restrictions. AMA" (clear with mods first)
 5. Share interesting data/insights from your app (anonymized): "We analyzed 10,000 dishes in Denver. Here's what the average 'healthy' bowl actually contains in macros"
 
@@ -337,7 +337,7 @@ People increasingly search by voice. Optimize for conversational queries:
 ### App Store Listing Optimization
 
 **App Name (30 chars max on iOS):**
-`NutriScout - Food Discovery`
+`FoodClaw - Food Discovery`
 
 **Subtitle (30 chars max on iOS):**
 `Dietary Filters & AI Macros`
@@ -409,7 +409,7 @@ Sources:
 
 **Why**: 2-3x higher engagement than macro influencers. 60% more engagement than celebrities. Most authentic. Cheapest.
 
-**Who to target for NutriScout:**
+**Who to target for FoodClaw:**
 - Local Denver food bloggers on Instagram/TikTok
 - CrossFit/F45/OrangeTheory members who post about food
 - Celiac/GF lifestyle content creators
@@ -443,7 +443,7 @@ Sources:
 **Compensation:**
 - $200-1,000 per post/reel
 - Revenue share or affiliate arrangement
-- Product co-creation (e.g., "NutriScout x [Influencer] Macro Guide")
+- Product co-creation (e.g., "FoodClaw x [Influencer] Macro Guide")
 
 **Expected ROI**: $3-8 per acquired user
 
@@ -460,14 +460,14 @@ Sources:
 1. Identify 30 nano-influencers in Denver (10 food, 10 fitness, 10 dietary restriction)
 2. Follow and engage with their content for 2 weeks before outreach
 3. Send personalized DM (not mass template):
-   > "Hey [name], I've been following your [specific content type] posts and love what you share about [specific topic]. I'm building an app called NutriScout that helps people find dishes based on dietary needs and see estimated macros. Since you're so active in the [GF/fitness/halal] Denver food scene, I'd love to get your honest feedback. No strings attached -- just want to know if this would be useful to you."
+   > "Hey [name], I've been following your [specific content type] posts and love what you share about [specific topic]. I'm building an app called FoodClaw that helps people find dishes based on dietary needs and see estimated macros. Since you're so active in the [GF/fitness/halal] Denver food scene, I'd love to get your honest feedback. No strings attached -- just want to know if this would be useful to you."
 4. Offer free early access to 20 who respond positively
 5. Let them use the app organically for 2 weeks before asking for any content
 
 **Month 2: Content Phase**
 1. Ask 10-15 of the most engaged beta influencers to create authentic content
 2. Provide creative brief but NOT a script -- authenticity outperforms polish
-3. Brief should include: 1 key message ("NutriScout lets you discover dishes filtered by your diet"), 1 CTA ("link in bio"), and freedom to interpret creatively
+3. Brief should include: 1 key message ("FoodClaw lets you discover dishes filtered by your diet"), 1 CTA ("link in bio"), and freedom to interpret creatively
 4. Coordinate posting across a 2-week window for maximum density
 5. Re-share and engage with every piece of influencer content
 
@@ -527,7 +527,7 @@ These pages directly serve your users and rank for local + dietary queries.
 3. Interactive map embed (linking to your app)
 4. Restaurant-by-restaurant breakdown with dish recommendations
 5. Macro/nutrition table for top dishes
-6. "Open in NutriScout" CTA buttons throughout
+6. "Open in FoodClaw" CTA buttons throughout
 7. Schema markup: LocalBusiness + Recipe structured data
 
 **Expected traffic**: 500-2,000 organic visits/month per guide after 3-6 months
@@ -548,10 +548,10 @@ These pages directly serve your users and rank for local + dietary queries.
 
 **Content format:**
 - 1,500-2,500 word guides with data tables
-- Embed NutriScout screenshots as "proof" images
+- Embed FoodClaw screenshots as "proof" images
 - Include Recipe/HowTo schema markup
 - Internal link to Tier 1 city guides
-- CTA: "Track these meals in NutriScout" with download link
+- CTA: "Track these meals in FoodClaw" with download link
 
 **Expected traffic**: 1,000-5,000 organic visits/month per article after 6 months
 **Effort**: 3-5 hours per article
@@ -610,7 +610,7 @@ Sources:
 
 ## 8. Waitlist & Pre-Launch Strategy
 
-### The Robinhood Model Adapted for NutriScout
+### The Robinhood Model Adapted for FoodClaw
 
 Robinhood grew their waitlist to 1 million users before launch using a simple formula: clear value prop + single-field signup + referral leaderboard. Here is how to adapt this for a food app.
 
@@ -636,7 +636,7 @@ Robinhood grew their waitlist to 1 million users before launch using a simple fo
    - **3 referrals**: Move up 100 spots + early access
    - **5 referrals**: Lifetime free premium features
    - **10 referrals**: "Founding Member" badge + input on feature roadmap
-   - **25 referrals**: Free NutriScout merchandise + personal onboarding call with founder
+   - **25 referrals**: Free FoodClaw merchandise + personal onboarding call with founder
 5. Show a real-time leaderboard of top referrers (builds competition)
 6. Send automated email when someone they referred joins: "Your friend [name] just joined! You're now #[new position]"
 
@@ -650,27 +650,27 @@ Robinhood grew their waitlist to 1 million users before launch using a simple fo
 - CTA: "Share your link to move up"
 
 **Email 2: The Story (Day 3)**
-- Subject: "Why we're building NutriScout"
+- Subject: "Why we're building FoodClaw"
 - Content: Founder's personal story (celiac diagnosis, frustration with existing apps, "aha" moment)
 - CTA: "Follow our journey on TikTok/Instagram"
 
 **Email 3: Behind the Scenes (Day 10)**
-- Subject: "Sneak peek: Here's what NutriScout looks like"
+- Subject: "Sneak peek: Here's what FoodClaw looks like"
 - Content: 3 screenshots, brief feature walkthrough, "we're building this for YOU"
 - CTA: "Reply with your #1 must-have feature" (drives engagement + market research)
 
 **Email 4: Social Proof (Day 20)**
-- Subject: "3,000 people are waiting for NutriScout"
+- Subject: "3,000 people are waiting for FoodClaw"
 - Content: Waitlist milestone, top feature requests from the community, beta tester testimonials
 - CTA: "Share your link -- only [X] spots left for early access"
 
 **Email 5: Launch Countdown (1 week before)**
-- Subject: "NutriScout launches in 7 days"
+- Subject: "FoodClaw launches in 7 days"
 - Content: Final feature preview, launch day plan, "here's exactly what to expect"
 - CTA: "Last chance to refer friends for founding member status"
 
 **Email 6: Launch Day**
-- Subject: "It's here. Download NutriScout now."
+- Subject: "It's here. Download FoodClaw now."
 - Content: Download links (iOS + Android), quick-start guide, special launch-day offer
 - CTA: "Download now + leave a review"
 
@@ -774,7 +774,7 @@ Sources:
   - MyFitnessPal: Dish-aware but no restaurant discovery
   - Fig: Allergen-focused but no macros or discovery
   - Zabihah: Halal-only, no macros
-  - **NutriScout**: Dish-centric + Nutrition-aware (empty quadrant = your opportunity)
+  - **FoodClaw**: Dish-centric + Nutrition-aware (empty quadrant = your opportunity)
 
 #### Slide 10: Go-to-Market
 - City-by-city expansion model (Denver first, then Austin/Portland)
@@ -899,7 +899,7 @@ Sources:
 1. Promote 3-5 active members to community moderators
 2. Launch user-led events (members propose and host their own sessions)
 3. Create city-specific channels as you expand
-4. Integrate Discord bot that pulls NutriScout data (e.g., "!macro chipotle chicken bowl")
+4. Integrate Discord bot that pulls FoodClaw data (e.g., "!macro chipotle chicken bowl")
 5. Monthly "Community Spotlight" featuring top contributors
 
 ### Metrics to Track
@@ -948,13 +948,13 @@ Sources:
 - Barry's Bootcamp
 
 **Partnership structure:**
-- NutriScout offers free premium access to all gym members
-- Gym displays NutriScout QR code at front desk/check-in
-- NutriScout creates a "Post-Workout Meals Near [Gym Name]" custom list
+- FoodClaw offers free premium access to all gym members
+- Gym displays FoodClaw QR code at front desk/check-in
+- FoodClaw creates a "Post-Workout Meals Near [Gym Name]" custom list
 - Co-host a "Nutrition Night" event at the gym quarterly
 
 **Outreach script:**
-> "Hi [Manager Name], I'm [Founder], building NutriScout -- a food discovery app that helps fitness-focused people find macro-friendly meals near them. We'd love to offer all [Gym Name] members free premium access. In return, we'd just ask you to put our QR code card at the front desk. We'll also create a custom 'Best Post-Workout Meals Near [Gym]' list for your members. No cost to you -- just value for your members."
+> "Hi [Manager Name], I'm [Founder], building FoodClaw -- a food discovery app that helps fitness-focused people find macro-friendly meals near them. We'd love to offer all [Gym Name] members free premium access. In return, we'd just ask you to put our QR code card at the front desk. We'll also create a custom 'Best Post-Workout Meals Near [Gym]' list for your members. No cost to you -- just value for your members."
 
 **Expected results per gym**: 20-50 downloads/month
 **Cost**: $0 (maybe $20 for printed QR code cards)
@@ -964,8 +964,8 @@ Sources:
 #### Tier 2: Dietitians & Nutritionists
 
 **Partnership structure:**
-- Dietitians recommend NutriScout to clients with dietary restrictions
-- NutriScout lists them as "Verified Nutrition Partners" in-app
+- Dietitians recommend FoodClaw to clients with dietary restrictions
+- FoodClaw lists them as "Verified Nutrition Partners" in-app
 - Co-create content: "Dietitian-approved macro-friendly meals in Denver"
 - Revenue share: Dietitian gets affiliate commission on premium conversions
 
@@ -982,13 +982,13 @@ Sources:
 #### Tier 3: Restaurant Partnerships
 
 **Partnership structure:**
-- Restaurants "verify" their dietary information in NutriScout (accuracy badge)
+- Restaurants "verify" their dietary information in FoodClaw (accuracy badge)
 - Restaurants get a "Featured" placement in relevant dietary filters
-- NutriScout creates content about the restaurant's allergen-safe/macro-friendly options
+- FoodClaw creates content about the restaurant's allergen-safe/macro-friendly options
 - Pricing: Free verification tier, $99-299/month for featured placement
 
 **Value proposition for restaurants:**
-> "NutriScout users are specifically searching for [dietary restriction]-safe meals. A 'Verified Gluten-Free' badge means celiac diners choose YOU over competitors with uncertainty. Our users spend 40% more per visit because they trust the dietary information."
+> "FoodClaw users are specifically searching for [dietary restriction]-safe meals. A 'Verified Gluten-Free' badge means celiac diners choose YOU over competitors with uncertainty. Our users spend 40% more per visit because they trust the dietary information."
 
 **Expected results**: Revenue stream + authentic content + user trust
 **Target**: 50 verified restaurants in first 6 months
@@ -999,7 +999,7 @@ Sources:
 | App | Synergy | Partnership Idea |
 |-----|---------|-----------------|
 | **Whoop/Oura** | Wearable data + food data | "Eat for your recovery score" integration |
-| **MyFitnessPal** | Macro logging | NutriScout dish data auto-imports to MFP |
+| **MyFitnessPal** | Macro logging | FoodClaw dish data auto-imports to MFP |
 | **Strava** | Post-workout meals | "Fuel your run" restaurant suggestions near routes |
 | **Noom** | Psychology + food | Content cross-promotion |
 | **Headspace/Calm** | Wellness bundle | Joint premium subscription offer |
@@ -1070,12 +1070,12 @@ Sources:
 
 #### Template 1: Tech Press (TechCrunch)
 
-**Subject**: NutriScout: AI-powered dish discovery for the 120M Americans with dietary restrictions
+**Subject**: FoodClaw: AI-powered dish discovery for the 120M Americans with dietary restrictions
 
 **Body** (7 sentences max):
 > Hi [Journalist First Name],
 >
-> 120 million Americans have dietary restrictions, yet no food app lets them search restaurants by dish and dietary safety. NutriScout is changing that.
+> 120 million Americans have dietary restrictions, yet no food app lets them search restaurants by dish and dietary safety. FoodClaw is changing that.
 >
 > We're a dish-first food discovery app that combines dietary filtering (celiac, halal, kosher, keto, vegan, allergen-free) with AI-powered macro estimation. Instead of searching "restaurants near me" and hoping for the best, users search for specific dishes filtered by their exact dietary needs.
 >
@@ -1092,9 +1092,9 @@ Sources:
 **Body**:
 > Hi [Name],
 >
-> As a [celiac sufferer / fitness enthusiast / specific personal connection], I built NutriScout because finding safe, nutritious meals at Denver restaurants shouldn't require 20 minutes of Googling before every meal.
+> As a [celiac sufferer / fitness enthusiast / specific personal connection], I built FoodClaw because finding safe, nutritious meals at Denver restaurants shouldn't require 20 minutes of Googling before every meal.
 >
-> NutriScout is a Denver-born app that lets users discover dishes (not just restaurants) filtered by dietary needs -- gluten-free, halal, kosher, keto, high-protein -- with AI-estimated macros for every dish. We've mapped [X] dishes across [X] Denver restaurants.
+> FoodClaw is a Denver-born app that lets users discover dishes (not just restaurants) filtered by dietary needs -- gluten-free, halal, kosher, keto, high-protein -- with AI-estimated macros for every dish. We've mapped [X] dishes across [X] Denver restaurants.
 >
 > Denver is our first city because of its incredible food scene and health-conscious population. We're seeing [early traction metric].
 >
@@ -1117,7 +1117,7 @@ Sources:
 ### The Data Story Angle (Your Secret Weapon)
 
 Once you have user data, pitch stories like:
-- "NutriScout data reveals Denver's most macro-friendly neighborhood" (local press loves this)
+- "FoodClaw data reveals Denver's most macro-friendly neighborhood" (local press loves this)
 - "The hidden allergens in America's most popular restaurant dishes" (national health press)
 - "AI analysis of 10,000 restaurant dishes shows 'healthy' menus average X calories" (tech press)
 
@@ -1240,7 +1240,7 @@ This is an extremely capital-efficient launch strategy. Most food/health apps sp
 | Zabihah | Halal restaurant finder | Halal-only, no macros, no other dietary needs |
 | Yummly | Recipe discovery | Home cooking only, not restaurant dining |
 
-**NutriScout's unique position**: The ONLY app that combines dish-first restaurant discovery + multi-dietary filtering + AI macro estimation. This is an empty quadrant in the competitive landscape.
+**FoodClaw's unique position**: The ONLY app that combines dish-first restaurant discovery + multi-dietary filtering + AI macro estimation. This is an empty quadrant in the competitive landscape.
 
 ---
 

@@ -1,4 +1,4 @@
-# NutriScout Learning Digest: Backend -- Cycle 4
+# FoodClaw Learning Digest: Backend -- Cycle 4
 **Date**: 2026-04-02
 **Agent**: Backend (PostgreSQL, pgvector, Redis, Prisma, connection pooling, query optimization, full-text search)
 
@@ -42,7 +42,7 @@ Note: Items 3-5 were addressed in the 2026-04-02 learning cycle log (phase 4). I
 
 ---
 
-### 2. HNSW Index Parameters Under-tuned for NutriScout Dataset
+### 2. HNSW Index Parameters Under-tuned for FoodClaw Dataset
 
 **Source**: [Crunchy Data HNSW guide](https://www.crunchydata.com/blog/hnsw-indexes-with-postgres-and-pgvector) | [Google Cloud pgvector tuning](https://cloud.google.com/blog/products/databases/faster-similarity-search-performance-with-pgvector-indexes/) | [Neon pgvector optimization](https://neon.com/docs/ai/ai-vector-search-optimization)
 
@@ -68,7 +68,7 @@ Note: Items 3-5 were addressed in the 2026-04-02 learning cycle log (phase 4). I
 
 **Source**: [Prisma 7.4 release blog](https://www.prisma.io/blog/prisma-orm-v7-4-query-caching-partial-indexes-and-major-performance-improvements) | [Prisma 7 AMA](https://www.prisma.io/blog/prisma-7-ama-clearing-up-the-why-behind-the-changes)
 
-**Finding**: NutriScout is on Prisma 7.6.0, which includes the query plan caching introduced in 7.4.0. This caches compiled query plans in an LRU cache, reusing them across repeated queries with the same shape. This is already active by default -- no configuration needed. The main search query in `orchestrator/index.ts` (line 145, `prisma.dish.findMany(...)`) benefits automatically since search queries have a consistent shape with varying parameter values.
+**Finding**: FoodClaw is on Prisma 7.6.0, which includes the query plan caching introduced in 7.4.0. This caches compiled query plans in an LRU cache, reusing them across repeated queries with the same shape. This is already active by default -- no configuration needed. The main search query in `orchestrator/index.ts` (line 145, `prisma.dish.findMany(...)`) benefits automatically since search queries have a consistent shape with varying parameter values.
 
 **Action needed**: None for enabling caching. However, the orchestrator uses `$queryRaw` for full-text search and vector similarity -- these bypass Prisma's query plan cache. The raw queries are fine since they are parameterized SQL that PostgreSQL caches via prepared statements.
 
@@ -99,11 +99,11 @@ Note: Items 3-5 were addressed in the 2026-04-02 learning cycle log (phase 4). I
 
 ---
 
-### 7. PostgreSQL 17 Performance Features Relevant to NutriScout
+### 7. PostgreSQL 17 Performance Features Relevant to FoodClaw
 
 **Source**: [PostgreSQL 17 release](https://www.postgresql.org/about/news/postgresql-17-released-2936/) | [PgEdge analysis](https://www.pgedge.com/blog/postgresql-17-a-major-step-forward-in-performance-logical-replication-and-more)
 
-**Finding**: PG17 brings several improvements relevant to NutriScout:
+**Finding**: PG17 brings several improvements relevant to FoodClaw:
 - **IN clause B-tree optimization**: The orchestrator's `id: { in: textSearchDishIds }` and `restaurantId: { in: nearbyRestaurantIds }` queries benefit from faster IN-list processing with B-tree indexes.
 - **Improved VACUUM**: 20x less memory usage for vacuum operations. Relevant as the dataset grows.
 - **Streaming I/O for sequential scans**: The full-text search fallback (simple dictionary path) benefits from faster seq scans.

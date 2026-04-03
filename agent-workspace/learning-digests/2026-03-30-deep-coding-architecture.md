@@ -1,4 +1,4 @@
-# NutriScout: Deep Coding Architecture Guide
+# FoodClaw: Deep Coding Architecture Guide
 
 > Implementation-ready architecture for a dish-first food discovery app built with Next.js 16+ App Router, TypeScript, Tailwind CSS, shadcn/ui, Prisma, Redis, BullMQ, Claude API, and WebSockets.
 
@@ -23,7 +23,7 @@
 
 ### Recommended File Tree
 
-Next.js 16 is unopinionated about organization but provides route groups, private folders, and colocation. For NutriScout, we use a **hybrid approach**: `/app` for routing only, `/lib` for shared logic, `/components` for UI.
+Next.js 16 is unopinionated about organization but provides route groups, private folders, and colocation. For FoodClaw, we use a **hybrid approach**: `/app` for routing only, `/lib` for shared logic, `/components` for UI.
 
 ```
 nutriscout/
@@ -237,7 +237,7 @@ export default nextConfig
 
 ## 2. Server Components vs Client Components
 
-### Decision Matrix for NutriScout
+### Decision Matrix for FoodClaw
 
 | Component | Type | Why |
 |---|---|---|
@@ -828,7 +828,7 @@ export async function getPopularDishes(limit = 10) {
 
 ### Recommendation: Server-Sent Events (SSE) for Wait Times
 
-For NutriScout's use case (server-to-client unidirectional updates), **SSE is the best choice**:
+For FoodClaw's use case (server-to-client unidirectional updates), **SSE is the best choice**:
 
 | Feature | SSE | WebSocket (Socket.io) | Streaming (fetch) |
 |---|---|---|---|
@@ -1000,7 +1000,7 @@ export function useWaitTime(
 
 ### When to Use WebSocket (Socket.io) Instead
 
-If NutriScout later needs **bidirectional** communication (e.g., chat with restaurant, live order coordination), use a **separate WebSocket server**:
+If FoodClaw later needs **bidirectional** communication (e.g., chat with restaurant, live order coordination), use a **separate WebSocket server**:
 
 ```typescript
 // server/websocket.ts -- Run as a separate Node.js process, NOT inside Next.js
@@ -2750,5 +2750,5 @@ export function errorResponse(error: unknown): NextResponse {
 
 ---
 
-*Generated for NutriScout -- a dish-first food discovery application.*
+*Generated for FoodClaw -- a dish-first food discovery application.*
 *Architecture based on Next.js 16.2 documentation (March 2026), Anthropic Claude API, and production patterns.*

@@ -100,7 +100,7 @@
 2. No dietary restriction filtering — critical gap
 3. No nutritional data or macro information whatsoever
 
-**Gaps we fill**: Cravr has the right idea (dish-first) but lacks everything that makes NutriScout valuable: dietary filters, macro estimation, nutritional goals, real-time wait times. We're Cravr + Cronometer + Fig in one app. ([App Store](https://apps.apple.com/us/app/cravr-smarter-food-search/id6754335758))
+**Gaps we fill**: Cravr has the right idea (dish-first) but lacks everything that makes FoodClaw valuable: dietary filters, macro estimation, nutritional goals, real-time wait times. We're Cravr + Cronometer + Fig in one app. ([App Store](https://apps.apple.com/us/app/cravr-smarter-food-search/id6754335758))
 
 ---
 
@@ -140,7 +140,7 @@
 2. **Grocery-only** — scans packaged products, NOT restaurant dishes
 3. **No nutritional/macro data** — tells you if something is safe, not if it fits your goals
 
-**Gaps we fill**: Fig only works for grocery products. NutriScout works for restaurant dishes. We also add nutritional data on top of dietary safety — the combination no one else offers.
+**Gaps we fill**: Fig only works for grocery products. FoodClaw works for restaurant dishes. We also add nutritional data on top of dietary safety — the combination no one else offers.
 
 ---
 
@@ -180,7 +180,7 @@
 2. **Outdated data** — restaurant info, halal certification status, and contact details often stale ([Halalification](https://halalification.com/knowledge-base/food-beverages/emergencies-necessity-darurah-scholar-disagreements/handling-doubtful-foods-in-non-muslim-settings/can-i-rely-on-apps-to-find-halal-restaurants-while-abroad/))
 3. **No personal lists, no nutritional data, no dietary combinations** — can't combine halal + gluten-free + high-protein
 
-**Gaps we fill**: Halal is just one of many filters in NutriScout. Users can combine halal + any other restriction + nutritional goals. Plus we add macro data, wait times, and delivery availability.
+**Gaps we fill**: Halal is just one of many filters in FoodClaw. Users can combine halal + any other restriction + nutritional goals. Plus we add macro data, wait times, and delivery availability.
 
 ---
 

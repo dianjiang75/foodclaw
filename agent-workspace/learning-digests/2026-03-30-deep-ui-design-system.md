@@ -1,4 +1,4 @@
-# NutriScout Deep UI/UX Design System
+# FoodClaw Deep UI/UX Design System
 
 > Comprehensive, implementation-ready design system for a dish-first food discovery app.
 > Tech stack: Next.js 16 App Router, TypeScript, Tailwind CSS v4, shadcn/ui v4, Framer Motion.
@@ -39,7 +39,7 @@
 - Serif + sans-serif pairing (DM Serif Display + Inter)
 
 **Noom**
-- Color-coded food classification system (green/yellow/red) — NutriScout's confidence system mirrors this
+- Color-coded food classification system (green/yellow/red) — FoodClaw's confidence system mirrors this
 - Heavy use of illustrations and iconography to reduce cognitive load
 - Bottom sheet patterns for filters rather than full-page navigation
 - Typography: 700 weight headers, generous letter-spacing on labels
@@ -50,7 +50,7 @@
 - Sans-serif only (Circular/Avenir style), very clean
 
 **Fitia**
-- Macro-first design: protein/carbs/fat shown as horizontal segmented bars (NutriScout already does this)
+- Macro-first design: protein/carbs/fat shown as horizontal segmented bars (FoodClaw already does this)
 - Dark mode default, health data on dark backgrounds reads as "premium"
 - Color-coded macros: Protein = blue-purple, Carbs = warm yellow, Fat = coral-pink
 
@@ -59,7 +59,7 @@
 - Results appear as an overlay card sliding up from bottom
 - Confidence displayed as a subtle progress ring around the food photo
 
-### Key design principles for NutriScout
+### Key design principles for FoodClaw
 
 1. **Data density without overwhelm** — show macros at a glance, details on demand
 2. **Traffic-light patterns** — green/amber/red for confidence, wait times, dietary compliance
@@ -73,7 +73,7 @@
 
 ### Primary Palette
 
-The current NutriScout palette uses OKLCH (good for perceptual uniformity). Below are the recommended values with hex equivalents for reference.
+The current FoodClaw palette uses OKLCH (good for perceptual uniformity). Below are the recommended values with hex equivalents for reference.
 
 #### Brand Colors
 
@@ -167,7 +167,7 @@ The current NutriScout palette uses OKLCH (good for perceptual uniformity). Belo
   --input: oklch(0.90 0.005 110);
   --ring: oklch(0.55 0.18 155);
 
-  /* NutriScout semantic */
+  /* FoodClaw semantic */
   --ns-green: oklch(0.55 0.15 150);
   --ns-green-light: oklch(0.92 0.05 150);
   --ns-amber: oklch(0.75 0.15 75);
@@ -200,7 +200,7 @@ The current NutriScout palette uses OKLCH (good for perceptual uniformity). Belo
 | Mono / Data | Geist Mono | 400, 500 | `ui-monospace, monospace` |
 | Brand wordmark | Geist Sans | 800 | - |
 
-> **Why NOT add a display font:** Geist Sans is purpose-built for interfaces. Adding DM Serif or Playfair adds visual noise without helping NutriScout's data-heavy screens. Lifesum can afford serif headings because it's a lifestyle brand — NutriScout is a tool. Keep it utilitarian.
+> **Why NOT add a display font:** Geist Sans is purpose-built for interfaces. Adding DM Serif or Playfair adds visual noise without helping FoodClaw's data-heavy screens. Lifesum can afford serif headings because it's a lifestyle brand — FoodClaw is a tool. Keep it utilitarian.
 
 ### Type Scale (Mobile-first)
 
@@ -247,7 +247,7 @@ This ensures columns of numbers align properly in macro breakdowns.
 
 ### Spacing Scale
 
-Tailwind's default scale is fine. Key spacing values for NutriScout:
+Tailwind's default scale is fine. Key spacing values for FoodClaw:
 
 | Use Case | Tailwind | Pixels |
 |----------|----------|--------|
@@ -318,7 +318,7 @@ npx shadcn@latest add chart           # Recharts-based macro visualization
 
 ### Component Customizations
 
-#### Button variants for NutriScout
+#### Button variants for FoodClaw
 
 ```tsx
 // In button.tsx, add these variants to the CVA config:
@@ -333,7 +333,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        // NutriScout additions:
+        // FoodClaw additions:
         "ns-green": "bg-ns-green text-white hover:bg-ns-green/90",
         "ns-filter": "border border-border rounded-full hover:bg-muted text-sm h-8",
         "ns-filter-active": "bg-foreground text-background border-foreground rounded-full text-sm h-8",
@@ -343,7 +343,7 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md px-3 text-xs",
         lg: "h-10 rounded-md px-6",
         icon: "h-9 w-9",
-        // NutriScout additions:
+        // FoodClaw additions:
         chip: "h-8 px-3 text-xs rounded-full",
       },
     },
@@ -857,7 +857,7 @@ All text must meet **WCAG 2.1 AA** minimum (AAA preferred for body text):
 | UI components, icons | 3:1 | AA |
 | Body text (ideally) | 7:1 | AAA |
 
-### Contrast audit of current NutriScout colors
+### Contrast audit of current FoodClaw colors
 
 | Combination | Light mode ratio | Dark mode ratio | Pass? |
 |-------------|-----------------|-----------------|-------|
@@ -1247,7 +1247,7 @@ Add safe area inset for iPhone notch/home indicator:
 
 ```
 ┌─────────────────────────────────────────┐
-│ NutriScout    [Search input]   [Avatar] │  Sticky top, blurred bg
+│ FoodClaw    [Search input]   [Avatar] │  Sticky top, blurred bg
 │ [vegan] [gf] [halal] [kosher] [df] >>> │  Horizontally scrollable chips
 │ [Best Match] [Nearest] [Top Rated] >>> │  Sort pills
 └─────────────────────────────────────────┘
@@ -1386,7 +1386,7 @@ export function DishSearch() {
 
 ## Appendix A: Icon Library
 
-Use **Lucide React** (already installed). Key icons for NutriScout:
+Use **Lucide React** (already installed). Key icons for FoodClaw:
 
 | Feature | Icon | Import |
 |---------|------|--------|
@@ -1480,4 +1480,4 @@ import Image from "next/image";
 
 ---
 
-*This design system is tailored specifically for NutriScout's existing codebase (Next.js 16, Tailwind v4, shadcn/ui v4 base-nova style, OKLCH color space). All recommendations build on top of the existing `globals.css`, `dish-card.tsx`, `macro-bar.tsx`, and component infrastructure.*
+*This design system is tailored specifically for FoodClaw's existing codebase (Next.js 16, Tailwind v4, shadcn/ui v4 base-nova style, OKLCH color space). All recommendations build on top of the existing `globals.css`, `dish-card.tsx`, `macro-bar.tsx`, and component infrastructure.*

@@ -1,6 +1,6 @@
 # Market Research Digest — April 2, 2026
 
-Research agent run covering 10 search topics on user demographics, dietary restriction trends, competitive landscape, and retention benchmarks relevant to NutriScout's dish-first food discovery positioning.
+Research agent run covering 10 search topics on user demographics, dietary restriction trends, competitive landscape, and retention benchmarks relevant to FoodClaw's dish-first food discovery positioning.
 
 ---
 
@@ -8,7 +8,7 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 
 **Data:** 60% of diet/nutrition app users are aged 25–44. Millennials and Gen Z (18–34) are the most likely to follow specialized diets, with 90% cutting discretionary spending to maintain healthy food choices. 78% of consumers say health matters when making food choices. 50% of U.S. respondents actively try to eat healthy; 30% prioritize convenience.
 
-**Why it matters for NutriScout:** The 25–44 cohort is both health-motivated and tech-comfortable — they already use apps to track nutrition. NutriScout should optimize UX and messaging for this group first. The secondary Gen Z segment (18–24) skews toward delivery convenience; they need frictionless dietary filtering.
+**Why it matters for FoodClaw:** The 25–44 cohort is both health-motivated and tech-comfortable — they already use apps to track nutrition. FoodClaw should optimize UX and messaging for this group first. The secondary Gen Z segment (18–24) skews toward delivery convenience; they need frictionless dietary filtering.
 
 **Recommendation:** Profile pages, macro goal-setting, and dietary preference persistence are table-stakes features for this demographic. Onboarding should ask users to set protein/calorie goals and dietary restrictions immediately — users who set goals are 30% more likely to retain. Target marketing around "find exactly what fits your diet" messaging, not generic restaurant discovery.
 
@@ -21,13 +21,13 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 
 **Data (Circana, Jan 2026):** GLP-1 medication users are NOT abandoning restaurants. Visit frequency is stable. They order more main dishes, fewer sides/snacks/breads. 63% seek more vegetables; 55% seek more fruit. They skew younger, higher-income, urban, and fast-casual oriented. GLP-1 users spend MORE at restaurants than before medication. Circana projects GLP-1 users will represent 35% of U.S. food and beverage sales by 2030. 23% of U.S. households currently use GLP-1 medications.
 
-**Why it matters for NutriScout:** This is an underserved, high-intent, high-income restaurant segment. Existing discovery apps (Yelp, Google Maps) cannot filter for "high-protein, fiber-rich, small-portion" dishes. NutriScout's dish-first search with macro filters is a natural fit.
+**Why it matters for FoodClaw:** This is an underserved, high-intent, high-income restaurant segment. Existing discovery apps (Yelp, Google Maps) cannot filter for "high-protein, fiber-rich, small-portion" dishes. FoodClaw's dish-first search with macro filters is a natural fit.
 
 **Recommendation:**
 - Add a "GLP-1 Friendly" dietary flag or macro preset (high protein, high fiber, low carb, moderate calorie) as a named filter option
 - Surface dishes with detailed macro breakdowns prominently — this cohort is making protein-first decisions
 - Consider a "Smaller Portions" badge on dish listings where half-portion options exist
-- Restaurant operators are actively launching GLP-1 menus (Shake Shack, Chipotle, Subway) — NutriScout should crawl and tag these proactively
+- Restaurant operators are actively launching GLP-1 menus (Shake Shack, Chipotle, Subway) — FoodClaw should crawl and tag these proactively
 - Target files: `src/lib/agents/menu-crawler/`, evaluator dietary flags, search filter UI
 
 **Risk tier:** GREEN
@@ -44,7 +44,7 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 - 4% of U.S. adults identify as vegetarian, 1% as vegan (Gallup 2023); plant-based demand growing faster than identity numbers suggest
 - New 2025–2030 Dietary Guidelines emphasize high-quality protein, healthy fats, whole grains, avoiding ultra-processed foods — macro-conscious eating is now officially mainstream
 
-**Why it matters for NutriScout:** Multi-restriction users (e.g., vegan + gluten-free, halal + nut-free) are severely underserved by general restaurant apps that can't cross-filter at the dish level. These users are high-frequency searchers with safety-critical needs.
+**Why it matters for FoodClaw:** Multi-restriction users (e.g., vegan + gluten-free, halal + nut-free) are severely underserved by general restaurant apps that can't cross-filter at the dish level. These users are high-frequency searchers with safety-critical needs.
 
 **Recommendation:**
 - The Apollo Evaluator's conservative defaults (null for uncertain, not true) are exactly right for safety-critical restrictions — do not change this behavior
@@ -61,10 +61,10 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 
 **Data:** DoorDash launched "Zesty," an AI-powered restaurant discovery app, tested in NYC and SF Bay Area. Eater relaunched its discovery app with 45,000 restaurants across 85 cities. Restaurant discovery is described as "more personalized, more conversational, increasingly AI-driven." The restaurant reservations wars are intensifying (CNN, March 2026). Restaurant tech M&A is regaining momentum entering 2026.
 
-**Why it matters for NutriScout:** The window to establish a dish-first, dietary-restriction-aware discovery niche is narrowing. DoorDash's Zesty is restaurant-first and delivery-focused; NutriScout's dish-first approach with real macro data is genuinely differentiated — but needs to ship fast.
+**Why it matters for FoodClaw:** The window to establish a dish-first, dietary-restriction-aware discovery niche is narrowing. DoorDash's Zesty is restaurant-first and delivery-focused; FoodClaw's dish-first approach with real macro data is genuinely differentiated — but needs to ship fast.
 
 **Recommendation:**
-- NutriScout's moat is in dish-level data + macro accuracy + dietary safety, NOT general restaurant browsing. Double down on what generic AI apps can't do: verified allergen flags and vision-analyzed nutrition estimates.
+- FoodClaw's moat is in dish-level data + macro accuracy + dietary safety, NOT general restaurant browsing. Double down on what generic AI apps can't do: verified allergen flags and vision-analyzed nutrition estimates.
 - Consider adding a conversational search entry point ("Find me a high-protein gluten-free lunch near me") powered by the orchestrator — this matches where discovery UX is heading
 - Prioritize menu crawl coverage in target cities before competitors build dataset parity
 - Target files: Search Orchestrator, frontend search UX, Menu Crawler coverage
@@ -78,10 +78,10 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 
 **Data:** Biohacker-preferred apps (Cronometer) use USDA/NCCDB verified data rather than crowdsourced entries. 80% of calorie trackers fail due to tedious manual logging. AI photo, voice, and conversational logging are now standard expectations. Biohackers want holistic dashboards covering nutrition, sleep, supplements, and wearable data. Professional integration (virtual nutritionist booking) is trending.
 
-**Why it matters for NutriScout:** NutriScout's Vision Analyzer (Claude Haiku, USDA matching) already addresses the accuracy gap. The key gap is making confidence scores and data source transparency visible to biohacker users who care deeply about data provenance.
+**Why it matters for FoodClaw:** FoodClaw's Vision Analyzer (Claude Haiku, USDA matching) already addresses the accuracy gap. The key gap is making confidence scores and data source transparency visible to biohacker users who care deeply about data provenance.
 
 **Recommendation:**
-- Expose the macro confidence score and data source (Vision AI vs. USDA match vs. menu scrape) on dish detail pages — biohackers will trust NutriScout more than MyFitnessPal for restaurant macro data
+- Expose the macro confidence score and data source (Vision AI vs. USDA match vs. menu scrape) on dish detail pages — biohackers will trust FoodClaw more than MyFitnessPal for restaurant macro data
 - Consider a "Macro Source" badge: "USDA Verified," "Vision Estimated," "Menu Listed"
 - The AGENTS.md note about `getSourceIcon()` returning JSX is already implemented — ensure this is surfaced prominently in dish detail UI
 - Target files: dish detail component, Vision Analyzer response formatting, USDA client
@@ -101,7 +101,7 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 - Millennials (83%) prefer ordering through dedicated restaurant apps over third-party platforms
 - Nearly 4 in 10 Millennials/Gen Z use restaurant apps weekly
 
-**Why it matters for NutriScout:** Gen Z's insistence on customization maps directly to NutriScout's multi-filter dish search. TikTok-driven food discovery means social sharing features (shareable dish cards, "I found this on NutriScout") could be a meaningful acquisition channel.
+**Why it matters for FoodClaw:** Gen Z's insistence on customization maps directly to FoodClaw's multi-filter dish search. TikTok-driven food discovery means social sharing features (shareable dish cards, "I found this on FoodClaw") could be a meaningful acquisition channel.
 
 **Recommendation:**
 - Build shareable dish detail cards optimized for social (Open Graph image with macro display, dietary badges)
@@ -124,7 +124,7 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 - 36% of Americans don't use food ordering apps at all (ceiling for addressable market)
 - 83% of Millennials prefer dedicated restaurant apps over third-party platforms for ordering
 
-**Why it matters for NutriScout:** The discovery funnel is: NutriScout discovers dish → user orders via delivery platform or goes to restaurant. NutriScout is upstream of delivery, not competing with it. The Logistics Poller (wait times, delivery availability) makes NutriScout actionable, not just informational.
+**Why it matters for FoodClaw:** The discovery funnel is: FoodClaw discovers dish → user orders via delivery platform or goes to restaurant. FoodClaw is upstream of delivery, not competing with it. The Logistics Poller (wait times, delivery availability) makes FoodClaw actionable, not just informational.
 
 **Recommendation:**
 - Deep-link from dish detail into DoorDash/Uber Eats for that dish or restaurant (affiliate/partnership opportunity)
@@ -149,7 +149,7 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 - Global digital fitness spending projected to surpass $60B by 2026 (including wearables, apps, connected equipment)
 - iOS users show higher willingness to pay for premium app features
 
-**Why it matters for NutriScout:** The market has fully accepted $10–20/month for health app subscriptions. NutriScout's premium tier (saved dietary profiles, advanced macro goals, full restaurant coverage, dish history) has a clear monetization path.
+**Why it matters for FoodClaw:** The market has fully accepted $10–20/month for health app subscriptions. FoodClaw's premium tier (saved dietary profiles, advanced macro goals, full restaurant coverage, dish history) has a clear monetization path.
 
 **Recommendation:**
 - Freemium entry (basic search, 3 dietary filters) with paid tier ($12.99/month) for: unlimited filters, macro goals sync, dish save/history, GLP-1 presets, allergy alerts
@@ -162,7 +162,7 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 
 ---
 
-## Finding 9: App Retention Benchmarks — NutriScout's Day-30 Target Should Be 12%+
+## Finding 9: App Retention Benchmarks — FoodClaw's Day-30 Target Should Be 12%+
 
 **Data (2026 benchmarks):**
 | Category | Day 1 | Day 7 | Day 30 |
@@ -179,14 +179,14 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 - Reward-based fitness apps (Sweatcoin) achieve 20–31% Day 30 retention — showing what's possible with strong incentive loops
 - 91% of CX leaders say AI-driven personalization improves retention
 
-**Why it matters for NutriScout:** Industry average for Day 30 is ~8%. A dish-first app with strong dietary restriction utility should target 12–15%+ by leveraging goal-setting onboarding, push alerts for new dishes matching user restrictions near them, and saved search notifications.
+**Why it matters for FoodClaw:** Industry average for Day 30 is ~8%. A dish-first app with strong dietary restriction utility should target 12–15%+ by leveraging goal-setting onboarding, push alerts for new dishes matching user restrictions near them, and saved search notifications.
 
 **Recommendation:**
 - Onboarding MUST capture dietary restrictions + macro goals (not optional skippable step)
 - Push notification trigger: "New [cuisine type] [dietary flag] dish added near you" — implement via BullMQ notification job
 - Saved searches / dish favorites as retention anchor
 - Weekly "Your top dishes nearby" digest email
-- Avoid complexity creep — 70% churn from complexity is the primary risk for a feature-rich app like NutriScout
+- Avoid complexity creep — 70% churn from complexity is the primary risk for a feature-rich app like FoodClaw
 - Target files: onboarding flow, notification worker, BullMQ job types
 
 **Risk tier:** GREEN
@@ -204,7 +204,7 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 - 60% of nutrition app users express privacy concerns about health data
 - 2025–2030 USDA Dietary Guidelines reset: emphasis on real food, high protein, away from ultra-processed
 
-**Why it matters for NutriScout:** The Apollo Evaluator's safety-first posture (nut_free, gluten_free require explicit `true` + 85%+ confidence) is a genuine trust differentiator. FARE allergy data consistently shows ~33M Americans have food allergies — and they have nowhere reliable to find restaurant dishes filtered at the dish level (not just restaurant level).
+**Why it matters for FoodClaw:** The Apollo Evaluator's safety-first posture (nut_free, gluten_free require explicit `true` + 85%+ confidence) is a genuine trust differentiator. FARE allergy data consistently shows ~33M Americans have food allergies — and they have nowhere reliable to find restaurant dishes filtered at the dish level (not just restaurant level).
 
 **Recommendation:**
 - Make "Allergy Safe" the featured trust message in onboarding and marketing — not "find healthy food." Safety is stickier than wellness.
@@ -220,7 +220,7 @@ Research agent run covering 10 search topics on user demographics, dietary restr
 
 ## Summary Priority Matrix
 
-| Finding | NutriScout Impact | Effort | Priority |
+| Finding | FoodClaw Impact | Effort | Priority |
 |---|---|---|---|
 | GLP-1 segment + macro presets | VERY HIGH | MEDIUM | P1 |
 | Allergy trust + Evaluator UI transparency | VERY HIGH | LOW | P1 |

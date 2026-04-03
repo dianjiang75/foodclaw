@@ -177,7 +177,7 @@ Sources: [Dribbble nutrition-app](https://dribbble.com/tags/nutrition-app), [Des
 ## Branding Corner
 
 ### Current Problem
-"NutriScout" sounds generic — Nutri-prefix is overused (NutriScan, Nutrify, NutriTracker). Doesn't convey the dish-first, AI-powered, real-time nature of the app.
+"FoodClaw" sounds generic — Nutri-prefix is overused (NutriScan, Nutrify, NutriTracker). Doesn't convey the dish-first, AI-powered, real-time nature of the app.
 
 ### What the Name Should Convey
 - Dish-first discovery (not restaurant-first)

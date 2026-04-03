@@ -2,7 +2,7 @@ Both WebSearch and WebFetch permissions are denied. I cannot perform live web re
 
 ---
 
-# NutriScout: Monetization & IP Protection Deep Dive
+# FoodClaw: Monetization & IP Protection Deep Dive
 
 ## Comprehensive Strategy Document for a Dish-First Food Discovery Platform
 
@@ -55,7 +55,7 @@ Both WebSearch and WebFetch permissions are denied. I cannot perform live web re
 - After US registration, consider **Madrid Protocol** filing for international protection ($600-$1,000 per country).
 
 ### Risks to Watch
-- If your app name is descriptive of its function (e.g., "Food Finder"), it will be harder to register. Coined or arbitrary names (e.g., "NutriScout") are strongest.
+- If your app name is descriptive of its function (e.g., "Food Finder"), it will be harder to register. Coined or arbitrary names (e.g., "FoodClaw") are strongest.
 - Failure to enforce your trademark can weaken it. Set up Google Alerts and app store monitoring.
 - You must file maintenance documents (Declaration of Use) between years 5-6 and renew every 10 years ($225-$425 per class).
 
@@ -481,7 +481,7 @@ Do NOT start with restaurant monetization. First build a user base that creates 
 
 **Title & Subtitle Optimization:**
 - Title format: `[AppName] - [Primary Keyword]`
-- Example: `NutriScout - Find Macro-Friendly Food`
+- Example: `FoodClaw - Find Macro-Friendly Food`
 - Subtitle: `Halal, Kosher, Vegan & Keto Dishes`
 - Rotate subtitle keywords every 4-6 weeks based on performance
 
@@ -644,7 +644,7 @@ Start paid acquisition only after you have validated your conversion funnel and 
 | Data licensing to CPG/restaurant chains | $5,000-$20,000/mo | Requires scale |
 | Enterprise API deals | $10,000-$50,000/mo | Enterprise sales |
 | International expansion (UK, UAE, Southeast Asia -- high halal demand) | Multiply TAM 3-5x | Localization investment |
-| Explore D2C product line (NutriScout-branded meal plans/kits) | High margin, brand extension | Significant investment |
+| Explore D2C product line (FoodClaw-branded meal plans/kits) | High margin, brand extension | Significant investment |
 | Consider Series A raise ($5M-$15M) | Fuel aggressive scaling | 15-25% dilution |
 
 **Phase 4 Target: $100,000-$300,000 MRR**

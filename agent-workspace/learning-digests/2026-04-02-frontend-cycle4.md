@@ -1,6 +1,6 @@
 # Frontend Learning Digest -- Cycle 4
 **Date:** 2026-04-02
-**Agent:** NutriScout Frontend Learning Agent
+**Agent:** FoodClaw Frontend Learning Agent
 **Scope:** WCAG 2.2 gaps, Image optimization, skeleton loading, error boundaries, empty states
 **Constraint:** Quick wins only (GREEN). RSC refactoring deferred.
 

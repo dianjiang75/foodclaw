@@ -1,4 +1,4 @@
-# NutriScout Target Audience Deep Research
+# FoodClaw Target Audience Deep Research
 ## Comprehensive User Persona & Behavioral Analysis
 ### March 2026
 
@@ -24,9 +24,9 @@
 
 # Executive Summary
 
-This document presents deep user research across eight distinct audience segments for NutriScout, a dish-first food discovery app featuring dietary restriction filters, AI macro estimation from food photos, and real-time wait times and delivery. Each persona is built from real behavioral data, community sentiment, published research, and market analysis conducted in March 2026.
+This document presents deep user research across eight distinct audience segments for FoodClaw, a dish-first food discovery app featuring dietary restriction filters, AI macro estimation from food photos, and real-time wait times and delivery. Each persona is built from real behavioral data, community sentiment, published research, and market analysis conducted in March 2026.
 
-**Key finding:** Every segment we studied shares one fundamental pain point -- the gap between knowing *what* they need to eat and being able to *find it nearby, right now, with confidence*. Current tools force users to cobble together 3-5 apps, cross-reference restaurant menus manually, and still take a leap of faith when they sit down to eat. NutriScout sits directly in that gap.
+**Key finding:** Every segment we studied shares one fundamental pain point -- the gap between knowing *what* they need to eat and being able to *find it nearby, right now, with confidence*. Current tools force users to cobble together 3-5 apps, cross-reference restaurant menus manually, and still take a leap of faith when they sit down to eat. FoodClaw sits directly in that gap.
 
 **Market context:**
 - The global wellness apps market was valued at $11.27 billion in 2024 and is growing at 14.9% CAGR
@@ -62,7 +62,7 @@ Marcus practices time-restricted eating. He won't consume calories until noon, b
 
 Here's where his day gets complicated. It's 11:45 AM and his team wants to go out for lunch. Marcus has been tracking his macros for 847 consecutive days. Today he needs 185g of protein, wants to stay under 120g of net carbs, and is targeting 2,400 calories total. He also wants to avoid seed oils (he's been reading about linoleic acid and oxidative stress) and wants a high-omega-3 protein source.
 
-This is the moment NutriScout would change his life.
+This is the moment FoodClaw would change his life.
 
 Right now, Marcus opens four apps. First, Google Maps to see what's nearby. Then Cronometer, where he searches the database for menu items from local restaurants -- most aren't there. Then he opens the restaurant's website to look at their menu, trying to mentally estimate macros based on portion descriptions. Finally, he might check Yelp reviews to see if anyone mentions portion sizes or ingredient quality. The whole process takes 15-20 minutes, and at the end, he's still guessing. His CGM will tell him later if he guessed wrong -- by then the damage is done.
 
@@ -70,7 +70,7 @@ What Marcus *wants* is to open one app, type "grilled salmon bowl" and see every
 
 After lunch, Marcus returns to work. At 6 PM, he does a 45-minute Zone 2 cardio session (he tracks his heart rate zones meticulously). Dinner at 7 PM is usually home-cooked -- he meal preps on Sundays -- but two to three nights a week, he eats out, especially when his girlfriend wants a real date night. Those meals are where his anxiety peaks. Not social anxiety. Data anxiety. He hates not knowing what he's eating at the molecular level.
 
-By 9 PM, Marcus is winding down. Blue light blocking glasses go on. He takes his evening magnesium. He reviews his day's data in a Notion dashboard that aggregates his sleep, glucose, exercise, and nutrition data. He spots that his afternoon glucose spiked to 142 mg/dL after lunch. He makes a mental note: that restaurant's rice portion was bigger than expected. He won't make that mistake again. But with NutriScout's AI photo estimation, he wouldn't have had to guess in the first place.
+By 9 PM, Marcus is winding down. Blue light blocking glasses go on. He takes his evening magnesium. He reviews his day's data in a Notion dashboard that aggregates his sleep, glucose, exercise, and nutrition data. He spots that his afternoon glucose spiked to 142 mg/dL after lunch. He makes a mental note: that restaurant's rice portion was bigger than expected. He won't make that mistake again. But with FoodClaw's AI photo estimation, he wouldn't have had to guess in the first place.
 
 Marcus falls asleep at 10:15 PM. His room is 65 degrees, blackout curtains drawn, a mouth-taping strip across his lips for nasal breathing. Tomorrow he'll optimize again.
 
@@ -109,7 +109,7 @@ Marcus falls asleep at 10:15 PM. His room is 65 degrees, blackout curtains drawn
 3. **Seed oil / ingredient transparency flags** -- which restaurants cook with avocado oil vs. soybean oil.
 4. **CGM integration** -- log a meal and overlay his glucose response. Correlate dishes with metabolic outcomes over time.
 5. **Community-verified nutritional data** -- a database built by people like him, not auto-scraped from menus.
-6. **API / export** -- he wants to pull NutriScout data into his Notion dashboard.
+6. **API / export** -- he wants to pull FoodClaw data into his Notion dashboard.
 
 ## How to Reach Marcus
 
@@ -129,7 +129,7 @@ Marcus currently spends $400-$600/month on health optimization. A $14.99/month a
 
 ## What Would Make Him Tell a Friend?
 
-"I scanned my lunch with NutriScout and it estimated 47g protein, 38g carbs, 22g fat. My CGM confirmed a glucose peak of only 118. The AI was spot on." He'd screenshot this and post it to r/Biohackers and his Twitter within the hour. He'd tag Bryan Johnson. This is the kind of validation that becomes free marketing.
+"I scanned my lunch with FoodClaw and it estimated 47g protein, 38g carbs, 22g fat. My CGM confirmed a glucose peak of only 118. The AI was spot on." He'd screenshot this and post it to r/Biohackers and his Twitter within the hour. He'd tag Bryan Johnson. This is the kind of validation that becomes free marketing.
 
 ## What Would Make Him Delete the App?
 
@@ -169,13 +169,13 @@ Jordan's current process for eating out is painful. He opens MyFitnessPal and se
 
 Mia is frustrated. "You order the same thing everywhere we go," she told him last week. She's right. And he knows it's killing the relationship. He wants to try the pad thai. He really does. But pad thai is a macro black box -- how much oil? What kind of noodle? How much sugar in the sauce? He could log it as "generic pad thai" in MyFitnessPal, but the database entries for "pad thai" range from 400 to 1,200 calories. That variance is unacceptable 14 weeks out from competition.
 
-This is the exact moment NutriScout would save his relationship.
+This is the exact moment FoodClaw would save his relationship.
 
 If Jordan could search "pad thai near me" and see macro estimates per restaurant -- even approximate ones -- he could make an informed choice. If the AI photo estimation could look at his actual plate of pad thai when it arrives and say, "This looks like approximately 680 calories, 28g protein, 82g carbs, 24g fat," he could adjust his remaining meals for the day accordingly. He wouldn't have to order grilled chicken. He could eat like a normal person. He could be a normal boyfriend.
 
 After dinner (grilled chicken, steamed vegetables, plain rice -- he went to the Thai restaurant and ordered this again), Jordan goes home and spends 30 minutes entering his food log. He subtracts what he ate from his daily targets. He's 15g short on protein. He mixes a casein shake and drinks it before bed. He sets his alarm for 5:15 AM. Tomorrow he'll do it all again.
 
-On Sundays, Jordan spends 3-4 hours meal prepping. He cooks 7 lbs of chicken breast, 10 cups of rice, and roasts several trays of vegetables. He portions everything into 21 containers. This takes a huge amount of time, and he does it because the alternative -- eating out and guessing -- is worse. If NutriScout made eating out reliable from a macro perspective, he'd meal prep less and live more.
+On Sundays, Jordan spends 3-4 hours meal prepping. He cooks 7 lbs of chicken breast, 10 cups of rice, and roasts several trays of vegetables. He portions everything into 21 containers. This takes a huge amount of time, and he does it because the alternative -- eating out and guessing -- is worse. If FoodClaw made eating out reliable from a macro perspective, he'd meal prep less and live more.
 
 ## Current Tool Stack & Frustrations
 
@@ -209,7 +209,7 @@ On Sundays, Jordan spends 3-4 hours meal prepping. He cooks 7 lbs of chicken bre
 1. **AI photo macro estimation** -- THE feature. Scan the plate, get the macros. Even 85% accuracy would be revolutionary.
 2. **Dish-first search with protein filter** -- "Show me meals with 40g+ protein within 2 miles."
 3. **Portion size estimation** -- not just "this dish has X macros" but "this specific restaurant serves a portion that weighs approximately Y ounces."
-4. **MFP/Cronometer integration** -- let him log NutriScout-estimated meals directly to his existing tracker.
+4. **MFP/Cronometer integration** -- let him log FoodClaw-estimated meals directly to his existing tracker.
 5. **"Competition mode"** -- tighter macro tolerance, stricter ingredient filters, no cheat suggestions.
 6. **Social feature** -- "Other lifters ordered THIS dish at this restaurant" with verified macro reviews.
 
@@ -225,13 +225,13 @@ On Sundays, Jordan spends 3-4 hours meal prepping. He cooks 7 lbs of chicken bre
 
 ## Price Sensitivity
 
-Jordan spends $200-$350/month on fitness. He subscribes to MFP Premium ($6.67/mo effective) and MacroFactor ($6/mo effective). He'd pay $9.99/month for NutriScout if the AI estimation is accurate enough that he could replace one of those apps. He'd pay $14.99/month if it included integration with his existing trackers. He'd strongly prefer an annual plan at $79.99/year. He's not rich, but this is a priority spend for him.
+Jordan spends $200-$350/month on fitness. He subscribes to MFP Premium ($6.67/mo effective) and MacroFactor ($6/mo effective). He'd pay $9.99/month for FoodClaw if the AI estimation is accurate enough that he could replace one of those apps. He'd pay $14.99/month if it included integration with his existing trackers. He'd strongly prefer an annual plan at $79.99/year. He's not rich, but this is a priority spend for him.
 
 **The line:** Accuracy. He can tolerate 15% variance on macros. Above that, the app is useless for his purposes, and he'll leave immediately.
 
 ## What Would Make Him Tell a Friend?
 
-"I ate pad thai at a restaurant and still hit my macros. NutriScout scanned the plate and estimated everything. I adjusted dinner and hit 218g protein for the day." He'd post this in r/bodybuilding and his gym's group chat within minutes. He'd tag his coach. Competition prep communities are tight-knit and word travels fast.
+"I ate pad thai at a restaurant and still hit my macros. FoodClaw scanned the plate and estimated everything. I adjusted dinner and hit 218g protein for the day." He'd post this in r/bodybuilding and his gym's group chat within minutes. He'd tag his coach. Competition prep communities are tight-knit and word travels fast.
 
 ## What Would Make Him Delete the App?
 
@@ -334,7 +334,7 @@ Elena's income is modest at $58K/year. She already spends more on groceries than
 
 ## What Would Make Her Tell a Friend?
 
-"I used NutriScout to find a celiac-safe restaurant I'd never heard of. The listing showed they have dedicated fryers and separate prep areas. I ate there and felt fine the next day." She'd post this in her celiac Facebook group, share it on r/Celiac, and text every celiac friend she has. This community is tight-knit and desperate for reliable information. Word of mouth would be explosive.
+"I used FoodClaw to find a celiac-safe restaurant I'd never heard of. The listing showed they have dedicated fryers and separate prep areas. I ate there and felt fine the next day." She'd post this in her celiac Facebook group, share it on r/Celiac, and text every celiac friend she has. This community is tight-knit and desperate for reliable information. Word of mouth would be explosive.
 
 ## What Would Make Her Delete the App?
 
@@ -374,7 +374,7 @@ Lunch is the daily crisis point. Her team eats together three days a week. They 
 
 Priya orders grilled chicken with olive oil and lemon on the side. Her coworkers get platters of colorful, fragrant Mediterranean food. She gets... chicken. Again. She smiles and says she's "being healthy." She doesn't explain PCOS or IBS. She's tired of explaining. She's tired of the follow-up questions. She's tired of people saying "just try a little bit, it won't hurt." It will hurt. She'll be in the bathroom for three hours.
 
-If NutriScout existed, Priya could have searched "low-FODMAP dishes near me" or even better, "anti-inflammatory, low-glycemic, low-FODMAP dishes near me" and found options she didn't know existed. Maybe there's a poke bowl place two blocks away that serves rice bowls with salmon, cucumber, and ginger -- perfectly suited to both her conditions. She doesn't know about it because Google Maps doesn't have a "won't wreck my hormones AND my gut" filter.
+If FoodClaw existed, Priya could have searched "low-FODMAP dishes near me" or even better, "anti-inflammatory, low-glycemic, low-FODMAP dishes near me" and found options she didn't know existed. Maybe there's a poke bowl place two blocks away that serves rice bowls with salmon, cucumber, and ginger -- perfectly suited to both her conditions. She doesn't know about it because Google Maps doesn't have a "won't wreck my hormones AND my gut" filter.
 
 After work, Priya goes to a yoga class. Movement helps both conditions. At home, she cooks dinner: baked salmon, quinoa, roasted zucchini with olive oil. She knows these ingredients are safe because she's tested them over months of elimination dieting. She logs the meal in both apps. She notes her symptoms. She photographs the meal for her own records. She has 847 food photos on her phone. She once showed them to her gastroenterologist and he said, "This is very helpful." It was the most validated she's felt in a medical office.
 
@@ -437,7 +437,7 @@ Priya earns $95K and currently spends about $15/month across her various health 
 
 ## What Would Make Her Tell a Friend?
 
-"I found a restaurant on NutriScout where I could actually EAT with my team. Not grilled chicken and a side salad. A real meal. And I didn't flare afterward." She'd share this in r/PCOS and r/ibs. She'd tell her gastroenterologist. She'd tell every woman in her PCOS support group. This community is hungry (literally) for solutions.
+"I found a restaurant on FoodClaw where I could actually EAT with my team. Not grilled chicken and a side salad. A real meal. And I didn't flare afterward." She'd share this in r/PCOS and r/ibs. She'd tell her gastroenterologist. She'd tell every woman in her PCOS support group. This community is hungry (literally) for solutions.
 
 ## What Would Make Her Delete the App?
 
@@ -480,7 +480,7 @@ The specificity matters because halal isn't just a restaurant-level designation.
 
 At 6:00 PM, the client dinner is at a steakhouse. This is the hardest scenario. Steakhouses are a staple of client entertainment in consulting. Omar can't eat the steak unless it's halal-certified (it's not -- no American steakhouse chain serves halal beef). He can eat the seafood. He orders a lobster tail. It's $58. His company pays for it, but the principle bothers him -- he's forced into the most expensive option because it's the only safe one. His colleagues order ribeyes. He watches them eat.
 
-If NutriScout existed with a halal filter at the dish level, Omar could have suggested alternative restaurants for the client dinner. "Hey, there's a great Mediterranean grill two blocks away that serves halal ribeye. It's rated 4.5 stars." He could have made the suggestion proactively, naturally, without it being a "dietary restriction conversation." NutriScout would normalize the process.
+If FoodClaw existed with a halal filter at the dish level, Omar could have suggested alternative restaurants for the client dinner. "Hey, there's a great Mediterranean grill two blocks away that serves halal ribeye. It's rated 4.5 stars." He could have made the suggestion proactively, naturally, without it being a "dietary restriction conversation." FoodClaw would normalize the process.
 
 At the hotel that night, Omar FaceTimes Fatima. He tells her about the steakhouse dinner. She's heard this story before. She asks if he's eating enough. He is. But he's not eating well. He's eating safely. There's a difference.
 
@@ -543,7 +543,7 @@ Omar earns $125K and is comfortable spending on quality apps. He'd pay $9.99/mon
 
 ## What Would Make Him Tell a Friend?
 
-"I was in Des Moines for work and NutriScout found me a halal chicken place I never would have known about. It even showed the certification." He'd share this in his mosque WhatsApp group, his MBA alumni network, and his consulting firm's Muslim affinity group. Muslim professional networks are tight and information spreads fast.
+"I was in Des Moines for work and FoodClaw found me a halal chicken place I never would have known about. It even showed the certification." He'd share this in his mosque WhatsApp group, his MBA alumni network, and his consulting firm's Muslim affinity group. Muslim professional networks are tight and information spreads fast.
 
 ## What Would Make Him Delete the App?
 
@@ -593,7 +593,7 @@ Her strategies for coping mirror Omar's but with an even smaller restaurant univ
 
 Travel is worse. When she traveled to a legal conference in Nashville, she spent more time planning meals than reviewing case materials. She packed a cooler with kosher food. She researched whether the hotel had a kitchenette. She identified the nearest Chabad house (Chabad houses around the world offer kosher meals to Jewish travelers -- it's an informal global kosher safety net). In Nashville, the nearest Chabad was 20 minutes from the conference hotel. She drove there for dinner one night.
 
-If NutriScout existed with kosher certification filters, Shira's life would change in small but meaningful ways. She might not find a kosher steakhouse in Nashville. But she could find restaurants that serve dishes made with inherently kosher ingredients (fish, vegetarian options) that haven't been prepared in a way that would violate kashrut. She could search for "sushi near me" with a kosher fish filter and know that the salmon nigiri is halachically acceptable even if the restaurant isn't certified, as long as certain conditions are met. The app could distinguish between "certified kosher" and "potentially kosher-compatible" -- a nuance that no existing app captures.
+If FoodClaw existed with kosher certification filters, Shira's life would change in small but meaningful ways. She might not find a kosher steakhouse in Nashville. But she could find restaurants that serve dishes made with inherently kosher ingredients (fish, vegetarian options) that haven't been prepared in a way that would violate kashrut. She could search for "sushi near me" with a kosher fish filter and know that the salmon nigiri is halachically acceptable even if the restaurant isn't certified, as long as certain conditions are met. The app could distinguish between "certified kosher" and "potentially kosher-compatible" -- a nuance that no existing app captures.
 
 After the client dinner (salad, water, two hours of smiling), Shira drives home. Avi is there. They talk about their days. She mentions the dinner. He nods. He gets it. They're both Orthodox. They've both navigated this their entire adult lives. They dream about moving to New York someday, where there are over 400 kosher-certified establishments. But their careers are here. And so they pack lunch.
 
@@ -652,7 +652,7 @@ Shira earns $140K and would gladly pay $14.99/month for a kosher food discovery 
 
 ## What Would Make Her Tell a Friend?
 
-"I was at a conference in Austin and NutriScout showed me a sushi restaurant where I could eat kosher fish with confidence. I didn't have to eat from my cooler." She'd tell every person in her shul, post it in three Facebook groups, and text her entire WhatsApp group from Georgetown Law Jewish Student Association. This is a community that shares resources religiously (literally).
+"I was at a conference in Austin and FoodClaw showed me a sushi restaurant where I could eat kosher fish with confidence. I didn't have to eat from my cooler." She'd tell every person in her shul, post it in three Facebook groups, and text her entire WhatsApp group from Georgetown Law Jewish Student Association. This is a community that shares resources religiously (literally).
 
 ## What Would Make Her Delete the App?
 
@@ -696,7 +696,7 @@ At 9:00 AM, Danielle starts researching lunch options. Her process is exhaustive
 
 This process takes 45 minutes. It's 9:45 AM. She still isn't confident about any of the options.
 
-What Danielle needs -- what she *desperately* needs -- is to open NutriScout, search "kid-friendly restaurants near [soccer field address]," filter for "peanut-free AND tree nut-free," and see results with verified allergen protocols. Not just "this restaurant says they don't use nuts." But "this restaurant has been verified by the food allergy community as having dedicated nut-free preparation areas, staff trained in allergen protocols, and an emergency response plan."
+What Danielle needs -- what she *desperately* needs -- is to open FoodClaw, search "kid-friendly restaurants near [soccer field address]," filter for "peanut-free AND tree nut-free," and see results with verified allergen protocols. Not just "this restaurant says they don't use nuts." But "this restaurant has been verified by the food allergy community as having dedicated nut-free preparation areas, staff trained in allergen protocols, and an emergency response plan."
 
 75% of parents of children with food allergies report that the allergy causes them fear and anxiety. Danielle is in that 75%. But she's also pragmatic. She knows she can't keep Ethan in a bubble. He needs to learn to navigate the world. He needs to eat at restaurants. He needs to go to birthday parties. She needs tools that make those experiences safer, not scarier.
 
@@ -704,7 +704,7 @@ After soccer (Ethan's team won 3-1, he scored the second goal), the family goes 
 
 The meal goes fine. It usually goes fine. But "usually" isn't "always," and the stakes of "not fine" are anaphylaxis. So she does the research. Every. Single. Time.
 
-At home that evening, after the kids are in bed, Danielle sits on the couch with her laptop. She's updating her "safe restaurants" spreadsheet -- a Google Sheet she maintains with columns for restaurant name, address, allergen policy, date verified, dishes Ethan can eat, and notes. She has 34 restaurants in the spreadsheet across Scottsdale, Phoenix, and the surrounding area. She built this database herself, over three years, through hundreds of phone calls and dozens of uncomfortable conversations with restaurant managers. If NutriScout had this database built in -- community-sourced and verified -- she'd pay almost anything for it.
+At home that evening, after the kids are in bed, Danielle sits on the couch with her laptop. She's updating her "safe restaurants" spreadsheet -- a Google Sheet she maintains with columns for restaurant name, address, allergen policy, date verified, dishes Ethan can eat, and notes. She has 34 restaurants in the spreadsheet across Scottsdale, Phoenix, and the surrounding area. She built this database herself, over three years, through hundreds of phone calls and dozens of uncomfortable conversations with restaurant managers. If FoodClaw had this database built in -- community-sourced and verified -- she'd pay almost anything for it.
 
 ## Current Tool Stack & Frustrations
 
@@ -763,7 +763,7 @@ Danielle's household income is $195K. She already spends significantly on allerg
 
 ## What Would Make Her Tell a Friend?
 
-"NutriScout verified that this restaurant is completely nut-free and showed me the allergy protocol. We went there and Ethan ordered off the regular menu. He didn't feel 'different.' He just ate." She'd tell every parent at Ethan's school. She'd post in every allergy parent Facebook group. She'd email FARE and suggest they partner. Allergy parents are the most passionate, word-of-mouth-driven community you'll ever encounter, because they're all fighting the same battle.
+"FoodClaw verified that this restaurant is completely nut-free and showed me the allergy protocol. We went there and Ethan ordered off the regular menu. He didn't feel 'different.' He just ate." She'd tell every parent at Ethan's school. She'd post in every allergy parent Facebook group. She'd email FARE and suggest they partner. Allergy parents are the most passionate, word-of-mouth-driven community you'll ever encounter, because they're all fighting the same battle.
 
 ## What Would Make Her Delete the App?
 
@@ -805,18 +805,18 @@ His daily food discovery process is entirely social-media-first. Here's how Kai 
 4. He cross-references everything on Google Maps for ratings and hours.
 5. He picks the poke bowl place because the aesthetic is good (important for content), the menu has a high-protein option (important for him), and it's new enough that his TikTok review will be one of the first (important for views).
 
-This process is fun for Kai. It's literally his job and his hobby. But even for him, there are friction points that NutriScout would solve:
+This process is fun for Kai. It's literally his job and his hobby. But even for him, there are friction points that FoodClaw would solve:
 
 - He can't filter by nutritional content on any social platform. TikTok shows him pretty food, not nutritious food. He has to manually check if a restaurant has healthy options.
 - When he wants to find a specific dish -- not a restaurant, but a *dish* -- like "the best high-protein acai bowl in LA" -- he has to search across multiple platforms and hope someone posted about it.
 - His lactose intolerance means he needs to check if dishes contain dairy. No social platform filters for this.
 - He wants to tell his audience "this meal has roughly 40g of protein" because that's the kind of value-add content that builds loyal followers. But he has to guess or Google, because no discovery platform gives him macro data.
 
-NutriScout's AI photo macro estimation would be *content gold* for Kai. Imagine his TikTok: he walks into a restaurant, orders a dish, scans it with NutriScout, and the macro breakdown appears on screen. "This birria taco from [restaurant] has 35g protein, 42g carbs, 18g fat. And it slaps." That video format -- delicious food + instant nutrition data + authentic recommendation -- would perform extremely well. He'd make NutriScout a recurring character in his content. The app would become his storytelling device.
+FoodClaw's AI photo macro estimation would be *content gold* for Kai. Imagine his TikTok: he walks into a restaurant, orders a dish, scans it with FoodClaw, and the macro breakdown appears on screen. "This birria taco from [restaurant] has 35g protein, 42g carbs, 18g fat. And it slaps." That video format -- delicious food + instant nutrition data + authentic recommendation -- would perform extremely well. He'd make FoodClaw a recurring character in his content. The app would become his storytelling device.
 
-At 2:00 PM, Kai is at the poke bowl place. He films the order, the preparation, and the final product. He eats it (it's good -- ahi tuna, avocado, edamame, brown rice). He estimates the macros based on vibes: "probably like 35g protein?" He doesn't really know. If NutriScout's AI scanned the bowl and said "38g protein, 52g carbs, 22g fat, 490 calories," he'd show that on screen. His audience would love it. He'd love it. It's the intersection of his content niche and his personal health interest.
+At 2:00 PM, Kai is at the poke bowl place. He films the order, the preparation, and the final product. He eats it (it's good -- ahi tuna, avocado, edamame, brown rice). He estimates the macros based on vibes: "probably like 35g protein?" He doesn't really know. If FoodClaw's AI scanned the bowl and said "38g protein, 52g carbs, 22g fat, 490 calories," he'd show that on screen. His audience would love it. He'd love it. It's the intersection of his content niche and his personal health interest.
 
-By 5:00 PM, Kai is editing. By 8:00 PM, the poke bowl video is posted. By midnight, it has 15K views. Someone in the comments asks, "How much protein is in that?" Kai doesn't have a precise answer. NutriScout would give him one.
+By 5:00 PM, Kai is editing. By 8:00 PM, the poke bowl video is posted. By midnight, it has 15K views. Someone in the comments asks, "How much protein is in that?" Kai doesn't have a precise answer. FoodClaw would give him one.
 
 ## Current Tool Stack & Frustrations
 
@@ -850,8 +850,8 @@ By 5:00 PM, Kai is editing. By 8:00 PM, the poke bowl video is posted. By midnig
 1. **AI photo macro estimation** -- THE content feature. Scan dishes on camera for his audience.
 2. **Dish-first search with "content-worthy" angle** -- find photogenic dishes that are also high-protein or dairy-free.
 3. **"New restaurant" alerts** -- be the first creator to review a new spot.
-4. **Social sharing integration** -- share NutriScout macro cards directly to TikTok and Instagram Stories.
-5. **Creator profile** -- a NutriScout profile where his followers can see all his reviewed dishes and their macros.
+4. **Social sharing integration** -- share FoodClaw macro cards directly to TikTok and Instagram Stories.
+5. **Creator profile** -- a FoodClaw profile where his followers can see all his reviewed dishes and their macros.
 6. **Real-time wait times** -- know if a restaurant is packed before heading there to film.
 
 ## How to Reach Kai
@@ -867,19 +867,19 @@ By 5:00 PM, Kai is editing. By 8:00 PM, the poke bowl video is posted. By midnig
 
 ## Price Sensitivity
 
-Kai earns $45K. He's careful with money. He'd pay $4.99/month for a basic NutriScout subscription. He'd pay $9.99/month if the app included content creator features (macro cards for sharing, creator profile, first-to-review alerts). But the real value proposition for Kai isn't what he pays -- it's what NutriScout gets. If Kai uses the app in his content, that's free marketing to 38K+ followers. NutriScout should consider a **Creator Program** that gives creators like Kai free premium access in exchange for content featuring the app. Annual plan at $49.99/year for his tier, or free for verified creators.
+Kai earns $45K. He's careful with money. He'd pay $4.99/month for a basic FoodClaw subscription. He'd pay $9.99/month if the app included content creator features (macro cards for sharing, creator profile, first-to-review alerts). But the real value proposition for Kai isn't what he pays -- it's what FoodClaw gets. If Kai uses the app in his content, that's free marketing to 38K+ followers. FoodClaw should consider a **Creator Program** that gives creators like Kai free premium access in exchange for content featuring the app. Annual plan at $49.99/year for his tier, or free for verified creators.
 
 **The line:** Coolness. If the app looks like MyFitnessPal -- clinical, boring, health-app-coded -- Kai won't use it on camera. The UI needs to be TikTok-native in feel. Shareable. Aesthetic. If it looks good on screen, he'll use it. If it doesn't, he'll use it privately but never feature it.
 
 ## What Would Make Him Tell a Friend?
 
-He won't "tell" a friend. He'll make a TikTok. "POV: You find an app that tells you the macros of any dish just from a photo" -- with the NutriScout scan in action. If the AI estimation is accurate and the UX is visually satisfying, this video could go viral. Kai IS the marketing channel for the under-35 demographic.
+He won't "tell" a friend. He'll make a TikTok. "POV: You find an app that tells you the macros of any dish just from a photo" -- with the FoodClaw scan in action. If the AI estimation is accurate and the UX is visually satisfying, this video could go viral. Kai IS the marketing channel for the under-35 demographic.
 
 ## What Would Make Him Delete the App?
 
 - Ugly UI. If it looks like a health app from 2018, he's out. Design is non-negotiable.
 - Slow or inaccurate photo scanning. If the AI takes 10 seconds or gives obviously wrong estimates, he can't use it in content.
-- No social features. If he can't share NutriScout results to his Stories/TikTok seamlessly, the app exists in isolation from his actual life.
+- No social features. If he can't share FoodClaw results to his Stories/TikTok seamlessly, the app exists in isolation from his actual life.
 - Pushy premium upsells. If the free version is crippled with "Upgrade to see full macros!" pop-ups, he'll delete it and tell his audience to avoid it.
 
 ---
@@ -923,7 +923,7 @@ Danielle    Elena    Shira    Omar    Priya    Jordan    Marcus    Kai
 (anaphylaxis) (celiac)  (exclusion) (faith) (symptoms) (competition) (optimization) (creativity)
 ```
 
-**Insight:** The left side of this spectrum (fear-driven) requires *trust and safety* as the primary value proposition. The right side requires *data quality and delight*. NutriScout must serve both, but the messaging and onboarding should be tailored to where each persona falls on this spectrum.
+**Insight:** The left side of this spectrum (fear-driven) requires *trust and safety* as the primary value proposition. The right side requires *data quality and delight*. FoodClaw must serve both, but the messaging and onboarding should be tailored to where each persona falls on this spectrum.
 
 ## Willingness to Pay Summary
 
@@ -938,7 +938,7 @@ Danielle    Elena    Shira    Omar    Priya    Jordan    Marcus    Kai
 | Danielle (Allergy Parent) | $12.99-$16.99 | $99.99 | High | Minimal (free apps) |
 | Kai (Foodie Creator) | $4.99-$9.99 | $49.99 | Low (but wants creator perks) | $0 (free versions) |
 
-**Key insight:** The personas currently spending the LEAST on apps (Omar, Shira, Danielle) are potentially willing to pay the MOST for a NutriScout solution -- because nothing adequate exists for them today. They're not cheap. They're underserved. There's a critical difference.
+**Key insight:** The personas currently spending the LEAST on apps (Omar, Shira, Danielle) are potentially willing to pay the MOST for a FoodClaw solution -- because nothing adequate exists for them today. They're not cheap. They're underserved. There's a critical difference.
 
 ---
 
@@ -973,7 +973,7 @@ Danielle    Elena    Shira    Omar    Priya    Jordan    Marcus    Kai
 - Premium features at no cost
 - Content creation tools (shareable macro cards, creator profile)
 - Early access to new restaurants in the database
-- **Requirement:** Minimum 5K followers, 2+ NutriScout features in content per month
+- **Requirement:** Minimum 5K followers, 2+ FoodClaw features in content per month
 - **Target persona:** Kai
 
 ---
@@ -993,7 +993,7 @@ Danielle    Elena    Shira    Omar    Priya    Jordan    Marcus    Kai
 - Dense restaurant markets with diverse cuisines
 
 **Primary Segments to Activate:**
-1. **Kai (Foodie Creator)** -- FIRST. Use creators to generate awareness and organic content. NutriScout's AI photo estimation is inherently shareable.
+1. **Kai (Foodie Creator)** -- FIRST. Use creators to generate awareness and organic content. FoodClaw's AI photo estimation is inherently shareable.
 2. **Omar (Halal)** -- High unmet need, tight community networks, fast word-of-mouth.
 3. **Jordan (Lifter)** -- Large addressable market (r/fitness has 11M+ members), clear pain point, quantifiable value.
 
@@ -1047,7 +1047,7 @@ Danielle    Elena    Shira    Omar    Priya    Jordan    Marcus    Kai
 | **Time-to-first-value** | How quickly does a new user find a useful result? | <60 seconds |
 | **Community contribution rate** | Are users leaving reviews and verifying restaurants? | >15% of active users |
 | **Segment-specific NPS** | Are individual segments satisfied enough to recommend? | >50 per segment |
-| **Creator content generation** | How many creators feature NutriScout organically? | 50+ per month by Month 6 |
+| **Creator content generation** | How many creators feature FoodClaw organically? | 50+ per month by Month 6 |
 | **Cross-segment adoption** | Do users use multiple dietary filters? (Priya = FODMAP + anti-inflammatory) | Track overlap patterns |
 
 ---
@@ -1058,11 +1058,11 @@ Every person profiled in this document -- from Marcus with his CGM and $600/mont
 
 **To answer the question "What can I eat right now, near me, that won't compromise my health, my values, or my happiness?" in under 30 seconds.**
 
-No app does this today. Not Google Maps. Not Yelp. Not MyFitnessPal. Not Zabihah. Not Find Me Gluten Free. Not KosherNearMe. Not Spokin. Not any of them. They all solve one piece of the puzzle. NutriScout's opportunity is to be the single answer.
+No app does this today. Not Google Maps. Not Yelp. Not MyFitnessPal. Not Zabihah. Not Find Me Gluten Free. Not KosherNearMe. Not Spokin. Not any of them. They all solve one piece of the puzzle. FoodClaw's opportunity is to be the single answer.
 
 The market is $11+ billion and growing at 15%+ CAGR. The users are desperately cobbling together 3-5 apps. The communities are tight-knit and word-of-mouth-driven. The willingness to pay ranges from $5 to $30/month depending on the segment, with annual plans strongly preferred.
 
-The question isn't whether there's demand. There is overwhelming demand. The question is whether NutriScout can earn trust -- especially from the safety-critical segments (celiac, allergy, halal, kosher) -- while simultaneously delighting the discovery-driven segments (biohackers, lifters, foodies). That dual mandate is the product challenge. But it's also the moat: anyone who builds both trust and delight will own this category.
+The question isn't whether there's demand. There is overwhelming demand. The question is whether FoodClaw can earn trust -- especially from the safety-critical segments (celiac, allergy, halal, kosher) -- while simultaneously delighting the discovery-driven segments (biohackers, lifters, foodies). That dual mandate is the product challenge. But it's also the moat: anyone who builds both trust and delight will own this category.
 
 ---
 

@@ -1,4 +1,4 @@
-# NutriScout Learning Digest: Comprehensive — All Focus Areas
+# FoodClaw Learning Digest: Comprehensive — All Focus Areas
 **Date**: 2026-04-02
 **Focus**: Frontend/UI, Backend, Nutrition/Food Tech, Target Audience/Market, + Weekly Top-5 Synthesis
 
@@ -64,7 +64,7 @@ These are the highest-impact, cross-validated recommendations to implement next:
 
 ### 1. Next.js 16.2 — Caching is now fully opt-in (AUDIT REQUIRED)
 **Source**: https://nextjs.org/blog/next-16-2 (March 18, 2026)
-**Relevance to NutriScout**: This is a breaking behavioral change from Next.js 13-15. All `fetch()` calls in Server Components that previously auto-cached now run at request time. Any data fetching in NutriScout that relied on implicit caching now runs fresh on every request — increasing DB load and API costs.
+**Relevance to FoodClaw**: This is a breaking behavioral change from Next.js 13-15. All `fetch()` calls in Server Components that previously auto-cached now run at request time. Any data fetching in FoodClaw that relied on implicit caching now runs fresh on every request — increasing DB load and API costs.
 **Action item**: Audit every `fetch()` call in `src/app/` Server Components and add explicit `cache: 'force-cache'` or `next: { revalidate: 3600 }` where stale-while-revalidate behavior is appropriate (e.g., restaurant metadata, dish detail data). Dynamic search results should remain uncached (correct default).
 
 **Priority Score**: Impact 4 | Effort 2 | Urgency 5 (could silently increase costs)
@@ -73,7 +73,7 @@ These are the highest-impact, cross-validated recommendations to implement next:
 
 ### 2. React Compiler is now stable in Next.js 16
 **Source**: https://nextjs.org/blog/next-16 + https://react.dev/blog/2025/10/01/react-19-2
-**Relevance to NutriScout**: The React Compiler auto-memoizes components, eliminating the need for manual `useMemo`, `useCallback`, and `React.memo`. Dish cards rendered in a 20-item search results grid would benefit from auto-memoization.
+**Relevance to FoodClaw**: The React Compiler auto-memoizes components, eliminating the need for manual `useMemo`, `useCallback`, and `React.memo`. Dish cards rendered in a 20-item search results grid would benefit from auto-memoization.
 **Action item**: Add `experimental: { reactCompiler: true }` to `next.config.ts` if not already present. This is a zero-code-change win — the compiler handles memoization automatically.
 
 **Priority Score**: Impact 3 | Effort 1 | Urgency 2
@@ -82,7 +82,7 @@ These are the highest-impact, cross-validated recommendations to implement next:
 
 ### 3. `useOptimistic` for the dish card save button
 **Source**: https://react.dev/blog/2025/10/01/react-19-2 (React 19.2)
-**Relevance to NutriScout**: `src/components/dish-card.tsx` currently uses `useState(initialFavorited)` + a `toggling` boolean for the heart button (lines 36-38). React 19.2's `useOptimistic` instantly updates UI while the mutation is in-flight, auto-reverts on error — eliminating the `toggling` spinner entirely.
+**Relevance to FoodClaw**: `src/components/dish-card.tsx` currently uses `useState(initialFavorited)` + a `toggling` boolean for the heart button (lines 36-38). React 19.2's `useOptimistic` instantly updates UI while the mutation is in-flight, auto-reverts on error — eliminating the `toggling` spinner entirely.
 **Action item**: In `src/components/dish-card.tsx`, replace the `favorited`/`toggling` state pattern in the `toggleFavorite` callback with `useOptimistic` — the heart toggles instantly without a loading state, reverts if `/api/favorites` returns an error.
 
 **Priority Score**: Impact 3 | Effort 1 | Urgency 2
@@ -91,7 +91,7 @@ These are the highest-impact, cross-validated recommendations to implement next:
 
 ### 4. AVIF image format + blur placeholder + correct `sizes` attribute
 **Source**: https://webpeak.org/blog/nextjs-image-optimization-techniques/ + Next.js docs
-**Relevance to NutriScout**: Food photos are the highest-value content and likely the largest bandwidth cost. AVIF is 40-70% smaller than JPEG and 25-35% smaller than WebP. Next.js 16 supports AVIF delivery by default. `src/components/dish-card.tsx` uses `<Image>` already, but `sizes` and `placeholder="blur"` are likely not set.
+**Relevance to FoodClaw**: Food photos are the highest-value content and likely the largest bandwidth cost. AVIF is 40-70% smaller than JPEG and 25-35% smaller than WebP. Next.js 16 supports AVIF delivery by default. `src/components/dish-card.tsx` uses `<Image>` already, but `sizes` and `placeholder="blur"` are likely not set.
 **Action item**:
 1. In `next.config.ts`, add `images: { formats: ['image/avif', 'image/webp'] }` — free bandwidth win
 2. In `src/components/dish-card.tsx`, add `sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"` to the dish photo Image component
@@ -104,7 +104,7 @@ These are the highest-impact, cross-validated recommendations to implement next:
 
 ### 5. shadcn/ui CLI v4 — unified `radix-ui` package migration
 **Source**: https://ui.shadcn.com/docs/changelog (March 2026)
-**Relevance to NutriScout**: All `@radix-ui/react-*` packages were consolidated into a single `radix-ui` package in February 2026. Running the old individual packages causes version drift and larger installs.
+**Relevance to FoodClaw**: All `@radix-ui/react-*` packages were consolidated into a single `radix-ui` package in February 2026. Running the old individual packages causes version drift and larger installs.
 **Action item**: Run `npx shadcn@latest upgrade` to migrate to the unified `radix-ui` package. Also run `npx shadcn@latest diff` to check if any currently-installed components have upstream updates.
 
 **Priority Score**: Impact 2 | Effort 1 | Urgency 2
@@ -113,7 +113,7 @@ These are the highest-impact, cross-validated recommendations to implement next:
 
 ### 6. Inline filter chips (replace modal filter drawer on mobile)
 **Source**: https://www.sanjaydey.com/mobile-ux-ui-design-patterns-2026-data-backed/ + top food app UX analysis
-**Relevance to NutriScout**: The current `src/components/filter-drawer.tsx` is a bottom sheet modal. 2026 mobile UX pattern for food apps uses a horizontal scrollable chip row below the search bar — active filters visible at all times, one-tap to remove. Modal filters cost 2+ taps; inline chips cost 0 taps to see active state.
+**Relevance to FoodClaw**: The current `src/components/filter-drawer.tsx` is a bottom sheet modal. 2026 mobile UX pattern for food apps uses a horizontal scrollable chip row below the search bar — active filters visible at all times, one-tap to remove. Modal filters cost 2+ taps; inline chips cost 0 taps to see active state.
 **Action item**: Add a filter chip strip below the search bar in `src/app/page.tsx` that shows active dietary restrictions as removable pills. The full drawer can remain for editing, but active filters must be visible without opening it.
 
 **Priority Score**: Impact 4 | Effort 2 | Urgency 3
@@ -124,7 +124,7 @@ These are the highest-impact, cross-validated recommendations to implement next:
 
 ### 7. pgvector iterative scans — CRITICAL FIX for dietary-filtered vector search
 **Source**: https://aws.amazon.com/blogs/database/supercharging-vector-search-performance-and-relevance-with-pgvector-0-8-0-on-amazon-aurora-postgresql/ + https://www.postgresql.org/about/news/pgvector-080-released-2952/
-**Relevance to NutriScout**: pgvector 0.8.0 introduced iterative index scans. Without it, a search for "high-protein vegan dishes" on a sparse vegan dataset may silently return 3 dishes instead of 20 because the vector index finds the top-k results first, then dietary filtering reduces the set below the requested LIMIT. This is silent — no error, just fewer results. With `hnsw.iterative_scan = 'relaxed_order'`, pgvector continues scanning until it finds enough filter-passing results.
+**Relevance to FoodClaw**: pgvector 0.8.0 introduced iterative index scans. Without it, a search for "high-protein vegan dishes" on a sparse vegan dataset may silently return 3 dishes instead of 20 because the vector index finds the top-k results first, then dietary filtering reduces the set below the requested LIMIT. This is silent — no error, just fewer results. With `hnsw.iterative_scan = 'relaxed_order'`, pgvector continues scanning until it finds enough filter-passing results.
 **Action item**: In the search orchestrator's vector similarity query function, add before the query:
 ```sql
 SET hnsw.iterative_scan = 'relaxed_order';
@@ -138,7 +138,7 @@ These are session-level settings — safe to add per-query. Find the raw SQL vec
 
 ### 8. BullMQ `keepLastIfActive` for crawl job deduplication
 **Source**: https://github.com/taskforcesh/bullmq/releases (v5.72.0, April 1, 2026)
-**Relevance to NutriScout**: NutriScout uses `jobId: crawl-${googlePlaceId}` and `jobId: photo-${dishId}` for deduplication (per AGENTS.md). Current behavior: if a restaurant is being crawled and a duplicate crawl request arrives, the new job is dropped. New `keepLastIfActive` option queues the new job to run after the active one completes — ensuring re-crawl requests aren't silently lost when a crawl is in progress.
+**Relevance to FoodClaw**: FoodClaw uses `jobId: crawl-${googlePlaceId}` and `jobId: photo-${dishId}` for deduplication (per AGENTS.md). Current behavior: if a restaurant is being crawled and a duplicate crawl request arrives, the new job is dropped. New `keepLastIfActive` option queues the new job to run after the active one completes — ensuring re-crawl requests aren't silently lost when a crawl is in progress.
 **Action item**: In `workers/crawl-worker.ts` where crawl jobs are added, update the job options to include `deduplication: { id: 'crawl-${googlePlaceId}', keepLastIfActive: true }`. Apply the same pattern to photo analysis jobs in the photo worker.
 
 **Priority Score**: Impact 3 | Effort 1 | Urgency 3
@@ -147,7 +147,7 @@ These are session-level settings — safe to add per-query. Find the raw SQL vec
 
 ### 9. Redis 8 I/O threading — free 30% throughput increase
 **Source**: https://redis.io/blog/redis-8-ga/ + https://redis.io/blog/announcing-redis-86-performance-improvements-streams/
-**Relevance to NutriScout**: Redis 8 delivers 30%+ throughput increase for caching workloads (10% SET, 90% GET pattern — which matches NutriScout's search cache) with I/O threading enabled. Also adds `volatile-lrm` eviction policy, which evicts least-recently-*modified* keys rather than least-recently-*accessed* — better for search caches where fresh data should survive.
+**Relevance to FoodClaw**: Redis 8 delivers 30%+ throughput increase for caching workloads (10% SET, 90% GET pattern — which matches FoodClaw's search cache) with I/O threading enabled. Also adds `volatile-lrm` eviction policy, which evicts least-recently-*modified* keys rather than least-recently-*accessed* — better for search caches where fresh data should survive.
 **Action item**:
 1. Enable `io-threads 4` in the Redis server config (or Redis Cloud config panel)
 2. Consider switching eviction policy from `allkeys-lru` to `allkeys-lrm` for the search cache Redis instance
@@ -158,7 +158,7 @@ These are session-level settings — safe to add per-query. Find the raw SQL vec
 
 ### 10. GIN index on `dietaryFlags` JSONB (still missing)
 **Source**: `agent-workspace/improvement-logs/2026-04-01-backend.md` (documented as still needed)
-**Relevance to NutriScout**: The dietary flag filters (`dietaryFlags->>'vegan' = 'true'`) are executed on every search. Without a GIN index, these are sequential scans. The 2026-04-01 backend agent noted this requires a raw SQL migration that Prisma can't express.
+**Relevance to FoodClaw**: The dietary flag filters (`dietaryFlags->>'vegan' = 'true'`) are executed on every search. Without a GIN index, these are sequential scans. The 2026-04-01 backend agent noted this requires a raw SQL migration that Prisma can't express.
 **Action item**: Create a raw SQL migration file at `prisma/migrations/YYYYMMDDHHMMSS_add_dietary_gin_index/migration.sql`:
 ```sql
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_dishes_dietary_flags
@@ -172,7 +172,7 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 11. Hybrid FTS + pgvector scoring for dish name search
 **Source**: https://blog.vectorchord.ai/postgresql-full-text-search-fast-when-done-right-debunking-the-slow-myth
-**Relevance to NutriScout**: Dish name searches ("pad thai", "tikka masala") are short text — standard `ts_rank` TF-IDF underweights exact short-document matches. A hybrid query combining `ts_rank` (text relevance) and `1 - (embedding <=> query_embedding)` (semantic similarity) produces better dish name relevance than either alone.
+**Relevance to FoodClaw**: Dish name searches ("pad thai", "tikka masala") are short text — standard `ts_rank` TF-IDF underweights exact short-document matches. A hybrid query combining `ts_rank` (text relevance) and `1 - (embedding <=> query_embedding)` (semantic similarity) produces better dish name relevance than either alone.
 **Action item**: In the search orchestrator's text search path, implement a hybrid scoring query that combines `ts_rank * 0.4 + vector_score * 0.6`. The `search_vector` tsvector column and GIN index are referenced in the codebase (per backend log: `geo.ts`) but need a raw SQL migration if not yet created.
 
 **Priority Score**: Impact 3 | Effort 3 | Urgency 2
@@ -183,7 +183,7 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 12. AGENTS.md: Vision analyzer uses Gemini Flash, not Claude Haiku (CORRECTION)
 **Source**: `src/lib/agents/vision-analyzer/index.ts` line 3 — `import { getGeminiClient, GEMINI_FLASH }` and line 295 comment "Legacy — kept for type compatibility but Gemini is now the primary vision model"
-**Relevance to NutriScout**: AGENTS.md currently states "Model: claude-haiku-4-5 for cost efficiency" for the Vision Analyzer. This is outdated and misleading for future agents. The actual model is `GEMINI_FLASH`.
+**Relevance to FoodClaw**: AGENTS.md currently states "Model: claude-haiku-4-5 for cost efficiency" for the Vision Analyzer. This is outdated and misleading for future agents. The actual model is `GEMINI_FLASH`.
 **Action item**: Update `nutriscout/AGENTS.md` Vision Analyzer section to reflect actual model: `GEMINI_FLASH` (Gemini Flash). Also verify what `GEMINI_FLASH` maps to in `src/lib/ai/clients.ts` — confirm it is the current generation Gemini Flash model and not an outdated constant.
 
 **Priority Score**: Impact 3 | Effort 1 | Urgency 3 (documentation accuracy matters for multi-agent coordination)
@@ -192,7 +192,7 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 13. USDA synonym map missing v14.3 additions (jalapeño, poblano, serrano, seafood)
 **Source**: https://fdc.nal.usda.gov/log/ (USDA FoodData Central v14.3, March 12, 2026)
-**Relevance to NutriScout**: `src/lib/usda/client.ts` `USDA_SYNONYMS` map (lines 127-160) has 30 entries. USDA v14.3 added new Foundation Foods including jalapeño, poblano, serrano peppers, plus anchovies, cod, halibut, lobster, mahi mahi, scallops, sea bass, snapper. Restaurant dishes featuring these ingredients will fail USDA lookup and fall back to vision-only estimates (lower accuracy).
+**Relevance to FoodClaw**: `src/lib/usda/client.ts` `USDA_SYNONYMS` map (lines 127-160) has 30 entries. USDA v14.3 added new Foundation Foods including jalapeño, poblano, serrano peppers, plus anchovies, cod, halibut, lobster, mahi mahi, scallops, sea bass, snapper. Restaurant dishes featuring these ingredients will fail USDA lookup and fall back to vision-only estimates (lower accuracy).
 **Action item**: Add to `USDA_SYNONYMS` in `src/lib/usda/client.ts`:
 ```typescript
 "jalapeño": "peppers, hot chili, green, raw",
@@ -213,7 +213,7 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 14. Sesame is now the FDA 9th major allergen — verify full coverage
 **Source**: https://media.market.us/food-allergies-statistics/ + FDA sesame labeling regulation (2023)
-**Relevance to NutriScout**: Sesame was added as the 9th major allergen in 2023. `src/lib/evaluator/index.ts` handles sesame via keyword matching (`ALLERGEN_KEYWORDS: { sesame: ["sesame", "tahini"] }`) but does NOT have a dedicated `sesame_free` dietary flag. This means sesame filtering is description-text only — less reliable than the flag-based approach used for nut_free and gluten_free. With 32M Americans having food allergies and rising prevalence, this gap matters.
+**Relevance to FoodClaw**: Sesame was added as the 9th major allergen in 2023. `src/lib/evaluator/index.ts` handles sesame via keyword matching (`ALLERGEN_KEYWORDS: { sesame: ["sesame", "tahini"] }`) but does NOT have a dedicated `sesame_free` dietary flag. This means sesame filtering is description-text only — less reliable than the flag-based approach used for nut_free and gluten_free. With 32M Americans having food allergies and rising prevalence, this gap matters.
 **Action item**: Consider adding `sesame_free: boolean | null` to `DietaryFlags` in `src/types/index.ts`. The Menu Crawler's dietary flag inference logic would need to classify sesame absence, and the Apollo Evaluator would need to apply `ALLERGY_CRITICAL_MIN: 0.85` threshold (same as nut_free/gluten_free). This is a YELLOW tier change — needs careful implementation.
 
 **Priority Score**: Impact 4 | Effort 3 | Urgency 3
@@ -222,8 +222,8 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 15. AI vision accuracy ceiling is ~±15% calorie error — make uncertainty visible
 **Source**: https://pmc.ncbi.nlm.nih.gov/articles/PMC12229984/ (systematic review, 13 studies) + https://arxiv.org/html/2504.06925 (Gemini 2.0 Flash benchmark: 70.16% food ID)
-**Relevance to NutriScout**: Scientific research confirms ±10-15% calorie error is the current floor for AI vision-based macro estimation on restaurant photos. Multi-component dishes cause 18-25% accuracy drop vs. single-ingredient dishes. The existing min/max range model is scientifically correct. However, the UI currently shows averaged values (`avg()` function in `dish-card.tsx` line 30-33) — hiding the uncertainty that the range was designed to communicate.
-**Action item**: In `src/components/dish-card.tsx`, display the macro range instead of avg for calories — e.g., "~480–620 cal" instead of "550 cal". This is more honest and differentiates NutriScout from apps that show false-precision single numbers. For very tight ranges (max - min < 50 cal), showing avg is fine.
+**Relevance to FoodClaw**: Scientific research confirms ±10-15% calorie error is the current floor for AI vision-based macro estimation on restaurant photos. Multi-component dishes cause 18-25% accuracy drop vs. single-ingredient dishes. The existing min/max range model is scientifically correct. However, the UI currently shows averaged values (`avg()` function in `dish-card.tsx` line 30-33) — hiding the uncertainty that the range was designed to communicate.
+**Action item**: In `src/components/dish-card.tsx`, display the macro range instead of avg for calories — e.g., "~480–620 cal" instead of "550 cal". This is more honest and differentiates FoodClaw from apps that show false-precision single numbers. For very tight ranges (max - min < 50 cal), showing avg is fine.
 
 **Priority Score**: Impact 3 | Effort 1 | Urgency 2
 
@@ -231,9 +231,9 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ## PART 4: TARGET AUDIENCE & MARKET
 
-### 16. Halal food market is $2.24T — NutriScout's halal filter is severely under-marketed
+### 16. Halal food market is $2.24T — FoodClaw's halal filter is severely under-marketed
 **Source**: https://www.researchandmarkets.com/reports/5744211/halal-food-market-report (2026) + kosher market $22.8B
-**Relevance to NutriScout**: Halal dining is a $2.24 trillion global market growing at 13.4% CAGR. It's consistently the most-requested minority dietary filter and is currently one of the hardest to satisfy at a restaurant — menus rarely disclose halal certification clearly. NutriScout's dish-level halal flag (with conservative null defaults) is genuinely valuable infrastructure that competitors don't have at this depth.
+**Relevance to FoodClaw**: Halal dining is a $2.24 trillion global market growing at 13.4% CAGR. It's consistently the most-requested minority dietary filter and is currently one of the hardest to satisfy at a restaurant — menus rarely disclose halal certification clearly. FoodClaw's dish-level halal flag (with conservative null defaults) is genuinely valuable infrastructure that competitors don't have at this depth.
 **Action item**: Prioritize menu crawl coverage for halal-certified restaurants in target markets. In `src/components/filter-drawer.tsx`, move "Halal" to the top of the dietary list (currently buried among other options). Consider a "Halal Verified" badge that distinguishes certification-sourced flags from inference-based flags.
 
 **Priority Score**: Impact 4 | Effort 2 | Urgency 3
@@ -242,7 +242,7 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 17. Retention target: 12% Day-30 vs. 8% industry average — onboarding is the lever
 **Source**: https://getstream.io/blog/app-retention-guide/ (2026 benchmarks)
-**Relevance to NutriScout**: Health/fitness apps average 8.48% Day-30 retention. A 12%+ target is achievable with: (1) goal-setting onboarding (30% retention boost), (2) proximity push notifications for new matching dishes, (3) saved searches as re-engagement hooks. The single highest-ROI retention investment is making users capture their dietary profile in onboarding.
+**Relevance to FoodClaw**: Health/fitness apps average 8.48% Day-30 retention. A 12%+ target is achievable with: (1) goal-setting onboarding (30% retention boost), (2) proximity push notifications for new matching dishes, (3) saved searches as re-engagement hooks. The single highest-ROI retention investment is making users capture their dietary profile in onboarding.
 **Action item**: Add a BullMQ notification job: when a new dish is crawled that matches a user's saved filters, queue a push notification. Target file: new worker at `workers/notification-worker.ts` that queries users with matching dietary profiles for newly-added dishes.
 
 **Priority Score**: Impact 4 | Effort 3 | Urgency 3
@@ -251,8 +251,8 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 18. Shareable dish cards for TikTok/social acquisition (Gen Z channel)
 **Source**: https://www.deliverect.com/en/blog/trending/gen-z-their-identity-food-delivery-behavior-and-key-stats-in-2024 + https://dana.dexterra.com/blog/millennials-vs-gen-z-food-trends-whats-cooking-in-2026/
-**Relevance to NutriScout**: 63% of Gen Z regularly use food delivery apps; TikTok is the #1 food discovery platform for this cohort. NutriScout has no social sharing. A shareable dish card image (showing photo + macros + dietary badges) is a zero-cost acquisition channel — each share is a product demo.
-**Action item**: Create an OG image generator for dish detail pages at `/api/og/dish/[id]` using `@vercel/og`. The generated image should show: dish photo, name, restaurant, calories+protein+carbs+fat badges, and dietary flag icons. Add `<meta property="og:image">` to the dish detail page head. This makes links shared from NutriScout render rich previews on iMessage, Twitter/X, TikTok bios, etc.
+**Relevance to FoodClaw**: 63% of Gen Z regularly use food delivery apps; TikTok is the #1 food discovery platform for this cohort. FoodClaw has no social sharing. A shareable dish card image (showing photo + macros + dietary badges) is a zero-cost acquisition channel — each share is a product demo.
+**Action item**: Create an OG image generator for dish detail pages at `/api/og/dish/[id]` using `@vercel/og`. The generated image should show: dish photo, name, restaurant, calories+protein+carbs+fat badges, and dietary flag icons. Add `<meta property="og:image">` to the dish detail page head. This makes links shared from FoodClaw render rich previews on iMessage, Twitter/X, TikTok bios, etc.
 
 **Priority Score**: Impact 4 | Effort 2 | Urgency 3
 
@@ -260,7 +260,7 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 19. Delivery platform deep-links close the discovery-to-order loop
 **Source**: https://oysterlink.com/spotlight/food-delivery-market-share-statistics/ (DoorDash 56% market share)
-**Relevance to NutriScout**: 51% of US consumers turn to third-party platforms when choosing a restaurant for delivery. NutriScout is upstream of this decision — we surface the dish, but currently the Logistics Poller's delivery platform availability is stub/mock data. A deep-link from dish detail into the restaurant's DoorDash page would close the discovery-to-order funnel.
+**Relevance to FoodClaw**: 51% of US consumers turn to third-party platforms when choosing a restaurant for delivery. FoodClaw is upstream of this decision — we surface the dish, but currently the Logistics Poller's delivery platform availability is stub/mock data. A deep-link from dish detail into the restaurant's DoorDash page would close the discovery-to-order funnel.
 **Action item**: In `src/app/dish/[id]/page.tsx`, add "Order on DoorDash" / "Order on Uber Eats" buttons using the restaurant's `googlePlaceId` to construct the search URL. These can be fuzzy links (search by restaurant name) until the delivery platform stubs are fully implemented. Target the `delivery_platforms` field already on `DishCardData`.
 
 **Priority Score**: Impact 4 | Effort 1 | Urgency 3
@@ -269,7 +269,7 @@ This uses `jsonb_path_ops` which is optimized for `@>` operator queries. The orc
 
 ### 20. Macro source transparency on dish detail — trust signal for biohackers
 **Source**: https://www.businessofapps.com/data/fitness-app-market/ + biohacker user research
-**Relevance to NutriScout**: The biohacker segment (Cronometer users, fitness-focused) is NutriScout's highest-value user type — they care deeply about data provenance. `src/components/confidence-dot.tsx` and `macro_source` field exist. The `getSourceIcon()` pattern in AGENTS.md is implemented. But these are likely not prominently surfaced on the dish detail page.
+**Relevance to FoodClaw**: The biohacker segment (Cronometer users, fitness-focused) is FoodClaw's highest-value user type — they care deeply about data provenance. `src/components/confidence-dot.tsx` and `macro_source` field exist. The `getSourceIcon()` pattern in AGENTS.md is implemented. But these are likely not prominently surfaced on the dish detail page.
 **Action item**: On the dish detail page (`src/app/dish/[id]/page.tsx`), add a visible macro source section: "Macros estimated from: USDA Foundation Foods (protein, carbs), AI vision analysis (calories)" with a confidence percentage. Use the `macro_source` field from the dish record. This directly addresses the #1 trust driver for the biohacker segment.
 
 **Priority Score**: Impact 3 | Effort 1 | Urgency 2
@@ -309,8 +309,8 @@ All recommendations cross-referenced with actual source files:
 
 - **Cravr** (v1.1.1, SF-only): Still early stage (6 ratings). No dietary evaluator. Gap to close: our evaluator moat is invisible without the safety badge UI.
 - **DoorDash Zesty** (NYC/SF beta): Restaurant-first, social layer. No dish-level search or dietary filtering. Monitor.
-- **MyFitnessPal** (Winter 2026): Added GLP-1 tracker — validates the segment for NutriScout.
-- **Nestlé Vital Pursuit** (launched): High-protein GLP-1 frozen meals. Shows CPG is rushing into this segment. NutriScout should capture restaurant equivalent.
+- **MyFitnessPal** (Winter 2026): Added GLP-1 tracker — validates the segment for FoodClaw.
+- **Nestlé Vital Pursuit** (launched): High-protein GLP-1 frozen meals. Shows CPG is rushing into this segment. FoodClaw should capture restaurant equivalent.
 
 ---
 

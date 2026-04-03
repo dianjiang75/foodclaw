@@ -1,4 +1,4 @@
-# NutriScout Security, Privacy & Compliance Report
+# FoodClaw Security, Privacy & Compliance Report
 **Date**: 2026-03-30
 **Focus**: Security, Privacy, and Compliance
 **Research Depth**: 10 web searches, 23 tool uses, comprehensive analysis
@@ -34,7 +34,7 @@ Under **GDPR Article 9**, dietary data that reveals a medical condition is class
 - **Diet choices** (e.g., "I'm vegetarian") = **NOT** health data on its own
 - **Medical dietary restrictions** (e.g., celiac disease, IBS, PCOS, food allergies) = **YES, this IS health data**
 
-Since NutriScout explicitly stores celiac, IBS, PCOS, and food allergy data, **the app processes sensitive health data under GDPR Article 9**.
+Since FoodClaw explicitly stores celiac, IBS, PCOS, and food allergy data, **the app processes sensitive health data under GDPR Article 9**.
 
 Under GDPR, allergy information is specifically classified as health data, and the only relevant legal basis for processing it is **explicit consent** from the data subject (Article 9(2)(a)).
 
@@ -273,7 +273,7 @@ In 2018, MyFitnessPal exposed **150 million user records** including usernames, 
 3. **Delayed detection** -- breach went undetected for weeks
 4. **No field-level encryption** -- medical/dietary data stored in plaintext
 
-### Prevention Architecture for NutriScout
+### Prevention Architecture for FoodClaw
 
 ```typescript
 // lib/security/password.ts
@@ -359,7 +359,7 @@ export async function logSecurityEvent(event: {
 
 ## 4. COPPA Compliance (Children & Food Allergies)
 
-### Does NutriScout Need COPPA Compliance?
+### Does FoodClaw Need COPPA Compliance?
 
 **YES, if any of these are true:**
 
@@ -483,7 +483,7 @@ export async function initiateParentalConsent(params: {
 
 ## 5. App Store Privacy Nutrition Labels
 
-### Required Disclosures for NutriScout
+### Required Disclosures for FoodClaw
 
 Apple requires **every app** to declare:
 1. A **privacy policy URL** accessible from within the app
@@ -491,7 +491,7 @@ Apple requires **every app** to declare:
 3. **Account deletion** functionality if the app allows account creation
 4. A **privacy manifest file** for apps using Required Reason APIs
 
-### Data Categories NutriScout Must Declare
+### Data Categories FoodClaw Must Declare
 
 | Data Category | Specific Types | Linked to Identity? | Used for Tracking? |
 |---|---|---|---|
@@ -799,9 +799,9 @@ export function middleware(request: NextRequest) {
 
 ## 8. OWASP Top 10 2025 Threat Analysis
 
-### Full OWASP Top 10:2025 List and NutriScout Relevance
+### Full OWASP Top 10:2025 List and FoodClaw Relevance
 
-| # | Category | Risk to NutriScout | Mitigation |
+| # | Category | Risk to FoodClaw | Mitigation |
 |---|---|---|---|
 | **A01** | Broken Access Control | **CRITICAL** - users accessing others' dietary/medical data | RLS, server-side auth checks, RBAC |
 | **A02** | Security Misconfiguration | **HIGH** - default configs, exposed error messages | Security headers, env validation, disable debug in prod |

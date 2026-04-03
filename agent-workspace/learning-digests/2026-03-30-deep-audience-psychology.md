@@ -1,5 +1,5 @@
 # Deep Audience Psychology Research
-## NutriScout: Dish-First Food Discovery App
+## FoodClaw: Dish-First Food Discovery App
 
 > Research compiled from community discussions (Reddit, forums, Facebook groups), market reports, app store reviews, published user research studies, and behavioral data patterns. Covers biohackers, bodybuilders, celiac/allergy sufferers, IBS/PCOS patients, halal/kosher observers, Gen Z/Millennial food app users, and allergy parents.
 
@@ -66,7 +66,7 @@ This segment has **extremely low price sensitivity** for tools they perceive as 
 - $2,000-5,000/year on blood panels (InsideTracker, Function Health)
 - Many spend $500-1,500/month on high-quality food (organic, grass-fed, wild-caught)
 
-**Willingness to pay for NutriScout:** $15-30/month easily for a premium tier with AI macro/micro estimation, glucose-friendly restaurant recommendations, and data export to Cronometer/Oura. They'd pay $50+/month if it included CGM integration or biomarker correlation.
+**Willingness to pay for FoodClaw:** $15-30/month easily for a premium tier with AI macro/micro estimation, glucose-friendly restaurant recommendations, and data export to Cronometer/Oura. They'd pay $50+/month if it included CGM integration or biomarker correlation.
 
 ### Feature Wishlist (What Makes Them Obsessive)
 
@@ -85,7 +85,7 @@ This segment has **extremely low price sensitivity** for tools they perceive as 
 - **Reddit:** r/Biohackers, r/longevity, r/Nootropics, r/fasting
 - **YouTube:** Channels focused on longevity protocols
 - **Conferences:** Biohacking Conference, Health Optimisation Summit, RAADfest
-- **Strategy:** Get one well-known biohacker to feature NutriScout in their protocol. This community follows leaders.
+- **Strategy:** Get one well-known biohacker to feature FoodClaw in their protocol. This community follows leaders.
 
 ### Persona Sketch
 
@@ -146,7 +146,7 @@ This is THE pain point. From extensive community discussion:
 - **Apps:** Currently pay $10-20/month for tracking apps
 - **Gym:** $30-100/month
 
-**Willingness to pay for NutriScout:** $10-15/month for reliable AI macro estimation from food photos. They'd pay $20-25/month if it could integrate with MyFitnessPal/MacroFactor and auto-log estimated macros. The value proposition is clear: **accurate restaurant macros save them the anxiety that currently makes them avoid eating out.**
+**Willingness to pay for FoodClaw:** $10-15/month for reliable AI macro estimation from food photos. They'd pay $20-25/month if it could integrate with MyFitnessPal/MacroFactor and auto-log estimated macros. The value proposition is clear: **accurate restaurant macros save them the anxiety that currently makes them avoid eating out.**
 
 ### Feature Wishlist
 
@@ -230,7 +230,7 @@ This is not about preference. This is about **medical fear and social isolation.
 - Many have significant medical costs (ongoing monitoring, initial diagnosis journey)
 - **But:** they will pay for safety. Find Me Gluten Free's premium tier converts well in this community.
 
-**Willingness to pay for NutriScout:** $8-15/month if it provides **celiac-specific safety ratings** (not just "has GF options"), **cross-contamination protocol information**, and **verified celiac reviewer badges**. The safety angle is the premium trigger. They won't pay for convenience alone — they'll pay for trust.
+**Willingness to pay for FoodClaw:** $8-15/month if it provides **celiac-specific safety ratings** (not just "has GF options"), **cross-contamination protocol information**, and **verified celiac reviewer badges**. The safety angle is the premium trigger. They won't pay for convenience alone — they'll pay for trust.
 
 ### Feature Wishlist
 
@@ -382,7 +382,7 @@ There are approximately 3.5-4 million Muslims in the United States. For observan
 - App spending: relatively price-sensitive for apps ($5-10/month ceiling for most)
 - But: halal delivery is a high-spend category — if the app unlocks halal delivery options they didn't know about, the transaction value is high
 
-**Willingness to pay for NutriScout:** $5-8/month for reliable halal restaurant discovery with certification type details, community verification, and delivery integration. Free tier with ads would convert a massive user base; premium unlocks certification details and delivery.
+**Willingness to pay for FoodClaw:** $5-8/month for reliable halal restaurant discovery with certification type details, community verification, and delivery integration. Free tier with ads would convert a massive user base; premium unlocks certification details and delivery.
 
 ### Feature Wishlist
 
@@ -527,7 +527,7 @@ This is the core demographic for any food app. Their relationship with food is s
 | **Yelp** | Restaurant reviews | Aging platform; reviews feel inauthentic; no dish-first search; younger users find it "boomer" |
 | **Beli** | Social restaurant recommendations | Growing among millennials; but restaurant-focused, not dish-focused |
 
-**The fundamental gap:** Discovery happens on social media (visual, dish-level, inspiring). Ordering happens on delivery apps (restaurant-level, transactional, frustrating). Nothing bridges the two. NutriScout's dish-first model sits exactly in this gap.
+**The fundamental gap:** Discovery happens on social media (visual, dish-level, inspiring). Ordering happens on delivery apps (restaurant-level, transactional, frustrating). Nothing bridges the two. FoodClaw's dish-first model sits exactly in this gap.
 
 ### Emotional Drivers
 
@@ -545,7 +545,7 @@ This is the core demographic for any food app. Their relationship with food is s
 - **"Free with ads" preference:** Many prefer free tiers. Conversion to paid requires a clear value unlock.
 - **Food spending as a category is their #1 or #2 discretionary spend.** They spend more on food than previous generations did at the same age.
 
-**Willingness to pay for NutriScout:** $5-8/month for premium features. Free tier essential for user acquisition. The premium unlock should be around personalization (saved preferences, AI recommendations) and social features (share/discover with friends).
+**Willingness to pay for FoodClaw:** $5-8/month for premium features. Free tier essential for user acquisition. The premium unlock should be around personalization (saved preferences, AI recommendations) and social features (share/discover with friends).
 
 ### Feature Wishlist
 
@@ -553,7 +553,7 @@ This is the core demographic for any food app. Their relationship with food is s
 2. **Social features** — see what friends are eating/recommending; shareable food discoveries to Instagram Stories
 3. **AI-powered "you'd love this" recommendations** — learn from ordering history and generate personalized suggestions
 4. **Group dining filter** — "3 of us eating: one vegan, one gluten-free, one no restrictions — show restaurants where everyone can eat well"
-5. **Delivery integration** — discover on NutriScout, order seamlessly (deep links to UberEats/DoorDash or native ordering)
+5. **Delivery integration** — discover on FoodClaw, order seamlessly (deep links to UberEats/DoorDash or native ordering)
 6. **Nutritional transparency without being preachy** — show macros/calories as an option, not the default. They want it available but not in their face.
 7. **"Trending near you"** — what dishes are hot in their area right now, driven by social data
 
@@ -563,7 +563,7 @@ This is the core demographic for any food app. Their relationship with food is s
 - **Instagram Reels:** Food photography, restaurant discovery
 - **Influencer partnerships:** Food bloggers, "hidden gem" discoverers, local food scene accounts
 - **Content marketing:** "Best [dish] in [city]" content that lives on the app and surfaces in Google
-- **Referral programs:** "Share NutriScout with a friend, both get a free month"
+- **Referral programs:** "Share FoodClaw with a friend, both get a free month"
 - **Strategy:** Make the app itself generate shareable content. Every dish search result should be Instagram-story-ready. Make users WANT to share their finds.
 
 ### Persona Sketch
@@ -608,7 +608,7 @@ This section synthesizes the pricing psychology across all segments.
 - **Conversion rates:** Health/nutrition apps see 2-5% free-to-paid conversion on average. Top performers (Noom, MyFitnessPal) hit 5-10%.
 - **Annual vs. monthly:** Annual plans at 40-50% discount convert better and improve retention. Offer $7.99/month or $47.99/year.
 - **Trial periods:** 7-day free trials convert 15-25% better than no trial. 14-day trials show diminishing returns over 7-day.
-- **The "aha moment":** Users who experience the core value within the first 3 sessions convert at 3-4x the rate of those who don't. For NutriScout, this means: the first time someone photographs a dish and gets instant macro estimation, or searches for a specific dish filtered by their dietary need and finds it — THAT is the moment that converts.
+- **The "aha moment":** Users who experience the core value within the first 3 sessions convert at 3-4x the rate of those who don't. For FoodClaw, this means: the first time someone photographs a dish and gets instant macro estimation, or searches for a specific dish filtered by their dietary need and finds it — THAT is the moment that converts.
 
 ### Tiered Pricing Strategy (Recommended)
 
@@ -671,7 +671,7 @@ Parents managing children's food allergies (affecting approximately 8% of US chi
 - Specialty allergen-free foods: $150-300/month more than standard groceries
 - **They will pay any reasonable amount for their child's safety.** This is not price-sensitive in the way other segments are.
 
-**Willingness to pay for NutriScout:** $10-15/month for verified allergen information, allergy-parent reviews, cross-contamination protocols, and multi-allergen filtering. Would pay $20/month if it included emergency protocol integration (nearest hospital, EpiPen reminders) and kid-specific profiles.
+**Willingness to pay for FoodClaw:** $10-15/month for verified allergen information, allergy-parent reviews, cross-contamination protocols, and multi-allergen filtering. Would pay $20/month if it included emergency protocol integration (nearest hospital, EpiPen reminders) and kid-specific profiles.
 
 ### Feature Wishlist
 
@@ -717,12 +717,12 @@ Top performers (Noom, MyFitnessPal, Cronometer) achieve Day 30 retention of 15-2
 
 #### 1. Personalization That Deepens Over Time
 - The app gets smarter with use. "It knows me" is the stickiest feeling.
-- After 10 uses, NutriScout should be able to predict: dietary preferences, cuisine preferences, protein targets, go-to restaurants, ordering patterns, allergen profiles.
+- After 10 uses, FoodClaw should be able to predict: dietary preferences, cuisine preferences, protein targets, go-to restaurants, ordering patterns, allergen profiles.
 - **Implementation:** "Based on your history, you'll love this new grass-fed burger spot that just opened." This recommendation couldn't exist without their data — that's the lock-in.
 
 #### 2. Streaks and Progress Tracking (Use Carefully)
 - Streaks work (Duolingo proves it) but can feel punitive in food contexts.
-- **Better approach:** "Nutrition consistency score" — not a streak of logging, but a positive metric: "You've hit your protein goal at restaurants 14 of the last 20 meals. That's in the top 10% of NutriScout users."
+- **Better approach:** "Nutrition consistency score" — not a streak of logging, but a positive metric: "You've hit your protein goal at restaurants 14 of the last 20 meals. That's in the top 10% of FoodClaw users."
 - AVOID: punishing missed days. Health apps that make users feel bad about skipping a day see higher churn, not lower.
 
 #### 3. Social Features (The Underutilized Superpower)
@@ -736,7 +736,7 @@ Top performers (Noom, MyFitnessPal, Cronometer) achieve Day 30 retention of 15-2
 
 #### 4. The "Aha Moment" Activation
 - Users who experience the core value in the first session are 3-4x more likely to retain at Day 30.
-- **NutriScout's aha moments:**
+- **FoodClaw's aha moments:**
   - First successful dish search with dietary filter: "Wow, I can search for 'gluten-free pasta' and see 12 options near me with safety ratings"
   - First AI photo estimation: "I photographed my plate and it told me 42g protein, 38g carbs, 22g fat in 3 seconds"
   - First discovery they couldn't have made elsewhere: "I found a halal fried chicken spot 8 minutes away that I never knew existed"
@@ -753,7 +753,7 @@ Top performers (Noom, MyFitnessPal, Cronometer) achieve Day 30 retention of 15-2
 
 #### 6. Content That Educates and Engages
 - Health apps that provide educational content (not just tools) retain better.
-- Examples for NutriScout:
+- Examples for FoodClaw:
   - "How to estimate macros when dining out: 5 visual cues"
   - "FODMAP dining guide: what to ask at restaurants"
   - "Celiac safety: 7 questions to ask before ordering"
@@ -763,10 +763,10 @@ Top performers (Noom, MyFitnessPal, Cronometer) achieve Day 30 retention of 15-2
 #### 7. Habit Stacking and Routine Integration
 - The app must become part of an existing routine, not create a new one.
 - **Stack onto existing behaviors:**
-  - "I always look at my phone at 11:30" → NutriScout lunch suggestion appears
-  - "I always check Instagram food posts" → NutriScout integrates with or mirrors social food discovery
-  - "I always log my meals in MFP" → NutriScout feeds data to MFP automatically
-  - "I always check the restaurant menu before going out" → NutriScout is where they do this
+  - "I always look at my phone at 11:30" → FoodClaw lunch suggestion appears
+  - "I always check Instagram food posts" → FoodClaw integrates with or mirrors social food discovery
+  - "I always log my meals in MFP" → FoodClaw feeds data to MFP automatically
+  - "I always check the restaurant menu before going out" → FoodClaw is where they do this
 - **The goal: replace one step in their existing food decision process, then expand.**
 
 ### Retention Metrics to Track
@@ -788,13 +788,13 @@ Top performers (Noom, MyFitnessPal, Cronometer) achieve Day 30 retention of 15-2
 
 ### Universal Truths Across All Segments
 
-1. **Everyone wants dish-first search.** Not a single segment starts with "I want to go to Restaurant X." They all start with "I want [specific food] that meets [my dietary requirements]." NutriScout's core model is validated across every segment.
+1. **Everyone wants dish-first search.** Not a single segment starts with "I want to go to Restaurant X." They all start with "I want [specific food] that meets [my dietary requirements]." FoodClaw's core model is validated across every segment.
 
 2. **Trust is the currency.** Every segment has trust issues with existing tools — inaccurate macro data, unreliable GF labels, unverified halal claims, outdated kosher listings. **The app that earns trust in each segment will own that segment.**
 
 3. **Community verification beats corporate claims.** Reviews from "people like me" (celiac patients, allergy parents, halal observers, bodybuilders) are worth 10x more than restaurant self-reported data. Building verified community review systems is a competitive moat.
 
-4. **The restaurant is the enemy and the desire.** Every segment WANTS to eat out more but is held back by uncertainty, risk, and inadequate information. NutriScout's opportunity is to **unlock restaurant dining for underserved eaters.**
+4. **The restaurant is the enemy and the desire.** Every segment WANTS to eat out more but is held back by uncertainty, risk, and inadequate information. FoodClaw's opportunity is to **unlock restaurant dining for underserved eaters.**
 
 5. **Photo-based AI estimation is the hook feature.** Every segment that tracks anything (macros, FODMAPs, allergens) expressed frustration with manual data entry for restaurant food. AI photo estimation is the feature that makes every demo jaw-dropping.
 

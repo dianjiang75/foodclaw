@@ -1,6 +1,6 @@
 # Deep Branding & Identity Research: Dish-First Food Discovery App
 
-> Replacing "NutriScout" with a name that makes people say "BAM, what is that?!"
+> Replacing "FoodClaw" with a name that makes people say "BAM, what is that?!"
 
 ---
 
@@ -29,7 +29,7 @@
 **Whoop (fitness wearable)**
 - An exclamation. It's energetic, celebratory, and sounds like something you'd shout after a PR. The name IS the emotion of achievement.
 
-**Key Takeaway:** The most successful health-tech rebrands move AWAY from descriptive/clinical names and toward emotional, abstract, or outcome-oriented names. "NutriScout" fails because it describes the mechanism (scouting for nutrition) rather than the feeling (discovery, precision, control, delight).
+**Key Takeaway:** The most successful health-tech rebrands move AWAY from descriptive/clinical names and toward emotional, abstract, or outcome-oriented names. "FoodClaw" fails because it describes the mechanism (scouting for nutrition) rather than the feeling (discovery, precision, control, delight).
 
 ---
 

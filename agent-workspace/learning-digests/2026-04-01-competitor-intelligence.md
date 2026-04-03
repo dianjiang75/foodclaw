@@ -7,10 +7,10 @@
 
 ## EXECUTIVE SUMMARY
 
-Three urgent signals for NutriScout:
+Three urgent signals for FoodClaw:
 1. **Cravr is a direct clone of our concept** — dish-first discovery, AI ranking, delivery platform indexing, launched Dec 2025. Currently tiny (6 ratings) and SF-only. We have a short window before they grow.
 2. **DoorDash launched Zesty** (Dec 2025 public beta) — AI conversational restaurant discovery. Big-co entry into our discovery layer with massive distribution advantage.
-3. **MyFitnessPal's Winter 2026 release** (Feb 24, 2026) doubled down on meal-logging, not discovery — their AI photo scan helps users log meals they already ate, not find new ones. This is a gap NutriScout owns.
+3. **MyFitnessPal's Winter 2026 release** (Feb 24, 2026) doubled down on meal-logging, not discovery — their AI photo scan helps users log meals they already ate, not find new ones. This is a gap FoodClaw owns.
 
 ---
 
@@ -35,9 +35,9 @@ Three urgent signals for NutriScout:
 
 **CPO quote**: "Features like Photo Upload fit into real life without adding pressure, while our registered dietitians provide credible nutrition guidance." — Tim Holley, CPO
 
-**NutriScout implication**:
+**FoodClaw implication**:
 - MFP is firmly a **post-meal logger**, not a **pre-meal finder**. Zero dish discovery, zero dietary filtering for restaurant search.
-- The GLP-1 tracker is a new high-intent user cohort (appetite-suppressed, protein-focused, small portions) — NutriScout should consider making GLP-1 users an explicit dietary profile in our filter set.
+- The GLP-1 tracker is a new high-intent user cohort (appetite-suppressed, protein-focused, small portions) — FoodClaw should consider making GLP-1 users an explicit dietary profile in our filter set.
 - Photo logging is MFP's answer to restaurant meals — but it only works *after* you've already ordered. We solve the *before* problem.
 - **Risk tier**: LOW (not competing in discovery). **Opportunity**: GLP-1 filter addition = GREEN tier improvement.
 
@@ -52,7 +52,7 @@ Three urgent signals for NutriScout:
 
 **Pricing**: [NutriScan analysis](https://nutriscan.app/blog/posts/macrofactor-cost-2026-free-version-29f5edc98b) confirms no free tier for AI features; MacroFactor is a paid-only app (~$11.99/mo or discounted annually).
 
-**NutriScout implication**:
+**FoodClaw implication**:
 - MacroFactor's restaurant solution is still *retrospective* — you log what you ate. No dish finder, no dietary flag awareness, no pre-decision support.
 - Their "Describe" feature does reduce friction for restaurant logging. If we add a "log what you ate" micro-feature post-discovery, we could keep users in-app for their full meal journey.
 - **Risk tier**: LOW. **Opportunity**: Consider a post-meal confirmation/logging flow to capture this use case without building a full tracker.
@@ -71,8 +71,8 @@ Three urgent signals for NutriScout:
 - iOS only (33.9 MB)
 - Developer: Mayank Shekhar Singamreddy (solo developer)
 
-**Feature parity vs. NutriScout**:
-| Feature | Cravr | NutriScout |
+**Feature parity vs. FoodClaw**:
+| Feature | Cravr | FoodClaw |
 |---|---|---|
 | Dish-first search | Yes | Yes |
 | AI ranking/embeddings | Yes | Yes |
@@ -84,7 +84,7 @@ Three urgent signals for NutriScout:
 | Map browse | Yes | No |
 | Nutritional data | No | Yes |
 
-**Gap assessment**: Cravr wins on social UX (swipe, map). NutriScout wins on nutritional intelligence and dietary safety. They are going after food-curious users; we go after health-conscious users. These are different but overlapping markets.
+**Gap assessment**: Cravr wins on social UX (swipe, map). FoodClaw wins on nutritional intelligence and dietary safety. They are going after food-curious users; we go after health-conscious users. These are different but overlapping markets.
 
 **Risk tier**: HIGH. Solo dev, early stage — but the concept validation and App Store presence mean larger players will notice this niche.
 
@@ -109,12 +109,12 @@ Three urgent signals for NutriScout:
 - **No dietary restriction filtering mentioned**
 - Co-founder Andy Fang: app helps users "connect with the best of their communities"
 
-**NutriScout implication**:
+**FoodClaw implication**:
 - Zesty validates the market: even DoorDash recognizes that discovery is broken and needs its own surface.
-- Zesty is **restaurant-first** (exactly what NutriScout is not). Their conversational AI answers "where should I eat?" We answer "I want X dish that fits Y diet."
-- Zesty's social layer (follow diners, share photos) is a feature NutriScout lacks entirely. Worth monitoring — if Zesty adds dish-level search or dietary filters, they become a serious threat.
+- Zesty is **restaurant-first** (exactly what FoodClaw is not). Their conversational AI answers "where should I eat?" We answer "I want X dish that fits Y diet."
+- Zesty's social layer (follow diners, share photos) is a feature FoodClaw lacks entirely. Worth monitoring — if Zesty adds dish-level search or dietary filters, they become a serious threat.
 - **Risk tier**: MEDIUM now, HIGH if they add dish-level search.
-- **Opportunity**: NutriScout should articulate "dish-first vs restaurant-first" as a clear differentiation message.
+- **Opportunity**: FoodClaw should articulate "dish-first vs restaurant-first" as a clear differentiation message.
 
 ---
 
@@ -129,7 +129,7 @@ Notable new entrants:
 - **Emma: AI Food Scanner** (Product Hunt): Sugar-free food scanner, AI nutrition intelligence for global foods.
 - **Simply: AI Nutrition App** (Product Hunt): Minimal AI-driven nutrition companion.
 
-**Pattern**: All these apps are still **retrospective loggers**. None do proactive dish discovery. The entire category is "help me log what I ate," not "help me find what to eat." NutriScout's lane is uncrowded at the AI-native level.
+**Pattern**: All these apps are still **retrospective loggers**. None do proactive dish discovery. The entire category is "help me log what I ate," not "help me find what to eat." FoodClaw's lane is uncrowded at the AI-native level.
 
 ---
 
@@ -145,7 +145,7 @@ Established players with no major 2026 updates detected:
 
 **Notable**: Missouri Restaurant Association launched a **multilingual menu app** ahead of the 2026 FIFA World Cup (February 18, 2026) — accessibility-focused, translates menus. Not a direct competitor but shows restaurant operators investing in digital menu infrastructure.
 
-**NutriScout implication**: These incumbents do restriction-aware restaurant discovery but lack: (1) dish-level search, (2) AI macro estimation, (3) real-time logistics. They remain un-AI-fied. Our AI Evaluator approach is architecturally ahead.
+**FoodClaw implication**: These incumbents do restriction-aware restaurant discovery but lack: (1) dish-level search, (2) AI macro estimation, (3) real-time logistics. They remain un-AI-fied. Our AI Evaluator approach is architecturally ahead.
 
 ---
 
@@ -153,13 +153,13 @@ Established players with no major 2026 updates detected:
 
 Based on aggregated signals across search results:
 
-1. **Frustration with paywalled basics**: MFP users increasingly vocal about features being locked behind Premium+. Sentiment: "I pay $100/yr and the app got worse." Opportunity for NutriScout to offer a generous free tier as a competitive wedge.
+1. **Frustration with paywalled basics**: MFP users increasingly vocal about features being locked behind Premium+. Sentiment: "I pay $100/yr and the app got worse." Opportunity for FoodClaw to offer a generous free tier as a competitive wedge.
 
-2. **Demand for AI logging with less friction**: MacroFactor's "Describe" feature and MFP's Photo Upload both got positive reception — users want to log in 10 seconds, not 2 minutes. Implication: NutriScout's dish-card design should surface macro estimates immediately, not behind a detail page.
+2. **Demand for AI logging with less friction**: MacroFactor's "Describe" feature and MFP's Photo Upload both got positive reception — users want to log in 10 seconds, not 2 minutes. Implication: FoodClaw's dish-card design should surface macro estimates immediately, not behind a detail page.
 
 3. **30M US consumers have abandoned traditional search** for AI-driven, outcome-oriented interactions — this stat appeared in multiple sources. Validates our natural language search approach.
 
-4. **GLP-1 cohort is a real and growing segment**: MFP's explicit GLP-1 tracker signals this is a user segment worth targeting. GLP-1 users have specific nutritional needs (high protein, small portions, nausea avoidance) that NutriScout's macro filtering could serve perfectly.
+4. **GLP-1 cohort is a real and growing segment**: MFP's explicit GLP-1 tracker signals this is a user segment worth targeting. GLP-1 users have specific nutritional needs (high protein, small portions, nausea avoidance) that FoodClaw's macro filtering could serve perfectly.
 
 5. **Social proof and community signals matter**: Zesty's social layer, HappyCow's community reviews, and Cravr's taste-filter sharing all point to a shift toward "what are people like me eating" signals vs. raw star ratings.
 
@@ -176,7 +176,7 @@ Based on aggregated signals across search results:
 | Picknic / Spokin | Freemium | Free / small premium |
 | Nutrola / NutriScan | Freemium | Free / ~$5-10/mo |
 
-**Trend**: New entrants are going free-to-grow, established players are raising paywalls. NutriScout should stay generous at the free tier to acquire users that MFP is alienating.
+**Trend**: New entrants are going free-to-grow, established players are raising paywalls. FoodClaw should stay generous at the free tier to acquire users that MFP is alienating.
 
 ---
 
