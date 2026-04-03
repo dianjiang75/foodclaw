@@ -15,8 +15,9 @@ export async function GET(request: Request) {
 
     const q = searchParams.get("q") || "";
     const categories = searchParams.get("categories")?.split(",").filter(Boolean) || [];
-    // TODO: wire diet filters into restaurant query when dietary flags are on dishes
-    // const diets = searchParams.get("diet")?.split(",").filter(Boolean) || [];
+    const sort = searchParams.get("sort") || "distance";
+    const maxWait = searchParams.get("max_wait") ? parseInt(searchParams.get("max_wait")!) : null;
+    const radius = searchParams.get("radius") ? parseFloat(searchParams.get("radius")!) : null;
 
     // Cuisine-type categories for restaurant filter
     const cuisineIds = new Set([
@@ -93,10 +94,30 @@ export async function GET(request: Request) {
       };
     });
 
-    // Sort by distance
-    result.sort((a, b) => (a.distanceMiles ?? Infinity) - (b.distanceMiles ?? Infinity));
+    // Filter by radius
+    let filtered = result;
+    if (radius != null && !isNaN(radius)) {
+      filtered = filtered.filter((r) => r.distanceMiles <= radius);
+    }
 
-    return Response.json({ restaurants: result });
+    // Filter by max wait
+    if (maxWait != null && !isNaN(maxWait)) {
+      filtered = filtered.filter(
+        (r) => r.estimatedWait == null || r.estimatedWait < maxWait
+      );
+    }
+
+    // Sort
+    if (sort === "rating") {
+      filtered.sort((a, b) => (b.googleRating ?? 0) - (a.googleRating ?? 0));
+    } else if (sort === "wait_time") {
+      filtered.sort((a, b) => (a.estimatedWait ?? Infinity) - (b.estimatedWait ?? Infinity));
+    } else {
+      // Default: distance
+      filtered.sort((a, b) => (a.distanceMiles ?? Infinity) - (b.distanceMiles ?? Infinity));
+    }
+
+    return Response.json({ restaurants: filtered });
   } catch (error) {
     console.error("Restaurants error:", error);
     return Response.json({ error: "Failed to fetch restaurants" }, { status: 500 });
