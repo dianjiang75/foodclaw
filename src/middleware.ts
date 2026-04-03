@@ -20,7 +20,9 @@ export function middleware(request: NextRequest) {
     if (
       pathname.startsWith("/api/auth/") ||
       pathname.startsWith("/api/users/") ||
-      pathname.startsWith("/api/favorites")
+      pathname.startsWith("/api/favorites") ||
+      pathname.startsWith("/api/recognize") ||
+      pathname.startsWith("/api/notifications")
     ) {
       response.headers.set("Cache-Control", "private, no-store");
     }

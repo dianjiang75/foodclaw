@@ -23,6 +23,14 @@ async function preprocessImage(imageUrl: string): Promise<{ base64: string; medi
   if (!res.ok) throw new Error(`Failed to fetch image: ${res.status}`);
 
   const buffer = Buffer.from(await res.arrayBuffer());
+  return preprocessBuffer(buffer);
+}
+
+/**
+ * Preprocess a raw image buffer: resize, quality check, convert to JPEG.
+ * Used by both URL-based analysis and direct buffer uploads.
+ */
+async function preprocessBuffer(buffer: Buffer): Promise<{ base64: string; mediaType: "image/jpeg" }> {
   const image = sharp(buffer);
 
   // Quality check: detect blur using Sharp stats
@@ -138,6 +146,65 @@ export async function analyzeFoodPhoto(
     base64Data = Buffer.from(await res.arrayBuffer()).toString("base64");
   }
 
+  return analyzeBase64(model, base64Data);
+}
+
+/**
+ * Analyze a food photo from a raw buffer (e.g., user upload).
+ * Same pipeline as analyzeFoodPhoto but skips the HTTP fetch step.
+ */
+export async function analyzeFoodPhotoFromBuffer(
+  buffer: Buffer,
+): Promise<VisionAnalysis> {
+  const gemini = getGeminiClient();
+  const model = gemini.getGenerativeModel({
+    model: GEMINI_FLASH,
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: SchemaType.OBJECT,
+        properties: {
+          dish_name: { type: SchemaType.STRING },
+          cuisine_type: { type: SchemaType.STRING },
+          ingredients: {
+            type: SchemaType.ARRAY,
+            items: {
+              type: SchemaType.OBJECT,
+              properties: {
+                name: { type: SchemaType.STRING },
+                estimated_grams: { type: SchemaType.NUMBER },
+                is_primary: { type: SchemaType.BOOLEAN },
+              },
+              required: ["name", "estimated_grams", "is_primary"],
+            },
+          },
+          total_portion_grams: { type: SchemaType.NUMBER },
+          preparation_method: { type: SchemaType.STRING },
+          confidence: { type: SchemaType.NUMBER },
+        },
+        required: ["dish_name", "cuisine_type", "ingredients", "total_portion_grams", "preparation_method", "confidence"],
+      },
+    },
+  });
+
+  let base64Data: string;
+  try {
+    const { base64 } = await preprocessBuffer(buffer);
+    base64Data = base64;
+  } catch {
+    base64Data = buffer.toString("base64");
+  }
+
+  return analyzeBase64(model, base64Data);
+}
+
+/**
+ * Shared Gemini analysis pipeline: takes base64 image data, returns VisionAnalysis.
+ */
+async function analyzeBase64(
+  model: ReturnType<ReturnType<typeof getGeminiClient>["getGenerativeModel"]>,
+  base64Data: string,
+): Promise<VisionAnalysis> {
   const result = await model.generateContent([
     { text: VISION_SYSTEM_PROMPT + "\n\nAnalyze this food photo and estimate its nutritional content. Return ONLY valid JSON." },
     { inlineData: { data: base64Data, mimeType: "image/jpeg" } },
