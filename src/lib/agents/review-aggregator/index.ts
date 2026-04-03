@@ -143,7 +143,7 @@ export async function summarizeDishReviews(
 ): Promise<DishReviewSummary> {
   if (reviews.length === 0) {
     return {
-      summary: "No reviews found for this dish.",
+      summary: "No reviews on this dish yet.",
       dish_rating: 0,
       common_praises: [],
       common_complaints: [],
@@ -157,28 +157,27 @@ export async function summarizeDishReviews(
     .map((r, i) => `Review ${i + 1} (${r.rating}/5 stars, ${r.source}): "${r.text}"`)
     .join("\n\n");
 
-  const prompt = `You are analyzing restaurant reviews to provide a dish-specific summary.
+  const prompt = `Summarize what reviewers say about a specific dish. STRICT RULES:
+
+- ONLY state things explicitly mentioned in the reviews below. NEVER infer, guess, or add details not in the reviews.
+- Start the summary with "Based on ${reviews.length} review${reviews.length === 1 ? "" : "s"},"
+- Be specific: name exact flavors, textures, ingredients reviewers mention — not vague praise like "delicious" or "great".
+- NEVER say "customers say", "diners report", "patrons mention", or similar. Just state what the reviews say directly.
+- If reviews disagree, say so (e.g., "opinions split on sweetness — 2 loved it, 1 found it too sweet").
+- Keep it 2-3 sentences max. Every word should carry information.
 
 Dish: "${dishName}" at "${restaurantName}"
-Number of reviews mentioning this dish: ${reviews.length}
 
 Reviews:
 ${reviewTexts}
 
-Provide:
-1. A 2-3 sentence summary of what people say about THIS SPECIFIC DISH (not the restaurant in general). Focus on taste, portion size, preparation quality, and value.
-2. Common praises (array of short phrases)
-3. Common complaints (array of short phrases)
-4. Any dietary warnings mentioned by reviewers (e.g., "several reviewers mention it's spicier than expected" or "reviewers note the portion is smaller than photos suggest")
-5. Portion perception: Do reviewers generally say portions are generous, average, or small?
-
-Return as JSON:
+Return JSON:
 {
-  "summary": "string",
-  "dish_rating": number,
-  "common_praises": ["string"],
-  "common_complaints": ["string"],
-  "dietary_warnings": ["string"],
+  "summary": "string (start with 'Based on N reviews,' — be specific about flavors, textures, preparation details mentioned)",
+  "dish_rating": number (average of review ratings, 1 decimal),
+  "common_praises": ["short specific phrases from reviews, e.g. 'crispy batter' not 'good food'"],
+  "common_complaints": ["short specific phrases from reviews, e.g. 'too salty' not 'could be better'"],
+  "dietary_warnings": ["only if reviewers explicitly mention allergy/dietary info, e.g. 'spicier than menu suggests'"],
   "portion_perception": "generous" | "average" | "small" | "unknown"
 }
 

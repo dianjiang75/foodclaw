@@ -120,7 +120,7 @@ describe("Review Aggregator", () => {
         []
       );
 
-      expect(result.summary).toBe("No reviews found for this dish.");
+      expect(result.summary).toBe("No reviews on this dish yet.");
       expect(result.dish_rating).toBe(0);
       expect(mockCreate).not.toHaveBeenCalled();
     });
