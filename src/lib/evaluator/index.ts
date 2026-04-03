@@ -155,16 +155,27 @@ export function verify(
         }
 
         // Keyword safety net for dietary restrictions
-        // Even if flag is true, if description contains the allergen keyword, exclude
+        // Even if flag is true, if description/name contains allergen keywords, exclude.
+        // Uses the same comprehensive keyword lists as the allergen-path for consistency.
         if (isCritical && flag === true) {
           const desc = (dish.description || "").toLowerCase();
           const dName = (dish.name || "").toLowerCase();
-          const nutKeywords = restriction === "nut_free"
-            ? ["peanut", "almond", "cashew", "walnut", "pecan", "pistachio", "hazelnut", "macadamia", "pine nut", "coconut"]
-            : restriction === "gluten_free"
-            ? ["wheat", "flour tortilla", "panko", "breadcrumb"]
-            : [];
-          if (nutKeywords.some((kw) => desc.includes(kw) || dName.includes(kw))) return false;
+
+          // Map dietary restriction to the relevant allergen keyword lists
+          const keywordSources: string[][] = [];
+          if (restriction === "nut_free") {
+            keywordSources.push(ALLERGEN_KEYWORDS["peanuts"] || []);
+            keywordSources.push(ALLERGEN_KEYWORDS["tree_nuts"] || []);
+          } else if (restriction === "gluten_free") {
+            keywordSources.push(ALLERGEN_KEYWORDS["wheat"] || []);
+            keywordSources.push(KNOWN_ALLERGEN_DISHES["gluten_free"] || []);
+          } else if (restriction === "dairy_free") {
+            keywordSources.push(ALLERGEN_KEYWORDS["milk"] || []);
+            keywordSources.push(KNOWN_ALLERGEN_DISHES["dairy_free"] || []);
+          }
+
+          const allKeywords = keywordSources.flat();
+          if (allKeywords.some((kw) => desc.includes(kw) || dName.includes(kw))) return false;
         }
       }
       return true;
