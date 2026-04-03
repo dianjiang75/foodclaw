@@ -30,7 +30,8 @@ export function middleware(request: NextRequest) {
     else if (
       pathname.match(/^\/api\/dishes\/[^/]+$/) ||
       pathname.match(/^\/api\/restaurants\/[^/]+$/) ||
-      pathname.match(/^\/api\/restaurants\/[^/]+\/menu$/)
+      pathname.match(/^\/api\/restaurants\/[^/]+\/menu$/) ||
+      pathname.startsWith("/api/discover/")
     ) {
       response.headers.set(
         "Cache-Control",
