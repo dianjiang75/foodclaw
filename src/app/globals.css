@@ -169,7 +169,7 @@
 /* Safe area padding for bottom nav on notched devices */
 .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
 
-/* NutriScout semantic colors */
+/* FoodClaw semantic colors */
 :root {
   --ns-green: oklch(0.60 0.16 155);
   --ns-green-light: oklch(0.94 0.04 155);

@@ -1,5 +1,5 @@
 /**
- * Seed script for NutriScout demo data.
+ * Seed script for FoodClaw demo data.
  * Populates the database with realistic East Village NYC restaurants and dishes.
  *
  * Usage: npx tsx scripts/seed-demo.ts
@@ -177,7 +177,7 @@ const REVIEW_PRAISES = ["generous portions", "fresh ingredients", "great flavor"
 const REVIEW_COMPLAINTS = ["can be spicy", "small portion", "slow service", "overpriced", "inconsistent quality"];
 
 async function main() {
-  console.log("Seeding NutriScout demo data...");
+  console.log("Seeding FoodClaw demo data...");
 
   // Clear existing data
   await prisma.communityFeedback.deleteMany();
@@ -193,7 +193,7 @@ async function main() {
   // Create demo user
   const user = await prisma.userProfile.create({
     data: {
-      email: "demo@nutriscout.app",
+      email: "demo@foodclaw.app",
       name: "Demo User",
       dietaryRestrictions: { vegan: false, vegetarian: false, gluten_free: false },
       nutritionalGoals: { priority: "max_protein" },
@@ -354,7 +354,7 @@ async function main() {
   }
 
   console.log(`\nDone! Created ${RESTAURANTS.length} restaurants with ${totalDishes} total dishes.`);
-  console.log(`Demo user login: demo@nutriscout.app`);
+  console.log(`Demo user login: demo@foodclaw.app`);
 }
 
 function shuffle<T>(arr: T[]): T[] {

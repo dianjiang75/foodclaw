@@ -64,6 +64,12 @@ export async function search(query: UserSearchQuery): Promise<SearchResults> {
     // (proteinMaxG could meet it while proteinMinG doesn't)
     macroWhere.proteinMinG = { gte: query.protein_min_g };
   }
+  // GLP-1 friendly: high protein (≥25g), controlled calories (≤500)
+  // Maps to clinical priorities for GLP-1 medication users (Ozempic, Wegovy)
+  if (query.nutritional_goal === "glp1_friendly") {
+    macroWhere.proteinMinG = { gte: 25 };
+    macroWhere.caloriesMax = { lte: 500 };
+  }
 
   // Full-text search: use tsvector when available, fallback to ILIKE
   let textWhere: Record<string, unknown> = {};
@@ -403,6 +409,9 @@ function buildOrderBy(
       return { fatMinG: "asc" };
     case "min_carbs":
       return { carbsMinG: "asc" };
+    case "glp1_friendly":
+      // GLP-1: prioritize high protein first, then low calories
+      return { proteinMaxG: "desc" };
     default:
       return { createdAt: "desc" };
   }
@@ -423,6 +432,15 @@ function macroMatchScore(dish: DishResult, goal: string): number {
       return dish.fat_min_g != null ? 100 - dish.fat_min_g : 0;
     case "min_carbs":
       return dish.carbs_min_g != null ? 200 - dish.carbs_min_g : 0;
+    case "glp1_friendly": {
+      // Score: 60% protein density, 40% calorie control
+      // Best GLP-1 dishes are high protein AND low calorie — both matter
+      const protein = dish.protein_min_g ?? 0;
+      const calories = dish.calories_max ?? 800;
+      const proteinScore = Math.min(protein / 50, 1); // normalize: 50g protein = max score
+      const calScore = Math.max(0, 1 - (calories - 200) / 600); // 200 kcal = 1.0, 800 kcal = 0.0
+      return proteinScore * 0.6 + calScore * 0.4;
+    }
     case "balanced": {
       // Balanced: favor dishes near 30% protein, 40% carbs, 30% fat by calorie
       const cal = dish.calories_min ?? 500;

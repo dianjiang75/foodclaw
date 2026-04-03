@@ -17,6 +17,8 @@ export interface AnalyzedDish {
     nut_free: boolean | null;
     halal: boolean | null;
     kosher: boolean | null;
+    /** true when the restaurant explicitly labels this dish as GLP-1 Friendly */
+    glp1_labeled?: boolean;
   };
   dietary_confidence: number;
   dietary_warnings: string[];

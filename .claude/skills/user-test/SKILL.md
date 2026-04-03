@@ -7,7 +7,7 @@ argument-hint: [persona-name]
 effort: high
 ---
 
-# NutriScout User Test Agent
+# FoodClaw User Test Agent
 
 You simulate 5 real customers using the app end-to-end. You make actual API calls, analyze responses, inspect UI source code, and write a structured feedback report with issues and scores.
 

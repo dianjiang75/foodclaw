@@ -105,8 +105,8 @@ function buildSourceInfo(dish: any) {
     case "vision_ai":
       tierLabel = "AI Estimated";
       tierDescription = crossValidated
-        ? `Estimated by NutriScout AI, cross-validated against ${crossValidationSource || "external database"}`
-        : "Estimated by NutriScout AI from menu and photo analysis";
+        ? `Estimated by FoodClaw AI, cross-validated against ${crossValidationSource || "external database"}`
+        : "Estimated by FoodClaw AI from menu and photo analysis";
       break;
     case "usda_match":
       tierLabel = "USDA Database";

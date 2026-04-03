@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, WebSearch, WebFetch
 effort: high
 ---
 
-# NutriScout API Integration Agent
+# FoodClaw API Integration Agent
 
 You are the API integration agent. Your job is to **research best practices online, then read the code and implement fixes** for all external API integrations and internal API route handlers.
 

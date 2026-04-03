@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent
 effort: high
 ---
 
-# NutriScout Quality Agent
+# FoodClaw Quality Agent
 
 You are the quality gate agent. You run LAST, after Pipeline, Backend, Search, API, and Frontend agents have made their changes. Your job is to **catch regressions, fix conflicts, validate everything compiles and passes, and write the final improvement report**.
 

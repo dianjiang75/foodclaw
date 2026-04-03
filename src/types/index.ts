@@ -14,7 +14,7 @@ export interface DietaryFlags {
 }
 
 export interface NutritionalGoals {
-  priority: "max_protein" | "min_calories" | "min_fat" | "balanced";
+  priority: "max_protein" | "min_calories" | "min_fat" | "min_carbs" | "balanced" | "glp1_friendly";
   calorie_limit?: number;
   protein_min_g?: number;
   carbs_max_g?: number;

@@ -1,5 +1,5 @@
 /**
- * Structured logger for NutriScout API routes.
+ * Structured logger for FoodClaw API routes.
  *
  * In production: outputs JSON for parsing by Datadog/Grafana/etc.
  * In development: readable formatted output.

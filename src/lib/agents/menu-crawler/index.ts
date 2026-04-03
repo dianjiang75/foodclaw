@@ -24,6 +24,7 @@ For each dish below, analyze the name and description to:
    - halal: no pork, no alcohol in cooking
    - kosher: no pork/shellfish, no meat-dairy mixing
 3. Note any hidden ingredients that are commonly missed (e.g., Worcestershire sauce contains anchovies, many Asian dishes use fish sauce, Caesar dressing contains anchovies)
+4. Detect GLP-1 labels: set glp1_labeled=true ONLY if the restaurant explicitly labels the dish as "GLP-1 Friendly", "GLP-1 Support", or equivalent in the dish name or description. Do NOT infer this — only set true if the restaurant themselves labeled it.
 
 CRITICAL: Err on the side of caution. A false "safe" flag for someone with allergies is dangerous. If you cannot determine compliance with reasonable confidence, set the flag to null.
 
@@ -34,7 +35,7 @@ Return as JSON array:
 [{
   "dish_name": "string",
   "ingredients_parsed": [{"name": "string", "is_primary": boolean}],
-  "dietary_flags": {"vegan": true|false|null, "vegetarian": true|false|null, "gluten_free": true|false|null, "dairy_free": true|false|null, "nut_free": true|false|null, "halal": true|false|null, "kosher": true|false|null},
+  "dietary_flags": {"vegan": true|false|null, "vegetarian": true|false|null, "gluten_free": true|false|null, "dairy_free": true|false|null, "nut_free": true|false|null, "halal": true|false|null, "kosher": true|false|null, "glp1_labeled": true|false},
   "dietary_confidence": 0.0-1.0,
   "dietary_warnings": ["string"]
 }]
@@ -42,6 +43,21 @@ Return as JSON array:
 Return ONLY valid JSON, no markdown fences or extra text.`;
 
 // Uses Claude Sonnet 4.6 for dietary flag analysis (safety-critical)
+
+/**
+ * Regex patterns for GLP-1 labeled menu items.
+ * Major chains (Shake Shack, Chipotle, Subway, M&S) started adding "GLP-1 Friendly"
+ * section labels and tags in March–April 2026.
+ */
+const GLP1_LABEL_PATTERN = /\bglp-?1\s*(friendly|support|approved|label|section|choice)?\b/i;
+
+/**
+ * Check if a raw menu item has an explicit GLP-1 label from the restaurant.
+ * Returns true only for explicit restaurant labeling — never inferred.
+ */
+function hasGlp1Label(item: RawMenuItem): boolean {
+  return GLP1_LABEL_PATTERN.test(item.name) || GLP1_LABEL_PATTERN.test(item.description ?? "");
+}
 
 /**
  * Analyze raw menu items for ingredients and dietary flags using an LLM.
@@ -84,6 +100,17 @@ export async function analyzeIngredients(
         try {
           const parsed = extractJson<AnalyzedDish[]>(textBlock.text);
           if (Array.isArray(parsed)) {
+            // Apply GLP-1 pattern check as a confirmation layer.
+            // If the raw item has an explicit GLP-1 label the LLM may have missed,
+            // force glp1_labeled=true regardless of LLM output.
+            for (const dishResult of parsed) {
+              const rawItem = batch.find(
+                (item) => item.name.toLowerCase() === dishResult.dish_name.toLowerCase()
+              );
+              if (rawItem && hasGlp1Label(rawItem)) {
+                dishResult.dietary_flags.glp1_labeled = true;
+              }
+            }
             results.push(...parsed);
           }
         } catch (parseErr) {

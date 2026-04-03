@@ -1,5 +1,5 @@
 /**
- * Custom illustrated food icons for NutriScout category pills.
+ * Custom illustrated food icons for FoodClaw category pills.
  * 16 icons: 10 cuisines + 6 popular dish types.
  *
  * Style: warm fills, rounded strokes, simplified food illustrations.

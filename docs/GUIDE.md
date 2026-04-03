@@ -1,12 +1,12 @@
-# NutriScout — How It All Works
+# FoodClaw — How It All Works
 
-A plain-English walkthrough of what NutriScout is, how every piece fits together, and why we made the choices we did.
+A plain-English walkthrough of what FoodClaw is, how every piece fits together, and why we made the choices we did.
 
 ---
 
-## What Is NutriScout?
+## What Is FoodClaw?
 
-NutriScout is a **dish-first food discovery app**. Instead of browsing restaurants and hoping to find something that fits your diet, you search for *dishes* — and NutriScout finds ones that match your dietary restrictions (vegan, gluten-free, halal, etc.) and nutritional goals (high protein, low carb, etc.) at restaurants near you.
+FoodClaw is a **dish-first food discovery app**. Instead of browsing restaurants and hoping to find something that fits your diet, you search for *dishes* — and FoodClaw finds ones that match your dietary restrictions (vegan, gluten-free, halal, etc.) and nutritional goals (high protein, low carb, etc.) at restaurants near you.
 
 Think of it as: "Show me high-protein, gluten-free meals within a mile of me, sorted by shortest wait time."
 
@@ -25,7 +25,7 @@ Here's the flow from a user's perspective:
 
 ## How Data Gets Into the System
 
-NutriScout doesn't have a restaurant owner portal. Instead, it **crawls** restaurant data automatically through a pipeline of AI agents:
+FoodClaw doesn't have a restaurant owner portal. Instead, it **crawls** restaurant data automatically through a pipeline of AI agents:
 
 ### Step 1: Restaurant Discovery
 

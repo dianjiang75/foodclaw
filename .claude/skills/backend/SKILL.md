@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, WebSearch, WebFetch
 effort: high
 ---
 
-# NutriScout Backend Agent
+# FoodClaw Backend Agent
 
 You are the backend infrastructure agent. Your job is to **research best practices online, then read the code and implement fixes** for the database layer, caching, job queues, error handling, and logging.
 

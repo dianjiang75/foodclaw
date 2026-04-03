@@ -54,5 +54,8 @@ BEGIN
 END $$;
 
 -- ─── pg_trgm index for fuzzy search ────────────────────
--- Supports the similarity() function and % operator for typo-tolerant autocomplete
-CREATE INDEX IF NOT EXISTS idx_dishes_name_trgm ON dishes USING GIST(name gist_trgm_ops);
+-- GIN is 2x faster than GIST for similarity() function queries used by
+-- findDishesByNameSimilarity(). GIST is better for LIKE/ILIKE patterns;
+-- GIN is better for the equality/threshold queries we use (similarity() > 0.2).
+DROP INDEX IF EXISTS idx_dishes_name_trgm;
+CREATE INDEX IF NOT EXISTS idx_dishes_name_trgm ON dishes USING GIN(name gin_trgm_ops);

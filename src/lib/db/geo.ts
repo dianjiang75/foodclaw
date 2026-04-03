@@ -132,23 +132,18 @@ export async function fullTextSearchDishes(
   query: string,
   limit: number = 50
 ): Promise<{ id: string; rank: number }[]> {
-  // Convert user query to tsquery: "spicy chicken" → "spicy & chicken"
-  const tsquery = query
-    .trim()
-    .split(/\s+/)
-    .filter((w) => w.length > 1)
-    .join(" & ");
+  const trimmed = query.trim();
+  if (!trimmed) return [];
 
-  if (!tsquery) return [];
-
-  // Try English dictionary first, then fall back to 'simple' for foreign words
-  // (e.g., "sushi", "nori", "ramen" are not in the English stemmer dictionary)
+  // websearch_to_tsquery handles: quoted phrases ("pad thai"), optional words,
+  // single-word queries, and foreign food names — more robust than manual & join.
+  // Try English dictionary first (handles stemming: "chicken" matches "chickens")
   const results = await prisma.$queryRaw<{ id: string; rank: number }[]>`
     SELECT
       id,
-      ts_rank_cd(search_vector, to_tsquery('english', ${tsquery}), 2) AS rank
+      ts_rank_cd(search_vector, websearch_to_tsquery('english', ${trimmed}), 2) AS rank
     FROM dishes
-    WHERE search_vector @@ to_tsquery('english', ${tsquery})
+    WHERE search_vector @@ websearch_to_tsquery('english', ${trimmed})
       AND is_available = true
     ORDER BY rank DESC
     LIMIT ${limit}
@@ -156,22 +151,22 @@ export async function fullTextSearchDishes(
 
   if (results.length > 0) return results;
 
-  // Fallback: use 'simple' dictionary (no stemming — exact token match)
-  // This catches foreign food terms the English dictionary discards
+  // Fallback: 'simple' dictionary (no stemming — exact token match)
+  // Catches foreign food terms the English stemmer discards (sushi, ramen, nori)
   const simpleResults = await prisma.$queryRaw<{ id: string; rank: number }[]>`
     SELECT
       id,
       ts_rank_cd(
         setweight(to_tsvector('simple', coalesce(name, '')), 'A') ||
         setweight(to_tsvector('simple', coalesce(description, '')), 'B'),
-        to_tsquery('simple', ${tsquery}),
+        websearch_to_tsquery('simple', ${trimmed}),
         2
       ) AS rank
     FROM dishes
     WHERE (
       setweight(to_tsvector('simple', coalesce(name, '')), 'A') ||
       setweight(to_tsvector('simple', coalesce(description, '')), 'B')
-    ) @@ to_tsquery('simple', ${tsquery})
+    ) @@ websearch_to_tsquery('simple', ${trimmed})
       AND is_available = true
     ORDER BY rank DESC
     LIMIT ${limit}

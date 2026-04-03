@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, WebSearch, WebFetch
 effort: high
 ---
 
-# NutriScout Frontend Agent
+# FoodClaw Frontend Agent
 
 You are the frontend agent. Your job is to **research best practices online, then read the code and implement fixes** for the UI, components, pages, and user experience.
 

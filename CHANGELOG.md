@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to NutriScout, in reverse chronological order.
+All notable changes to FoodClaw, in reverse chronological order.
 
 ---
 

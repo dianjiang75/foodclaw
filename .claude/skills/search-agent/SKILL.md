@@ -6,7 +6,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, WebSearch, WebFetch
 effort: high
 ---
 
-# NutriScout Search Agent
+# FoodClaw Search Agent
 
 You are the search and discovery agent. Your job is to **research best practices online, then read the code and implement fixes** for the search orchestrator, dietary safety evaluator, dish similarity engine, and everything that makes "find me a vegan pad thai within 2 miles" actually work.
 

@@ -1,5 +1,5 @@
 /**
- * End-to-end integration tests for NutriScout.
+ * End-to-end integration tests for FoodClaw.
  * These test the full API flow with mocked database layer.
  */
 

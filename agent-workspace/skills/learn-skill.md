@@ -1,19 +1,19 @@
 ---
 name: learn
-description: Daily self-improvement agent that researches UI trends, backend best practices, competitor intel, and design patterns for NutriScout. Run daily to keep the codebase informed with the latest knowledge.
+description: Daily self-improvement agent that researches UI trends, backend best practices, competitor intel, and design patterns for FoodClaw. Run daily to keep the codebase informed with the latest knowledge.
 disable-model-invocation: true
 allowed-tools: WebSearch, WebFetch, Read, Write, Glob, Grep, Bash
 argument-hint: [focus-area]
 effort: high
 ---
 
-# NutriScout Daily Learning Agent
+# FoodClaw Daily Learning Agent
 
-You are a self-improving learning agent for NutriScout, a dish-first food discovery app with dietary filtering, AI macro estimation, and real-time logistics. Your job is to research, synthesize, and store actionable knowledge that future coding sessions can reference.
+You are a self-improving learning agent for FoodClaw, a dish-first food discovery app with dietary filtering, AI macro estimation, and real-time logistics. Your job is to research, synthesize, and store actionable knowledge that future coding sessions can reference.
 
-## What NutriScout Is
+## What FoodClaw Is
 
-NutriScout is built with Next.js 14+ (App Router), TypeScript, Tailwind CSS, shadcn/ui, PostgreSQL + pgvector, Redis, Prisma, BullMQ, and Claude API for vision analysis. It lets users search for specific dishes (not restaurants) filtered by dietary restrictions and nutritional goals.
+FoodClaw is built with Next.js 14+ (App Router), TypeScript, Tailwind CSS, shadcn/ui, PostgreSQL + pgvector, Redis, Prisma, BullMQ, and Claude API for vision analysis. It lets users search for specific dishes (not restaurants) filtered by dietary restrictions and nutritional goals.
 
 ## Focus Areas
 
@@ -34,7 +34,7 @@ For each session:
 1. **Search broadly** — Run 4-6 web searches on the day's topic, focusing on 2025-2026 content
 2. **Go deep** — Fetch 2-3 of the most promising articles/docs for detailed reading
 3. **Check for llms.txt** — For tech topics, check if the relevant docs have an `llms.txt` or `llms-full.txt` file and read it
-4. **Cross-reference with our codebase** — Read relevant NutriScout source files to identify gaps between current implementation and best practices
+4. **Cross-reference with our codebase** — Read relevant FoodClaw source files to identify gaps between current implementation and best practices
 5. **Synthesize** — Write a structured digest
 
 ## Sources to Check (by category)
@@ -76,7 +76,7 @@ For each session:
 Write your findings to `learning-digests/YYYY-MM-DD-{topic}.md` in this format:
 
 ```markdown
-# NutriScout Learning Digest: {Topic}
+# FoodClaw Learning Digest: {Topic}
 **Date**: {date}
 **Focus**: {area}
 
@@ -84,7 +84,7 @@ Write your findings to `learning-digests/YYYY-MM-DD-{topic}.md` in this format:
 
 ### 1. {Finding title}
 **Source**: {url}
-**Relevance to NutriScout**: {why this matters}
+**Relevance to FoodClaw**: {why this matters}
 **Action item**: {specific thing we could implement or change}
 
 ### 2. {Finding title}
@@ -105,7 +105,7 @@ Write your findings to `learning-digests/YYYY-MM-DD-{topic}.md` in this format:
 ## Weekly Priority Score
 
 Rate each finding 1-5 on:
-- **Impact**: How much would this improve NutriScout?
+- **Impact**: How much would this improve FoodClaw?
 - **Effort**: How hard is it to implement? (1=easy, 5=hard)
 - **Urgency**: How time-sensitive is this? (1=can wait, 5=do now)
 ```

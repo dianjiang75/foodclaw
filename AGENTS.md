@@ -4,7 +4,7 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# NutriScout Agent Architecture
+# FoodClaw Agent Architecture
 
 ## Core Agents (in codebase)
 
@@ -104,3 +104,23 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Jest: `jose` is mocked via `__mocks__/jose.ts` + `moduleNameMapper` (ESM-only package)
 - All API routes use `apiSuccess()`/`apiError()` envelope: `{ success: true, data: ... }` or `{ success: false, error: ... }`
 - Tests must check `body.data.X` for success responses (not `body.X`)
+- Gemini model upgrade path: current `GEMINI_FLASH` constant likely points to `gemini-1.5-flash`; upgrade target is `gemini-2.5-flash` (GA, 25% better on Nutrition5k benchmark). Do NOT use `gemini-2.5-flash-image` suffix — has known structured output bug (GitHub issue #1028 in google-gemini/cookbook)
+- DietAI24 RAG pattern (Nature 2025): best-practice vision nutrition — inject USDA calorie values for identified ingredients INTO the Gemini prompt context BEFORE asking for macro estimates, not post-hoc. Reduces MAE by 63–83%. Target: `vision-analyzer/index.ts` + `usda/client.ts`
+- California allergen law (effective July 1, 2026): CA restaurants must post allergen data on menu or QR-linked page. Machine-readable source FoodClaw can crawl. Tag dishes `source: "compliance_page"` as highest dietary flag confidence. Target: `menu-crawler/index.ts`
+- Yelp Menu Vision (Oct 21, 2025): AR camera overlay on printed menus showing dish photos — works at-table only, no macro data, no dietary safety. FoodClaw differentiator: pre-decision, verified macros, Apollo Evaluator safety layer.
+- Nutritionix geo-aware API: accepts lat/lng, returns nutrition data for 200K+ restaurant locations — useful fallback for branded chain dishes where USDA FDC is sparse
+- GLP-1 filter is URGENT (Apr 2026): major restaurant chains (Shake Shack, Chipotle, Subway) now labeling menu items "GLP-1 Friendly". Add `"glp1_friendly"` to `NutritionalGoals.priority` union mapping to `{ protein_min_g: 25, calories_max: 500, fiber_boost: true }`. Also add pattern matching in Menu Crawler for "GLP-1 friendly" labels.
+- Spokin verified restaurant model: restaurants answer 27-question allergy FAQ to get verified status. Spokin's public data can be used as confidence signal booster for our Apollo Evaluator (where they say nut-free certified, elevate our confidence score)
+- pgvector sparse-collection HNSW fix: when dietary filters reduce candidate set below ~500 dishes, either enable `SET hnsw.ef_search = 200` per-query or run dietary pre-filter in Prisma first then vector re-rank on the filtered subset (avoids sparse HNSW degradation, same issue OpenTable encountered and solved with Qdrant)
+- pgvector iterative scan: `SET hnsw.iterative_scan = relaxed_order` before vector queries is the canonical fix for dietary-filtered underreturn (pgvector 0.8.0+); `relaxed_order` has best perf; `strict_order` preserves exact distance ordering but is slower; `off` is legacy default
+- GIN index on `dietaryFlags` must use `jsonb_path_ops` operator class for 36x smaller index and faster `@>` containment queries; add via raw SQL in post-migrate.sql: `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_dishes_dietary_flags ON dishes USING GIN (dietary_flags jsonb_path_ops)`
+- `fullTextSearchDishes()` in geo.ts should use `websearch_to_tsquery()` (not manual `word & word` join) — handles quoted food names, optional terms, and foreign dish names; current manual construction breaks on single-word queries
+- Prisma 7.4 query caching: add `compilerBuild = "fast"` to generator block in schema.prisma to enable plan caching; reduces per-query compilation from 0.1–1ms to 1–10µs; not yet set
+- earthdistance GiST expression index: `CREATE INDEX idx_restaurants_geo ON restaurants USING gist(ll_to_earth(latitude::float, longitude::float))` required for geo pre-filter to use index scan; without it, `earth_box @>` does seq scan
+- Next.js 16: `use cache` directive + `unstable_cacheTag('restaurant:{id}')` is correct pattern for dish/restaurant detail pages; `revalidateTag()` in Server Action invalidates on crawl complete
+- BullMQ Flows (`FlowProducer`): correct pattern for crawl → vision → USDA pipeline chains where parent waits for all children; parent receives child results via `job.getChildrenValues()`
+- BullMQ priority tiers: 1=user-triggered, 2=user feedback, 5=nightly scheduled, 10=review aggregation, 20=bulk stale re-crawl; priority aging (boost by 1 after 5min wait) prevents low-priority starvation
+- Redis tag-based invalidation: maintain `restaurant-cache-refs:{restaurantId}` Redis SET of cache keys; on crawl complete DEL all members then the set itself
+- Hybrid RRF search: combining FTS (GIN) + vector (HNSW) via Reciprocal Rank Fusion (k=60) outperforms either alone; implement in `src/lib/similarity/` when vector search is active
+- GIN trgm index on `dishes.name` (`gin_trgm_ops`) speeds up `findDishesByNameSimilarity()` — currently performs seq scan for `similarity() > 0.2` threshold checks
+- For dietary safety caching (nut_free, gluten_free): never serve semantically cached results from different dietary restriction combos — partition semantic cache by dietary restriction hash

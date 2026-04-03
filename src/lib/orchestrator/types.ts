@@ -6,7 +6,7 @@ export interface UserSearchQuery {
   longitude: number;
   radius_miles: number;
   dietary_restrictions: DietaryFlags;
-  nutritional_goal?: "max_protein" | "min_calories" | "min_fat" | "min_carbs" | "balanced";
+  nutritional_goal?: "max_protein" | "min_calories" | "min_fat" | "min_carbs" | "balanced" | "glp1_friendly";
   calorie_limit?: number;
   protein_min_g?: number;
   cuisine_preferences?: string[];
