@@ -35,9 +35,19 @@ export const POST = withRateLimit("crawl", async (request) => {
     // Also lookup Yelp business IDs for each restaurant
     const yelpKey = process.env.YELP_API_KEY;
 
+    // Filter out non-restaurants (hotels, gyms, spas, etc.)
+    const NON_RESTAURANT_TYPES = ["lodging", "hotel", "gym", "spa", "beauty_salon", "bank", "pharmacy", "hospital", "shopping_mall", "store", "parking", "gas_station"];
+    const NON_RESTAURANT_NAMES = /hotel|motel|inn |hostel|gym |spa |salon|barber|laundry|cleaners|pharmacy|drugstore|bank |atm /i;
+    const filteredPlaces = places.filter((place: { types?: string[]; name?: string }) => {
+      const types = place.types || [];
+      if (types.some((t: string) => NON_RESTAURANT_TYPES.includes(t))) return false;
+      if (NON_RESTAURANT_NAMES.test(place.name || "")) return false;
+      return true;
+    });
+
     // Build FlowProducer children — one crawl job per restaurant
     const children = [];
-    for (const place of places) {
+    for (const place of filteredPlaces) {
       let yelpBusinessId: string | null = null;
 
       if (yelpKey && yelpKey !== "placeholder") {

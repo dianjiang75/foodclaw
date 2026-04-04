@@ -29,6 +29,15 @@ export const websiteSource: MenuSourceStrategy = {
     try {
       // Try common menu page patterns
       const menuPaths = ["/menu", "/our-menu", "/food", "/food-menu", "/drinks"];
+      // California SB 478 (eff. July 1, 2026) + EU FIC Regulation allergen disclosure paths.
+      // Restaurants posting allergen data here are legally obligated to be accurate —
+      // items from these pages get elevated dietary confidence (0.95) in the crawler.
+      const compliancePaths = [
+        "/allergens", "/allergen-info", "/allergen-information",
+        "/nutrition", "/nutritional-info", "/nutrition-info",
+        "/menu-allergens", "/food-allergens", "/dietary",
+        "/allergens-nutrition", "/nutrition-allergens",
+      ];
       const baseUrl = restaurant.websiteUrl.replace(/\/$/, "");
 
       let menuHtml: string | null = null;
@@ -84,12 +93,61 @@ export const websiteSource: MenuSourceStrategy = {
       if (jsonLdItems.length > 0) return jsonLdItems;
 
       // Fall back to CSS selector parsing
-      return parseHtmlMenu(menuHtml);
+      const menuItems = parseHtmlMenu(menuHtml);
+
+      // Additionally, scan compliance/allergen pages for higher-confidence dietary data.
+      // California SB 478 (effective July 1, 2026) means CA restaurants must post this.
+      // Items from compliance pages get source='compliance_page' so the crawler can
+      // boost their dietaryConfidence to 0.95 (restaurant self-certified = legally liable).
+      const complianceItems = await fetchCompliancePages(baseUrl, compliancePaths);
+      if (complianceItems.length > 0) {
+        // Merge: compliance page items override menu items for matching dish names
+        const complianceNames = new Set(complianceItems.map((i) => i.name.toLowerCase()));
+        const deduped = menuItems.filter((i) => !complianceNames.has(i.name.toLowerCase()));
+        return [...complianceItems, ...deduped];
+      }
+
+      return menuItems;
     } catch {
       return null;
     }
   },
 };
+
+/**
+ * Fetch allergen/nutrition compliance pages and return tagged menu items.
+ * Items are tagged source='compliance_page' so the main crawler can boost
+ * their dietaryConfidence to 0.95.
+ */
+async function fetchCompliancePages(
+  baseUrl: string,
+  paths: string[]
+): Promise<RawMenuItem[]> {
+  for (const path of paths) {
+    try {
+      const res = await fetchWithRetry(`${baseUrl}${path}`, {
+        headers: { "User-Agent": "FoodClaw/1.0 (allergen-compliance-indexer)" },
+      }, { maxRetries: 1, timeoutMs: 5000 });
+
+      if (!res.ok) continue;
+
+      const html = await res.text();
+
+      // Must contain allergen-related content to be a compliance page
+      const allergenSignals = /\b(allergen|allerg|gluten.free|nut.free|dairy.free|contains|may contain|suitable for)\b/i;
+      if (!allergenSignals.test(html)) continue;
+
+      const items = parseHtmlMenu(html);
+      if (items.length === 0) continue;
+
+      // Tag all items from this page as compliance_page
+      return items.map((item) => ({ ...item, source: "compliance_page" as const }));
+    } catch {
+      continue;
+    }
+  }
+  return [];
+}
 
 /**
  * Extract menu items from JSON-LD (Schema.org) structured data.
@@ -241,7 +299,55 @@ export function parseHtmlMenu(html: string): RawMenuItem[] {
     });
   }
 
-  return items;
+  // Validate: remove non-food items before returning
+  return items.filter(item => isLikelyFoodItem(item.name, item.description || ""));
+}
+
+/**
+ * Validate that a menu item is actually food/drink, not hotel amenities,
+ * website navigation, business hours, or other garbage.
+ *
+ * This is the LAST LINE OF DEFENSE before data enters the database.
+ * Be aggressive about rejecting — a missed real dish can be re-crawled,
+ * but junk in the DB pollutes search results and wastes image generation.
+ */
+function isLikelyFoodItem(name: string, description: string): boolean {
+  const lower = (name + " " + description).toLowerCase();
+
+  // Definite non-food patterns
+  const JUNK_PATTERNS = [
+    // Hotel/building amenities
+    /\b(gym|pool|spa|sauna|jacuzzi|elevator|lobby|concierge|valet|parking|shuttle|wifi|wi-fi)\b/,
+    /\b(check-in|checkout|check-out|luggage|baggage|key card|safe deposit|minibar|mini-bar)\b/,
+    /\b(hairdryer|hair dryer|shampoo|conditioner|towel|iron|ironing|laundry)\b/,
+    /\b(air condition|heating|balcony|terrace|grab rail|shower|bathtub|toilet|wc )\b/,
+    /\b(doorman|bellhop|reception|front desk|housekeeping|room service|wake-up)\b/,
+    // Navigation/business info
+    /\b(booking|reservation|phone|call us|contact|email|address|directions|located)\b/,
+    /\b(close to|near |subway|bus stop|train station|airport)\b/,
+    /\b(24-hour|24 hour|open daily|hours of operation|we are open)\b/,
+    /\b(360°|virtual tour|gallery|photo|video|instagram|facebook|twitter)\b/,
+    // Day names as standalone items
+    /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)$/i,
+    // Phone numbers
+    /\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/,
+    // URLs
+    /https?:\/\//,
+    // Too short (single character or abbreviation)
+  ];
+
+  if (JUNK_PATTERNS.some(p => p.test(lower))) return false;
+
+  // Name too short or too long
+  if (name.trim().length < 3 || name.trim().length > 80) return false;
+
+  // Mostly numbers (likely a code or price)
+  if (/^\d+[\s.,-]*\d*$/.test(name.trim())) return false;
+
+  // Contains pipe (wine list format: "6002 | Syrah | ...")
+  if (name.includes("|") && /\d{4}/.test(name)) return false;
+
+  return true;
 }
 
 /**
