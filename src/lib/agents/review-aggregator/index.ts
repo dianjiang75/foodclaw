@@ -41,8 +41,9 @@ export async function fetchGoogleReviews(
 }
 
 /**
- * Fetch reviews from Yelp Fusion API.
- * Note: Yelp returns max 3 review excerpts per business.
+ * Fetch reviews from Yelp GraphQL API.
+ * Note: REST /reviews endpoint is deprecated; GraphQL returns up to 3 reviews.
+ * Requires Yelp developer beta enrollment + Accept-Language header.
  */
 export async function fetchYelpReviews(
   yelpBusinessId: string
@@ -51,14 +52,34 @@ export async function fetchYelpReviews(
   if (!apiKey || apiKey === "placeholder") return [];
 
   try {
-    const url = `https://api.yelp.com/v3/businesses/${encodeURIComponent(yelpBusinessId)}/reviews?limit=3&sort_by=yelp_sort`;
-    const res = await fetchWithRetry(url, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    }, { maxRetries: 2 });
+    const query = `{
+      business(id: "${yelpBusinessId}") {
+        reviews(limit: 3) {
+          text
+          rating
+          user { name }
+          time_created
+        }
+      }
+    }`;
+
+    const res = await fetchWithRetry(
+      "https://api.yelp.com/v3/graphql",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/graphql",
+          "Accept-Language": "en_US",
+        },
+        body: query,
+      },
+      { maxRetries: 2 }
+    );
     if (!res.ok) return [];
 
     const data = await res.json();
-    const reviews = data.reviews || [];
+    const reviews = data.data?.business?.reviews || [];
 
     return reviews.map(
       (r: {
@@ -69,8 +90,8 @@ export async function fetchYelpReviews(
       }) => ({
         text: r.text,
         rating: r.rating,
-        author: r.user.name,
-        date: r.time_created,
+        author: r.user?.name || "Anonymous",
+        date: r.time_created || "",
         source: "yelp" as const,
       })
     );

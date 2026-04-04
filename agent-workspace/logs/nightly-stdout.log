@@ -22,3 +22,25 @@ All 6 agents complete. Here's the summary:
 6. **Quality** — Fixed 11 test regressions from the other agents, updated AGENTS.md with 10 new patterns, wrote quality report + METRICS.csv
 
 Not pushed to remote as instructed.
+**AGENT 6 — Quality complete.**
+
+All 7 agents have finished. Here's the final summary:
+
+## 7-Agent Nightly Run Complete
+
+| Agent | Files Changed | Key Fixes |
+|-------|-------------|-----------|
+| **Discovery** | 2 | Yelp city/state bug fix, 15 new areas, 50 restaurants discovered |
+| **Pipeline** | 4 | glp1_labeled placeholder, USDA null safety, ensemble confidence, JSON-LD price |
+| **Backend** | 4 | 3 new DB indexes, Redis eager connect, rate limiter uniqueness, log level |
+| **Search** | 2 | **CRITICAL**: eggs!=dairy evaluator fix, wait time `<=`, redundant checks |
+| **API** | 4 | Favorites response standardization, notification rate limits, UUID validation |
+| **Frontend** | 2 | Locked tab click prevention, error boundary escape hatch |
+| **Quality** | 2 | AGENTS.md (11 new patterns), METRICS.csv, quality report |
+
+### Final Metrics
+- **tsc**: 0 errors
+- **lint**: 0 errors, 11 warnings (pre-existing)
+- **tests**: 150/150 passing
+- **files changed**: 27 (+543/-56 lines)
+- **commit**: `2cd1253` (local only, not pushed)

@@ -2,7 +2,7 @@
  * FoodClaw Service Worker — offline support + caching.
  * Cache strategy: network-first for API, cache-first for static assets.
  */
-const CACHE_NAME = "foodclaw-v1";
+const CACHE_NAME = "foodclaw-v2";
 const STATIC_ASSETS = ["/", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
 
 self.addEventListener("install", (event) => {

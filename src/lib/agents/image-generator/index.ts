@@ -40,19 +40,26 @@ function getGeminiClient(): GoogleGenerativeAI {
  * - Include dish name + cuisine for grounding
  */
 function buildPrompt(dishName: string, cuisine: string, description?: string): string {
-  const descPart = description ? ` The dish contains: ${description.split(",").slice(0, 3).join(",")}.` : "";
+  const descPart = description ? ` This dish is: ${description}.` : "";
 
   return [
-    `Generate a professional food photograph of "${dishName}" (${cuisine} cuisine).`,
-    `Use the reference image as your guide — recreate this EXACT dish faithfully.`,
-    `Keep the same ingredients, same plating style, same color palette.`,
-    `Do NOT add or remove any ingredients. Do NOT change the dish composition.`,
+    `Create a stunning, original food photograph of "${dishName}" — a ${cuisine} dish.`,
     descPart,
     ``,
-    `Photography style: overhead angle, warm natural studio lighting,`,
-    `clean background, shallow depth of field, appetizing presentation.`,
-    `The image should look like it belongs in a premium food delivery app.`,
-    `High resolution, sharp focus on the food, editorial quality.`,
+    `The reference image is provided for general context only — use it to understand`,
+    `what kind of dish this is, but create your OWN unique, creative interpretation.`,
+    ``,
+    `Be creative with:`,
+    `- Beautiful, artistic plating on an elegant plate or bowl`,
+    `- Interesting garnishes and fresh herbs that complement the dish`,
+    `- A stylish background (marble, dark wood, rustic ceramic, or linen)`,
+    `- Dynamic composition — slightly angled, not just flat overhead`,
+    `- Warm, moody restaurant lighting with soft shadows`,
+    ``,
+    `The image must accurately represent "${dishName}" — correct ingredients and colors`,
+    `for this specific ${cuisine} dish. But make it look magazine-worthy, like a`,
+    `Bon Appetit or Eater cover photo. Premium food photography, shallow depth of field,`,
+    `appetizing, vibrant colors, editorial quality. 4K resolution.`,
   ].join("\n");
 }
 

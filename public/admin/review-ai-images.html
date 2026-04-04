@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodClaw — AI Image Review (Pass 2)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e5e5e5; }
+
+  .header { position: sticky; top: 0; z-index: 100; background: #111; border-bottom: 1px solid #333; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .header .stats { font-size: 13px; color: #888; }
+  .header .stats span { font-weight: 600; }
+  .header .stats .ok { color: #22c55e; }
+  .header .stats .rej { color: #ef4444; }
+  .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  .btn-primary { background: #22c55e; color: #000; }
+  .btn-primary:hover { background: #16a34a; }
+  .btn-secondary { background: #333; color: #e5e5e5; }
+  .btn-danger { background: #ef4444; color: #fff; }
+
+  .progress { height: 3px; background: #222; }
+  .progress .fill { height: 100%; background: #22c55e; transition: width 0.3s; }
+
+  .filters { padding: 8px 20px; background: #111; border-bottom: 1px solid #222; display: flex; gap: 8px; }
+  .filter-pill { padding: 4px 12px; border-radius: 20px; font-size: 11px; border: 1px solid #333; background: transparent; color: #888; cursor: pointer; }
+  .filter-pill.active { background: #22c55e20; border-color: #22c55e; color: #22c55e; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 16px; padding: 20px; }
+
+  .card { background: #181818; border-radius: 12px; overflow: hidden; border: 2px solid #333; }
+  .card.approved { border-color: #22c55e; }
+  .card.rejected { border-color: #ef4444; }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .compare .side { position: relative; }
+  .compare .side img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .compare .side .label { position: absolute; top: 6px; left: 6px; background: #000a; backdrop-blur: 4px; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+  .compare .side .label.ref { color: #f59e0b; }
+  .compare .side .label.ai { color: #22c55e; }
+  .compare .side .broken { width: 100%; aspect-ratio: 4/3; background: #222; display: flex; align-items: center; justify-content: center; color: #555; font-size: 11px; }
+
+  .card-info { padding: 10px; }
+  .card-info h3 { font-size: 14px; font-weight: 700; }
+  .card-info .meta { font-size: 11px; color: #888; margin-top: 2px; }
+  .card-info .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-top: 6px; text-transform: uppercase; }
+  .badge.ok { background: #22c55e20; color: #22c55e; }
+  .badge.rej { background: #ef444420; color: #ef4444; }
+  .badge.pending { background: #55555540; color: #888; }
+
+  .card-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .card-actions button { flex: 1; padding: 6px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
+  .card-actions .approve { background: #22c55e20; color: #22c55e; }
+  .card-actions .approve:hover { background: #22c55e40; }
+  .card-actions .reject { background: #ef444420; color: #ef4444; }
+  .card-actions .reject:hover { background: #ef444440; }
+  .card-actions .regen { background: #6366f120; color: #6366f1; }
+  .card-actions .regen:hover { background: #6366f140; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>AI Image Review — Pass 2</h1>
+  <div class="stats">
+    <span class="ok" id="okCount">0</span> approved ·
+    <span class="rej" id="rejCount">0</span> rejected ·
+    <span id="pendCount">0</span> pending ·
+    <span id="totalCount">0</span> total
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-primary" onclick="approveAll()">Approve All Remaining</button>
+    <button class="btn btn-secondary" onclick="exportResults()">Export Results</button>
+  </div>
+</div>
+<div class="progress"><div class="fill" id="progressFill"></div></div>
+<div class="filters" id="filters"></div>
+<div class="grid" id="grid"></div>
+
+<script>
+let dishes = [];
+let approved = {};
+let generated = {};
+let state = {}; // dish name → "approved" | "rejected" | "pending"
+
+async function init() {
+  // Load data
+  try {
+    const [approvedRes, generatedRes, dishesRes] = await Promise.all([
+      fetch('/admin/approved-photos.json'),
+      fetch('/admin/generated-photos.json'),
+      Promise.resolve(null), // dishes embedded below
+    ]);
+    if (approvedRes.ok) approved = await approvedRes.json();
+    if (generatedRes.ok) generated = await generatedRes.json();
+  } catch {}
+
+  // Build dish list from generated photos
+  dishes = Object.keys(generated).map(name => ({
+    name,
+    refUrl: approved[name] || null,
+    aiUrl: generated[name] || null,
+  }));
+
+  // Load saved state
+  const saved = localStorage.getItem('foodclaw_ai_review');
+  if (saved) state = JSON.parse(saved);
+
+  // Init pending
+  dishes.forEach(d => { if (!state[d.name]) state[d.name] = 'pending'; });
+
+  renderFilters();
+  render();
+  updateStats();
+}
+
+let currentFilter = 'all';
+
+function renderFilters() {
+  const counts = { all: dishes.length, pending: 0, approved: 0, rejected: 0 };
+  dishes.forEach(d => counts[state[d.name] || 'pending']++);
+  document.getElementById('filters').innerHTML = ['all','pending','approved','rejected'].map(f =>
+    `<button class="filter-pill ${f === currentFilter ? 'active' : ''}" onclick="setFilter('${f}')">${f} (${counts[f]})</button>`
+  ).join('');
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  render();
+}
+
+function render() {
+  const filtered = currentFilter === 'all' ? dishes : dishes.filter(d => (state[d.name] || 'pending') === currentFilter);
+  document.getElementById('grid').innerHTML = filtered.map((d, i) => {
+    const s = state[d.name] || 'pending';
+    const idx = dishes.indexOf(d);
+    return `
+    <div class="card ${s}" id="card-${idx}">
+      <div class="compare">
+        <div class="side">
+          <span class="label ref">REFERENCE</span>
+          ${d.refUrl ? `<img src="${d.refUrl}" alt="Reference" loading="lazy" onerror="this.outerHTML='<div class=broken>Reference unavailable</div>'">` : '<div class="broken">No reference</div>'}
+        </div>
+        <div class="side">
+          <span class="label ai">AI GENERATED</span>
+          ${d.aiUrl ? `<img src="${d.aiUrl}" alt="AI Generated" loading="lazy" onerror="this.outerHTML='<div class=broken>Image not found</div>'">` : '<div class="broken">Not generated</div>'}
+        </div>
+      </div>
+      <div class="card-info">
+        <h3>${d.name}</h3>
+        <div class="meta">${d.aiUrl || 'no image'}</div>
+        <span class="badge ${s === 'approved' ? 'ok' : s === 'rejected' ? 'rej' : 'pending'}">${s}</span>
+        <div class="card-actions">
+          <button class="approve" onclick="setStatus(${idx},'approved')">✓ Approve</button>
+          <button class="reject" onclick="setStatus(${idx},'rejected')">✗ Reject</button>
+          <button class="regen" onclick="window.open('https://www.google.com/search?q='+encodeURIComponent(dishes[${idx}].name+' food dish')+'&tbm=isch','_blank')">🔍 Google</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setStatus(idx, s) {
+  state[dishes[idx].name] = s;
+  save();
+  const card = document.getElementById('card-' + idx);
+  if (card) {
+    card.className = 'card ' + s;
+    card.querySelector('.badge').className = 'badge ' + (s === 'approved' ? 'ok' : s === 'rejected' ? 'rej' : 'pending');
+    card.querySelector('.badge').textContent = s;
+  }
+  updateStats();
+  renderFilters();
+}
+
+function approveAll() {
+  dishes.forEach((d, i) => { if (state[d.name] === 'pending') setStatus(i, 'approved'); });
+}
+
+function save() {
+  localStorage.setItem('foodclaw_ai_review', JSON.stringify(state));
+}
+
+function updateStats() {
+  const counts = { approved: 0, rejected: 0, pending: 0 };
+  dishes.forEach(d => counts[state[d.name] || 'pending']++);
+  document.getElementById('okCount').textContent = counts.approved;
+  document.getElementById('rejCount').textContent = counts.rejected;
+  document.getElementById('pendCount').textContent = counts.pending;
+  document.getElementById('totalCount').textContent = dishes.length;
+  document.getElementById('progressFill').style.width = `${(counts.approved / dishes.length) * 100}%`;
+}
+
+function exportResults() {
+  const rejected = dishes.filter(d => state[d.name] === 'rejected').map(d => d.name);
+  const approved = dishes.filter(d => state[d.name] === 'approved').map(d => d.name);
+  const result = { approved: approved.length, rejected: rejected.length, rejectedDishes: rejected };
+  const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'ai-review-results.json'; a.click();
+  alert(`${approved.length} approved, ${rejected.length} rejected.\n\nRejected dishes: ${rejected.join(', ') || 'none'}`);
+}
+
+init();
+</script>
+</body>
+</html>

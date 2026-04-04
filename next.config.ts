@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       { protocol: "https", hostname: "maps.googleapis.com" },
+      { protocol: "https", hostname: "places.googleapis.com" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "s3-media*.yelp.com" },
       { protocol: "https", hostname: "**.cdninstagram.com" },

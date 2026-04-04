@@ -1,3 +1,35 @@
 
 
 Dev server startup confirmed. All testing was already completed against it. Nothing further needed.
+User test complete. Here's the summary:
+
+## Results — 2026-04-03
+
+| Persona | Score | Critical | Major | Minor |
+|---------|-------|----------|-------|-------|
+| Explorer Emma | **6.5/10** | 2 | 0 | 5 |
+| Protein Pete | **5.5/10** | 2 | 3 | 1 |
+| Allergy Alice | **6.5/10** | 2 | 2 | 2 |
+| Speedy Sam | **6/10** | 0 | 2 | 2 |
+| Foodie Fiona | **4.5/10** | 1 | 4 | 3 |
+| **Overall** | **5.8/10** | **7** | **11** | **13** |
+
+### Top Issues to Fix
+
+**3 CRITICAL blockers:**
+1. **False vegan flags on fish/seafood & dairy** — Anago Nigiri (eel), Chirashi Bowl (raw fish), Cacio e Pepe (pecorino), Tiramisu (mascarpone) all marked `vegan: true`. Erodes trust in ALL safety labels.
+2. **Similar dishes endpoint crashes** — `macro_embedding` column doesn't exist in DB. Every `/api/dishes/{id}/similar` call fails.
+3. **Keto returns 0 results** — flag exists in schema but never populated by menu crawler.
+
+**Key MAJOR issues:**
+- Goal-based protein sort broken when combined with calorie cap (diversity cap scrambles ordering)
+- Delivery data universally null despite filter
+- `max_wait` filter passes null logistics through (unsafe for time-sensitive users)
+- Review summaries are identical boilerplate across all dishes
+- Rating sort lacks review_count tiebreaker
+
+**Safety (Alice):** Core allergy gate holds — `ALLERGY_CRITICAL_MIN=0.85` enforced, pad thai/baklava correctly blocked. But samosa (wheat pastry) slips through gluten_free, and evaluator warnings are silently dropped before reaching the UI.
+
+Reports written to:
+- `agent-workspace/user-test-reports/2026-04-03-user-test.md`
+- `agent-workspace/user-test-reports/BACKLOG.md` (15 new issues appended)

@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { UtensilsCrossed, MapPin, Clock, Heart } from "lucide-react";
 import { ConfidenceDot } from "@/components/confidence-dot";
 import { useAuth } from "@/lib/auth/context";
@@ -38,6 +37,7 @@ export function DishCard({ dish, initialFavorited = false }: { dish: DishCardDat
   const { user } = useAuth();
   const [favorited, setFavorited] = useState(initialFavorited);
   const [toggling, setToggling] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const toggleFavorite = useCallback(async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -75,16 +75,16 @@ export function DishCard({ dish, initialFavorited = false }: { dish: DishCardDat
       <div className="rounded-2xl overflow-hidden bg-card shadow-sm border border-border/50 transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 group-active:translate-y-0 group-active:shadow-md">
         {/* Photo */}
         <div className="aspect-[3/2] w-full relative overflow-hidden">
-          {dish.photo_url ? (
+          {dish.photo_url && !imgError ? (
             <>
               <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/10" />
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={dish.photo_url}
                 alt={dish.name}
-                fill
-                sizes="(max-width: 399px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                className="object-cover transition-all duration-500 opacity-0 data-[loaded=true]:opacity-100 group-hover:scale-105"
+                className="absolute inset-0 w-full h-full object-cover transition-all duration-500 opacity-0 data-[loaded=true]:opacity-100 group-hover:scale-105"
                 onLoad={(e) => e.currentTarget.setAttribute("data-loaded", "true")}
+                onError={() => setImgError(true)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
             </>
@@ -115,7 +115,7 @@ export function DishCard({ dish, initialFavorited = false }: { dish: DishCardDat
           </button>
 
           {/* Bottom info on photo */}
-          {dish.photo_url && (
+          {dish.photo_url && !imgError && (
             <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center gap-2">
               {dish.distance_miles != null && (
                 <span className="bg-white/90 dark:bg-card/90 backdrop-blur-sm text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
@@ -174,7 +174,7 @@ export function DishCard({ dish, initialFavorited = false }: { dish: DishCardDat
           )}
 
           {/* Distance/wait when no photo */}
-          {!dish.photo_url && (
+          {(!dish.photo_url || imgError) && (
             <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
               {dish.distance_miles != null && (
                 <span className="flex items-center gap-0.5">

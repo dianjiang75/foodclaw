@@ -1,0 +1,255 @@
+{
+  "baseline": [
+    {
+      "accuracy": 1,
+      "conservatism": 0,
+      "safety_failures": [],
+      "false_negatives": [],
+      "avg_latency_ms": 800,
+      "total_cost": 0.21315,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 1,
+      "conservatism": 0,
+      "safety_failures": [],
+      "false_negatives": [],
+      "avg_latency_ms": 800,
+      "total_cost": 0.21315,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 1,
+      "conservatism": 0,
+      "safety_failures": [],
+      "false_negatives": [],
+      "avg_latency_ms": 800,
+      "total_cost": 0.21315,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 1,
+      "conservatism": 0,
+      "safety_failures": [],
+      "false_negatives": [],
+      "avg_latency_ms": 800,
+      "total_cost": 0.21315,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 1,
+      "conservatism": 0,
+      "safety_failures": [],
+      "false_negatives": [],
+      "avg_latency_ms": 800,
+      "total_cost": 0.21315,
+      "dishes_scored": 49
+    }
+  ],
+  "deepseek_r1": [
+    {
+      "accuracy": 0.9813953488372092,
+      "conservatism": 0.6666666666666666,
+      "safety_failures": [
+        "Falafel Wrap: nut_free expected=null got=true (UNSAFE ASSUMPTION)"
+      ],
+      "false_negatives": [],
+      "avg_latency_ms": 12694.244897959186,
+      "total_cost": 0.06489761999999995,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 1,
+      "conservatism": 1,
+      "safety_failures": [],
+      "false_negatives": [],
+      "avg_latency_ms": 12844.795918367336,
+      "total_cost": 0.06663210000000001,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 0.9955947136563876,
+      "conservatism": 0.8333333333333334,
+      "safety_failures": [
+        "Bibimbap: nut_free expected=null got=true (UNSAFE ASSUMPTION)"
+      ],
+      "false_negatives": [],
+      "avg_latency_ms": 13428.224489795932,
+      "total_cost": 0.07011639000000003,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 0.974025974025974,
+      "conservatism": 0.6875,
+      "safety_failures": [
+        "Thai Green Curry: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Falafel Wrap: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Butter Chicken: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Chicken Tikka Masala: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Bibimbap: nut_free expected=null got=true (UNSAFE ASSUMPTION)"
+      ],
+      "false_negatives": [
+        "Mushroom Risotto: kosher expected=true got=false (OVERCAUTIOUS)"
+      ],
+      "avg_latency_ms": 11784.469387755114,
+      "total_cost": 0.06114396,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 0.9916317991631799,
+      "conservatism": 0.8,
+      "safety_failures": [
+        "Falafel Wrap: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Bibimbap: nut_free expected=null got=true (UNSAFE ASSUMPTION)"
+      ],
+      "false_negatives": [],
+      "avg_latency_ms": 13129.959183673462,
+      "total_cost": 0.06606488999999999,
+      "dishes_scored": 49
+    }
+  ],
+  "qwen_max": [
+    {
+      "accuracy": 0.8950819672131147,
+      "conservatism": 0.5454545454545454,
+      "safety_failures": [
+        "Pad Thai: gluten_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Vegetable Fried Rice: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Pesto Pasta: dairy_free expected=false got=true (FALSE POSITIVE)",
+        "Thai Green Curry: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Falafel Wrap: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Butter Chicken: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Sushi Platter: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Chicken Tikka Masala: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Poke Bowl: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: nut_free expected=null got=true (UNSAFE ASSUMPTION)"
+      ],
+      "false_negatives": [
+        "Falafel Wrap: vegan expected=true got=false (OVERCAUTIOUS)",
+        "Granola Parfait: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Caprese Salad: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Eggplant Parmesan: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Fettuccine Alfredo: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Shakshuka: vegetarian expected=true got=false (OVERCAUTIOUS)",
+        "Shakshuka: kosher expected=true got=false (OVERCAUTIOUS)"
+      ],
+      "avg_latency_ms": 1586.6530612244908,
+      "total_cost": 0.0403216,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 0.8986928104575164,
+      "conservatism": 0.5555555555555556,
+      "safety_failures": [
+        "Pad Thai: gluten_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Pesto Pasta: dairy_free expected=false got=true (FALSE POSITIVE)",
+        "Thai Green Curry: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Falafel Wrap: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Butter Chicken: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Fish Tacos: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Sushi Platter: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Chicken Tikka Masala: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Poke Bowl: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: nut_free expected=null got=true (UNSAFE ASSUMPTION)"
+      ],
+      "false_negatives": [
+        "Falafel Wrap: vegan expected=true got=false (OVERCAUTIOUS)",
+        "Granola Parfait: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Caprese Salad: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Eggplant Parmesan: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Fettuccine Alfredo: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Mushroom Risotto: kosher expected=true got=false (OVERCAUTIOUS)"
+      ],
+      "avg_latency_ms": 1499.857142857142,
+      "total_cost": 0.03931679999999997,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 0.9027777777777778,
+      "conservatism": 0.6071428571428571,
+      "safety_failures": [
+        "Pad Thai: gluten_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Pesto Pasta: dairy_free expected=false got=true (FALSE POSITIVE)",
+        "Thai Green Curry: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Falafel Wrap: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Butter Chicken: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Fish Tacos: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Sushi Platter: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Chicken Tikka Masala: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Poke Bowl: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: nut_free expected=null got=true (UNSAFE ASSUMPTION)"
+      ],
+      "false_negatives": [
+        "Margherita Pizza: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Tres Leches Cake: halal expected=true got=false (OVERCAUTIOUS)",
+        "Caprese Salad: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Eggplant Parmesan: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Fettuccine Alfredo: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Shakshuka: vegetarian expected=true got=false (OVERCAUTIOUS)",
+        "Shakshuka: kosher expected=true got=false (OVERCAUTIOUS)"
+      ],
+      "avg_latency_ms": 1573.2448979591836,
+      "total_cost": 0.03927839999999999,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 0.9050847457627119,
+      "conservatism": 0.59375,
+      "safety_failures": [
+        "Pad Thai: gluten_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Thai Green Curry: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Falafel Wrap: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Butter Chicken: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Sushi Platter: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Chicken Tikka Masala: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Poke Bowl: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: nut_free expected=null got=true (UNSAFE ASSUMPTION)"
+      ],
+      "false_negatives": [
+        "Granola Parfait: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Caprese Salad: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Eggplant Parmesan: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Fettuccine Alfredo: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Shakshuka: vegetarian expected=true got=false (OVERCAUTIOUS)",
+        "Shakshuka: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Mushroom Risotto: kosher expected=true got=false (OVERCAUTIOUS)"
+      ],
+      "avg_latency_ms": 1624.2244897959195,
+      "total_cost": 0.03978399999999997,
+      "dishes_scored": 49
+    },
+    {
+      "accuracy": 0.9105960264900662,
+      "conservatism": 0.625,
+      "safety_failures": [
+        "Pad Thai: gluten_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Pesto Pasta: dairy_free expected=false got=true (FALSE POSITIVE)",
+        "Thai Green Curry: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Falafel Wrap: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Butter Chicken: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Sushi Platter: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Chicken Tikka Masala: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Poke Bowl: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: gluten_free expected=false got=true (FALSE POSITIVE)",
+        "Bibimbap: nut_free expected=null got=true (UNSAFE ASSUMPTION)",
+        "Lamb Gyro: dairy_free expected=false got=true (FALSE POSITIVE)"
+      ],
+      "false_negatives": [
+        "Margherita Pizza: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Tres Leches Cake: halal expected=true got=false (OVERCAUTIOUS)",
+        "Granola Parfait: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Caprese Salad: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Eggplant Parmesan: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Fettuccine Alfredo: kosher expected=true got=false (OVERCAUTIOUS)",
+        "Mushroom Risotto: kosher expected=true got=false (OVERCAUTIOUS)"
+      ],
+      "avg_latency_ms": 1724.04081632653,
+      "total_cost": 0.03957920000000004,
+      "dishes_scored": 49
+    }
+  ]
+}

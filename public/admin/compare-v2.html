@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodClaw — Creative Prompt Test (v1 vs v2)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, sans-serif; background: #0a0a0a; color: #e5e5e5; padding: 20px; }
+  h1 { font-size: 20px; margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 900px; margin: 0 auto; }
+  .card { background: #181818; border-radius: 12px; overflow: hidden; }
+  .card h3 { padding: 10px 12px 6px; font-size: 15px; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .compare .side { position: relative; }
+  .compare .side img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .compare .side .label { position: absolute; top: 6px; left: 6px; background: #000a; backdrop-blur: 4px; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+  .label.old { color: #f59e0b; }
+  .label.new { color: #22c55e; }
+  .note { padding: 8px 12px; font-size: 11px; color: #888; }
+</style>
+</head>
+<body>
+<h1>Creative Prompt Test — Old (v1) vs New (v2)</h1>
+<p style="color:#888;margin-bottom:20px;font-size:13px;">Left = original (faithful copy). Right = new creative prompt (magazine-worthy, original interpretation).</p>
+<div class="grid">
+  <div class="card">
+    <h3>Khao Niew Ma Muang (Mango Sticky Rice)</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/khao-niew-ma-muang.jpg" onerror="this.src='/dishes/somtum-thai.jpg'"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/khao-niew-ma-muang-v2.jpg"></div>
+    </div>
+    <div class="note">Was missing from v1. New creative generation.</div>
+  </div>
+  <div class="card">
+    <h3>A5 Wagyu Nigiri</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/a5-wagyu-nigiri.jpg" onerror="this.src='/dishes/toro-nigiri.jpg'"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/a5-wagyu-nigiri-v2.jpg"></div>
+    </div>
+    <div class="note">Was missing from v1. New creative generation.</div>
+  </div>
+  <div class="card">
+    <h3>Spicy Cumin Lamb Hand-Ripped Noodles</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/spicy-cumin-lamb-hand-ripped-noodles.jpg" onerror="this.style.background='#333'"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/spicy-cumin-lamb-hand-ripped-noodles-v2.jpg"></div>
+    </div>
+    <div class="note">Was missing from v1. New creative generation.</div>
+  </div>
+  <div class="card">
+    <h3>Churros con Chocolate</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/churros-con-chocolate.jpg"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/churros-con-chocolate-v2.jpg"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Pan Fried Noodles</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/pan-fried-noodles.jpg"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/pan-fried-noodles-v2.jpg"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Pinwheel Lasagna</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/pinwheel-lasagna.jpg"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/pinwheel-lasagna-v2.jpg"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Kanom Jeen Nam Ya</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/kanom-jeen-nam-ya.jpg"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/kanom-jeen-nam-ya-v2.jpg"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Agedashi Tofu</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/agedashi-tofu.jpg"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/agedashi-tofu-v2.jpg"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Hire Katsu Set</h3>
+    <div class="compare">
+      <div class="side"><span class="label old">V1 — FAITHFUL</span><img src="/dishes/hire-katsu-set.jpg"></div>
+      <div class="side"><span class="label new">V2 — CREATIVE</span><img src="/dishes/hire-katsu-set-v2.jpg"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
