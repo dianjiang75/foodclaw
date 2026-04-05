@@ -5,11 +5,17 @@ import { useEffect, useState, useCallback } from "react";
 interface PhotoItem {
   photoId: string;
   dishId: string;
+  menuItemId: string | null;
   dishName: string;
   photoUrl: string;
   restaurantName: string;
+  cuisine: string;
   sourcePlatform: string;
   analyzedAt: string | null;
+}
+
+function googleSearchUrl(name: string, cuisine: string) {
+  return `https://www.google.com/search?q=${encodeURIComponent(`${name} ${cuisine} food dish`)}&tbm=isch`;
 }
 
 export default function PhotoAuditPage() {
@@ -20,19 +26,17 @@ export default function PhotoAuditPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState<string | null>(null);
   const [filter, setFilter] = useState<"unreviewed" | "low-confidence">("unreviewed");
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const fetchItems = useCallback(async (p: number, f: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/audit/photos?page=${p}&filter=${f}`);
+      const res = await fetch(`/api/admin/audit/photos?page=${p}&filter=${f}&limit=50`);
       if (res.ok) {
         const json = await res.json();
         const data = json.data || json;
         setItems(data.items || []);
         setTotal(data.total || 0);
         setPage(data.page || p);
-        setCurrentIndex(0);
       }
     } finally {
       setLoading(false);
@@ -43,26 +47,7 @@ export default function PhotoAuditPage() {
     fetchItems(1, filter);
   }, [fetchItems, filter]);
 
-  // Keyboard shortcuts: left = reject, right = approve
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (items.length === 0 || submitting) return;
-      const current = items[currentIndex];
-      if (!current) return;
-
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        handleAction(current.photoId, current.dishId, "approve");
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        handleAction(current.photoId, current.dishId, "reject");
-      }
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  });
-
-  async function handleAction(photoId: string, dishId: string, action: "approve" | "reject") {
+  async function handleAction(photoId: string, dishId: string, action: string) {
     setSubmitting(photoId);
     try {
       const res = await fetch("/api/admin/audit/photos", {
@@ -71,14 +56,7 @@ export default function PhotoAuditPage() {
         body: JSON.stringify({ photoId, dishId, action }),
       });
       if (res.ok) {
-        setItems((prev) => {
-          const next = prev.filter((i) => i.photoId !== photoId);
-          // Keep currentIndex in bounds
-          if (currentIndex >= next.length && next.length > 0) {
-            setCurrentIndex(next.length - 1);
-          }
-          return next;
-        });
+        setItems((prev) => prev.filter((i) => i.photoId !== photoId));
         setReviewed((r) => r + 1);
         setTotal((t) => Math.max(0, t - 1));
       }
@@ -87,19 +65,17 @@ export default function PhotoAuditPage() {
     }
   }
 
-  const current = items[currentIndex] || null;
-
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <a href="/admin/audit" className="text-sm text-muted-foreground hover:text-foreground mb-2 inline-block">
             &larr; Back to Audit Dashboard
           </a>
           <h1 className="text-2xl font-bold">Photo Audit</h1>
           <p className="text-muted-foreground mt-1">
-            Review dish photos. Use arrow keys for fast review (Left = Reject, Right = Approve).
+            Review dish photos in a grid. Approve, reject, remove from dish cards, or remove entirely.
           </p>
           <div className="flex items-center gap-4 mt-3">
             <span className="text-sm font-semibold text-primary">{reviewed} reviewed</span>
@@ -129,93 +105,109 @@ export default function PhotoAuditPage() {
           </div>
         </div>
 
-        {/* Loading state */}
+        {/* Loading */}
         {loading && items.length === 0 && (
-          <div className="space-y-4">
-            <div className="h-80 rounded-xl bg-muted/50 animate-pulse" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="aspect-square rounded-xl bg-muted/50 animate-pulse" />
+            ))}
           </div>
         )}
 
-        {/* Empty state */}
+        {/* Empty */}
         {!loading && items.length === 0 && (
           <div className="text-center py-16">
             <div className="text-4xl mb-4">&#10003;</div>
             <p className="text-lg font-semibold">All photos reviewed!</p>
-            <p className="text-muted-foreground mt-1">No photos need review right now.</p>
           </div>
         )}
 
-        {/* Current photo card (focused view) */}
-        {current && (
-          <div className={`border border-border rounded-xl overflow-hidden bg-card transition-opacity ${submitting ? "opacity-50" : ""}`}>
-            {/* Photo */}
-            <div className="relative bg-muted aspect-[4/3] max-h-[500px]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={current.photoUrl}
-                alt={current.dishName}
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/placeholder-dish.svg";
-                }}
-              />
-              <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full">
-                {currentIndex + 1} / {items.length}
-              </div>
-            </div>
-
-            {/* Info */}
-            <div className="p-5">
-              <h3 className="font-bold text-lg">{current.dishName}</h3>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                {current.restaurantName} &middot; {current.sourcePlatform}
-              </p>
-
-              {/* Action buttons */}
-              <div className="flex gap-3 mt-5">
-                <button
-                  disabled={!!submitting}
-                  onClick={() => handleAction(current.photoId, current.dishId, "reject")}
-                  className="flex-1 py-3 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 font-semibold text-sm hover:bg-red-500/20 active:scale-[0.98] transition-all disabled:opacity-50"
-                >
-                  Reject (&larr;)
-                </button>
-                <button
-                  disabled={!!submitting}
-                  onClick={() => handleAction(current.photoId, current.dishId, "approve")}
-                  className="flex-1 py-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold text-sm hover:bg-emerald-500/20 active:scale-[0.98] transition-all disabled:opacity-50"
-                >
-                  Approve (&rarr;)
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Thumbnail strip — show remaining items below */}
-        {items.length > 1 && (
-          <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar py-2">
-            {items.map((item, idx) => (
-              <button
+        {/* Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {items.map((item) => {
+            const isSubmitting = submitting === item.photoId;
+            return (
+              <div
                 key={item.photoId}
-                onClick={() => setCurrentIndex(idx)}
-                className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                  idx === currentIndex ? "border-primary ring-2 ring-primary/30" : "border-transparent opacity-60 hover:opacity-100"
-                }`}
+                className={`border border-border rounded-xl overflow-hidden bg-card transition-opacity ${isSubmitting ? "opacity-40" : ""}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={item.photoUrl}
-                  alt={item.dishName}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/placeholder-dish.svg";
-                  }}
-                />
-              </button>
-            ))}
-          </div>
-        )}
+                {/* Photo */}
+                <div className="relative aspect-square bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.photoUrl}
+                    alt={item.dishName}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/placeholder-dish.svg";
+                    }}
+                  />
+                </div>
+
+                {/* Info */}
+                <div className="p-2.5">
+                  <h3 className="font-semibold text-xs leading-tight truncate" title={item.dishName}>
+                    {item.dishName}
+                  </h3>
+                  <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                    {item.restaurantName}
+                  </p>
+
+                  {/* Action buttons — 2 rows */}
+                  <div className="flex gap-1 mt-2">
+                    <button
+                      disabled={isSubmitting}
+                      onClick={() => handleAction(item.photoId, item.dishId, "approve")}
+                      className="flex-1 py-1 text-[10px] font-semibold rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
+                      title="Approve this photo"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      disabled={isSubmitting}
+                      onClick={() => handleAction(item.photoId, item.dishId, "reject")}
+                      className="flex-1 py-1 text-[10px] font-semibold rounded bg-red-500/15 text-red-700 dark:text-red-400 hover:bg-red-500/25 transition-colors disabled:opacity-50"
+                      title="Remove this photo (keep dish)"
+                    >
+                      Reject
+                    </button>
+                    <a
+                      href={googleSearchUrl(item.dishName, item.cuisine)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-1 text-[10px] font-semibold rounded bg-blue-500/15 text-blue-700 dark:text-blue-400 hover:bg-blue-500/25 transition-colors text-center"
+                      title="Google search this dish"
+                    >
+                      Google
+                    </a>
+                  </div>
+                  <div className="flex gap-1 mt-1">
+                    <button
+                      disabled={isSubmitting}
+                      onClick={() => handleAction(item.photoId, item.dishId, "demote")}
+                      className="flex-1 py-1 text-[10px] font-medium rounded bg-amber-500/15 text-amber-700 dark:text-amber-400 hover:bg-amber-500/25 transition-colors disabled:opacity-50"
+                      title="Remove from dish cards (keep in menu)"
+                    >
+                      Not a Card
+                    </button>
+                    <button
+                      disabled={isSubmitting}
+                      onClick={() => {
+                        if (confirm(`Remove "${item.dishName}" from menu entirely?`)) {
+                          handleAction(item.photoId, item.dishId, "remove-all");
+                        }
+                      }}
+                      className="flex-1 py-1 text-[10px] font-medium rounded bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-colors disabled:opacity-50"
+                      title="Remove from both menu and dish cards"
+                    >
+                      Remove All
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
         {/* Pagination */}
         {total > 50 && (

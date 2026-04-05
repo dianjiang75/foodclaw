@@ -292,7 +292,7 @@ export async function scrapeRestaurantMenu(
       // Drinks / beverages (but NOT cocktails — those might get promoted)
       else if (/^(beverage|drink|soft\s+drink|soda|water|juice|non[- ]?alcoholic)s?$/i.test(cat)) preType = "drink";
       // Wine / beer / spirits
-      else if (/wine|beer|spirit|liquor|cocktail|bar|whiskey|bourbon|scotch|champagne|champage|sparkling|rosé|red\s+wine|white\s+wine/i.test(cat)) preType = "drink";
+      else if (/wine|beer|spirit|liquor|cocktail|bar|whiskey|bourbon|scotch|champagne|champage|sparkling|rosé|red\s+wine|white\s+wine/i.test(cat)) preType = "alcohol";
       // Condiments / sauces
       else if (/^(sauce|condiment|dressing|dip|salsa|spread)s?$/i.test(cat)) preType = "condiment";
       // Dishes — explicit main categories (appetizers, entrees, mains, etc.)
@@ -303,7 +303,7 @@ export async function scrapeRestaurantMenu(
 
     // ── Name-based classification (fallback when category didn't match) ──
     if (preType === "unknown") {
-      if (isWineOrSpirit(item.name, item.category)) preType = "drink";
+      if (isWineOrSpirit(item.name, item.category)) preType = "alcohol";
       else if (isCocktailOrSpecialDrink(item.name, item.category)) preType = "drink";
       else if (isDessertItem(item.name, item.category)) preType = "dessert";
       else if (isComboOrMealDeal(item.name)) preType = "combo";

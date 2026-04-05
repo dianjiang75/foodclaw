@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
 const VALID_TYPES = [
-  "dish", "dessert", "drink", "side", "condiment", "addon", "combo", "kids",
+  "dish", "dessert", "drink", "alcohol", "side", "condiment", "addon", "combo", "kids",
 ] as const;
 
 const CORRECTIONS_PATH = join(
@@ -100,15 +100,69 @@ export const GET = withRateLimit("read", async (request: Request) => {
 export const POST = withRateLimit("write", async (request: Request) => {
   try {
     const body = await request.json();
-    const { menuItemId, correctType, isDishCard, reason } = body;
+    const { menuItemId, correctType, isDishCard, action, reason } = body;
 
     if (!menuItemId || typeof menuItemId !== "string") {
       return apiBadRequest("menuItemId is required");
     }
 
-    // Either correctType or isDishCard must be provided
+    // Validate UUID format
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(menuItemId)) {
+      return apiBadRequest("Invalid menuItemId format");
+    }
+
+    // Fetch the item first
+    const existing = await prisma.menuItem.findUnique({
+      where: { id: menuItemId },
+      select: { name: true, menuItemType: true, dishId: true },
+    });
+
+    if (!existing) {
+      return apiNotFound("MenuItem not found");
+    }
+
+    // Handle reject action — archive as junk
+    if (action === "reject") {
+      await prisma.menuItem.update({
+        where: { id: menuItemId },
+        data: {
+          archivedAt: new Date(),
+          archivedReason: "junk_detected",
+          isDishCard: false,
+          auditConfidence: 1.0,
+        },
+      });
+
+      // If linked to a Dish, mark dish as unavailable too
+      if (existing.dishId) {
+        await prisma.dish.update({
+          where: { id: existing.dishId },
+          data: { isAvailable: false },
+        }).catch(() => {});
+      }
+
+      // Log correction
+      try {
+        const raw = readFileSync(CORRECTIONS_PATH, "utf-8");
+        const data = JSON.parse(raw);
+        data.corrections.push({
+          menuItemId,
+          name: existing.name,
+          previousType: existing.menuItemType,
+          action: "rejected",
+          reason: reason || "human audit — not a real menu item",
+          addedBy: "human_audit",
+          date: new Date().toISOString(),
+        });
+        writeFileSync(CORRECTIONS_PATH, JSON.stringify(data, null, 2) + "\n");
+      } catch { /* non-critical */ }
+
+      return apiSuccess({ rejected: true });
+    }
+
+    // Handle classify action
     if (!correctType && isDishCard === undefined) {
-      return apiBadRequest("correctType or isDishCard is required");
+      return apiBadRequest("correctType, isDishCard, or action:'reject' is required");
     }
 
     if (correctType && !VALID_TYPES.includes(correctType)) {
@@ -117,29 +171,33 @@ export const POST = withRateLimit("write", async (request: Request) => {
       );
     }
 
-    // Validate UUID format
-    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(menuItemId)) {
-      return apiBadRequest("Invalid menuItemId format");
-    }
-
-    // Fetch the item first to capture previous type
-    const existing = await prisma.menuItem.findUnique({
-      where: { id: menuItemId },
-      select: { name: true, menuItemType: true },
-    });
-
-    if (!existing) {
-      return apiNotFound("MenuItem not found");
-    }
+    // Alcohol items should never be dish cards
+    const isAlcohol = correctType === "alcohol";
+    const shouldBeDishCard = isDishCard !== undefined
+      ? !!isDishCard
+      : isAlcohol ? false : undefined;
 
     // Update the MenuItem
     await prisma.menuItem.update({
       where: { id: menuItemId },
       data: {
         ...(correctType ? { menuItemType: correctType, auditConfidence: 1.0 } : {}),
-        ...(isDishCard !== undefined ? { isDishCard: !!isDishCard, dishCardConfidence: 1.0 } : {}),
+        ...(shouldBeDishCard !== undefined ? { isDishCard: shouldBeDishCard, dishCardConfidence: 1.0 } : {}),
       },
     });
+
+    // If reclassified as alcohol and was a dish card, unlink from Dish
+    if (isAlcohol && existing.dishId) {
+      await prisma.menuItem.update({
+        where: { id: menuItemId },
+        data: { dishId: null, isDishCard: false },
+      });
+      // Mark the orphaned Dish as unavailable
+      await prisma.dish.update({
+        where: { id: existing.dishId },
+        data: { isAvailable: false },
+      }).catch(() => {});
+    }
 
     // Append to corrections.json
     try {
@@ -149,15 +207,13 @@ export const POST = withRateLimit("write", async (request: Request) => {
         menuItemId,
         name: existing.name,
         previousType: existing.menuItemType,
-        correctType,
+        correctType: correctType || null,
         reason: reason || null,
         addedBy: "human_audit",
         date: new Date().toISOString(),
       });
       writeFileSync(CORRECTIONS_PATH, JSON.stringify(data, null, 2) + "\n");
-    } catch {
-      // Non-critical — DB update already succeeded
-    }
+    } catch { /* non-critical */ }
 
     return apiSuccess({ updated: true });
   } catch (err) {

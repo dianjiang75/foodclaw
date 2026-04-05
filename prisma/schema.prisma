@@ -41,7 +41,8 @@ enum MacroSource {
 enum MenuItemType {
   dish        // mains, appetizers, starters, soups, salads
   dessert     // sweets, pastries, ice cream
-  drink       // ALL beverages (basic + special)
+  drink       // non-alcoholic beverages (coffee, tea, smoothies, soda, water)
+  alcohol     // wine, beer, spirits, cocktails
   side        // sides, bread, rice
   condiment   // sauces, dressings, dips
   addon       // extras, upgrades, substitutions
