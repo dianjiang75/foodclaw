@@ -4,6 +4,11 @@ jest.mock("@/lib/cache/redis", () => ({
     set: jest.fn().mockResolvedValue("OK"),
     del: jest.fn().mockResolvedValue(1),
     scan: jest.fn().mockResolvedValue(["0", []]),
+    smembers: jest.fn().mockResolvedValue([]),
+    pipeline: jest.fn().mockReturnValue({
+      del: jest.fn().mockReturnThis(),
+      exec: jest.fn().mockResolvedValue([]),
+    }),
   },
 }));
 
@@ -230,19 +235,27 @@ describe("Cache Layer", () => {
   });
 
   describe("invalidateRestaurant", () => {
-    it("scans and deletes all keys matching restaurant ID", async () => {
-      mockRedis.scan
-        .mockResolvedValueOnce(["42", ["rest:abc123:menu", "rest:abc123:macros"]])
-        .mockResolvedValueOnce(["0", ["rest:abc123:reviews"]]);
+    it("deletes all tagged keys for restaurant ID", async () => {
+      mockRedis.smembers.mockResolvedValueOnce([
+        "rest:abc123:menu",
+        "rest:abc123:macros",
+        "rest:abc123:reviews",
+      ]);
+      const mockPipeline = {
+        del: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue([]),
+      };
+      mockRedis.pipeline.mockReturnValueOnce(mockPipeline as never);
 
       const deleted = await invalidateRestaurant("abc123");
 
       expect(deleted).toBe(3);
-      expect(mockRedis.del).toHaveBeenCalledTimes(2);
+      expect(mockRedis.smembers).toHaveBeenCalledWith("cache-tag:restaurant:abc123");
+      expect(mockPipeline.del).toHaveBeenCalledTimes(4); // 3 keys + tag set
     });
 
     it("returns 0 when no matching keys", async () => {
-      mockRedis.scan.mockResolvedValueOnce(["0", []]);
+      mockRedis.smembers.mockResolvedValueOnce([]);
 
       const deleted = await invalidateRestaurant("nonexistent");
       expect(deleted).toBe(0);

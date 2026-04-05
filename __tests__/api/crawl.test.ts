@@ -91,8 +91,8 @@ describe("POST /api/crawl/area", () => {
     const body = await res.json();
 
     expect(res.status).toBe(202);
-    expect(body.restaurants_found).toBe(2);
-    expect(body.jobs_queued).toBe(2);
+    expect(body.data.restaurants_found).toBe(2);
+    expect(body.data.jobs_queued).toBe(2);
   });
 
   it("returns 500 when Google Places API fails", async () => {
