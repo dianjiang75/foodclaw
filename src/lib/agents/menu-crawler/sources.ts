@@ -321,14 +321,14 @@ export function parseHtmlMenu(html: string): RawMenuItem[] {
     });
   }
 
-  // Validate: multi-layer filtering
+  // Validate: two-layer filtering
   // 1. isLikelyFoodItem() — rejects obvious junk (hotel amenities, nav, phone numbers)
-  // 2. isWineOrSpirit() — rejects wine/beer/spirit listings
-  // 3. isDishWorthRecommending() — rejects sides, condiments, basic drinks
+  // 2. isWineOrSpirit() — rejects wine/beer/spirit listings (200+ grapes, 100+ brands)
+  // NOTE: isDishWorthRecommending() is NOT used here — it's too aggressive
+  // (rejects sides like Mac & Cheese, Truffle Fries which users want to find)
   return items.filter(item => {
     if (!isLikelyFoodItem(item.name, item.description || "")) return false;
     if (isWineOrSpirit(item.name, item.category)) return false;
-    if (!isDishWorthRecommending(item.name, item.category)) return false;
     return true;
   });
 }
